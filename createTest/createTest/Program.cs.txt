@@ -1,0 +1,380 @@
+﻿using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace createTest
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            XSSFWorkbook xssfwb;
+            string filename = @"d:\F1-F4.xlsx";
+            int dealta = 60;
+            #region init
+            using (FileStream file = new FileStream(filename, FileMode.Open, FileAccess.Read))
+            {
+                xssfwb = new XSSFWorkbook(file);
+            }
+
+            var ls = filename.Split('F');
+            int startFrame = Convert.ToInt32(ls[1].Split('-').FirstOrDefault());
+            int endFrame = Convert.ToInt32(ls[2].Split('.').FirstOrDefault());
+
+            var listTimeFrame = getTimeFrame(startFrame, endFrame);
+            var listGroup = getGroup();
+            #endregion
+            #region read data to object
+            ISheet sheet = xssfwb.GetSheetAt(0);
+            List<MyProgram> list = new List<MyProgram>();
+            for (int row = 0; row <= sheet.LastRowNum; row++)
+            {
+                if (sheet.GetRow(row) != null)
+                {
+                    if (sheet.GetRow(row).GetCell(5)!=null)
+                    {
+                        MyProgram pr = new MyProgram();
+                        pr.name = sheet.GetRow(row).GetCell(2).StringCellValue;
+                        if (pr.name.ToLower().Contains("live"))
+                        {
+                            pr.Live = true;
+                        }
+                        else
+                            pr.Live = false;
+                        pr.duration = Convert.ToInt32(sheet.GetRow(row).GetCell(5).NumericCellValue);
+                        pr.eff = Convert.ToDouble(sheet.GetRow(row).GetCell(6).NumericCellValue);
+                        pr.group = sheet.GetRow(row).GetCell(7).StringCellValue;
+                        if (pr.group == "E")
+                            pr.group = "D";
+                        if (!string.IsNullOrEmpty(pr.group))
+                        {
+                            list.Add(pr);
+                        }
+                    }
+                }
+            }
+            #endregion
+            #region calculate revenue by hand schedule
+            double revenueByHand = 0;
+            foreach (var item in list)
+            {
+                revenueByHand += item.eff * item.duration;
+            }
+            #endregion
+            #region create program list
+            List<MyProgram> programList = new List<MyProgram>();
+            int programIndex = 0;
+            foreach (var item in list)
+            {
+                if (programList.Where(x => x.name == item.name).FirstOrDefault() == null)
+                {
+                    item.Id = programIndex;
+                    programList.Add(item);
+                    programIndex++;
+                }
+            }
+            #endregion
+            #region calculate group duration
+            var totaltime = listTimeFrame.LastOrDefault().end;
+            var staticTime = programList.Sum(x => x.duration);
+            var totalGroup = programList.Select(x => x.group).Distinct().Count();
+            var dynamicTime = totaltime - staticTime;
+            double[] ratio = new double[4];
+            ratio[0] = 3;
+            ratio[1] = 1.7;
+            ratio[2] = 0.7;
+            ratio[3] = 2;
+            double totalRatio = 0.0;
+            for (int j = 0; j < totalGroup; j++)
+            {
+                totalRatio += ratio[j];
+            }
+            int sum = 0;
+            for (int k = 0; k < totalGroup - 1; k++)
+            {
+                listGroup[k].TotalTime = Convert.ToInt32(programList.Where(x=>x.group==listGroup[k].Name).Sum(t=>t.duration) + dynamicTime * ratio[k] / totalRatio);
+                sum += listGroup[k].TotalTime;
+                listGroup[k].MaxShow = Convert.ToInt32(Math.Ceiling((double)listGroup[k].TotalTime/programList.Where(x => x.group == listGroup[k].Name).Sum(t => t.duration)));
+            }
+            listGroup[totalGroup - 1].TotalTime = totaltime - sum;
+            listGroup[totalGroup - 1].MaxShow = Convert.ToInt32(Math.Ceiling((double)listGroup[totalGroup - 1].TotalTime / programList.Where(x => x.group == listGroup[totalGroup - 1].Name).Sum(t => t.duration)));
+            #endregion
+            #region calculate max show time
+            foreach (var pr in programList)
+            {
+                foreach (var gr in listGroup)
+                {
+                    if (pr.group == gr.Name)
+                    {
+                        pr.maxShow = gr.MaxShow;
+                    }
+                }
+            }
+            #endregion
+            #region assign program to time frame
+            List<MyAssignment> assList = new List<MyAssignment>();
+            foreach (var fr in listTimeFrame)
+            {
+                foreach (var pr in programList)
+                {
+                    if(fr.Live){
+                        assList.Add(new MyAssignment()
+                        {
+                            FrameId = fr.Id,
+                            ProgramId = pr.Id,
+                            Assignable = 1
+                        });
+                    }
+                    // normal frame
+                    else{
+                        if (pr.Live)
+                        {
+                            assList.Add(new MyAssignment()
+                            {
+                                FrameId = fr.Id,
+                                ProgramId = pr.Id,
+                                Assignable = 0
+                            });
+                        }
+                        else
+                        {
+                            assList.Add(new MyAssignment()
+                            {
+                                FrameId = fr.Id,
+                                ProgramId = pr.Id,
+                                Assignable = 1
+                            });
+                        }
+                    }
+                    
+                }
+            }
+            #endregion
+            #region program belong to group
+            List<MyBelongToGroup> belongList = new List<MyBelongToGroup>();
+            foreach (var gr in listGroup)
+            {
+                foreach (var pr in programList)
+                {
+                    if(pr.group == gr.Name){
+                        belongList.Add(new MyBelongToGroup()
+                        {                        
+                            GroupId=gr.Id,
+                            ProgramId = pr.Id,
+                            BelongTo = 1                       
+                        });
+                    }
+                    else
+                    {
+                        belongList.Add(new MyBelongToGroup()
+                        {
+                            GroupId = gr.Id,
+                            ProgramId = pr.Id,
+                            BelongTo = 0
+                        });
+                    }
+                }
+            }
+            #endregion
+            #region generate test
+            using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter(filename.Split('.').FirstOrDefault()+"_testcase.txt"))
+                {
+                    //total time 
+                    file.WriteLine("T\t" + totaltime);
+                    //delay repeat program show
+                    file.WriteLine("D\t" + dealta);
+                    //program
+                    foreach (var pr in programList)
+                    {
+                        file.WriteLine("P\t" + pr.Id + "\t" + pr.duration + "\t" + pr.eff + "\t" + pr.maxShow + "\t" + pr.name);
+                    }
+                    //time frame
+                    foreach (var tf in listTimeFrame)
+                    {
+                        file.WriteLine("F\t" + tf.Id + "\t" + tf.start + "\t" + tf.end);
+                    }
+                    // group
+                    foreach (var gr in listGroup)
+                    {
+                        file.WriteLine("G\t" + gr.Id + "\t" + gr.TotalTime + "\t" + gr.Name);
+                    }
+                    // assign
+                    foreach (var ass in assList)
+                    {
+                        file.WriteLine("A\t" + ass.FrameId + "\t" + ass.ProgramId + "\t" + ass.Assignable);
+                    }
+                    // belong to
+                    foreach (var blt in belongList)
+                    {
+                        file.WriteLine("B\t" + blt.GroupId + "\t" + blt.ProgramId + "\t" + blt.BelongTo);
+                    }
+                    // revenue by hand mode
+                    file.WriteLine("RBH\t" + revenueByHand);
+                }
+            #endregion 
+        }
+
+        static List<MyTimeFrame> getTimeFrame(int start, int end)
+        {
+            List<MyTimeFrame> baseList = new List<MyTimeFrame>();
+            #region init
+            baseList.Add(new MyTimeFrame()
+            {
+                Id = 0,
+                duration = 60,
+                Live = false
+            });
+            baseList.Add(new MyTimeFrame()
+            {
+                Id = 1,
+                duration = 60,
+                Live = true
+            });
+            baseList.Add(new MyTimeFrame()
+            {
+                Id = 2,
+                duration = 120,
+                Live=false
+            });
+            baseList.Add(new MyTimeFrame()
+            {
+                Id = 3,
+                duration = 60,
+                Live = true
+            });
+            baseList.Add(new MyTimeFrame()
+            {
+                Id = 4,
+                duration = 240,
+                Live = false
+            });
+            baseList.Add(new MyTimeFrame()
+            {
+                Id = 5,
+                duration = 60,
+                Live = true
+            });
+            baseList.Add(new MyTimeFrame()
+            {
+                Id = 6,
+                duration = 240,
+                Live = false
+            });
+            baseList.Add(new MyTimeFrame()
+            {
+                Id = 7,
+                duration = 60,
+                Live = true
+            });
+            baseList.Add(new MyTimeFrame()
+            {
+                Id = 8,
+                duration = 60,
+                Live = false
+            });
+            baseList.Add(new MyTimeFrame()
+            {
+                Id = 9,
+                duration = 60,
+                Live = true
+            });
+            baseList.Add(new MyTimeFrame()
+            {
+                Id = 10,
+                duration = 30,
+                Live = false
+            });
+            #endregion
+            List<MyTimeFrame> resultList = new List<MyTimeFrame>();
+            int time = 1;
+            for (int i = 0; i <= end - start; i++)
+            {
+                var frame = baseList.Where(x => x.Id == start + i).FirstOrDefault();
+                if (frame != null)
+                {
+                    frame.Id = i;
+                    frame.start = time;
+                    frame.end = time + frame.duration - 1;
+                    time = frame.end + 1;
+                    resultList.Add(frame);
+                }
+            }
+            return resultList;
+        }
+
+        static List<MyGroup> getGroup()
+        {
+            List<MyGroup> listGroup = new List<MyGroup>();
+            listGroup.Add(new MyGroup()
+            {
+                Id = 0,
+                Name = "A"
+            });
+            listGroup.Add(new MyGroup()
+            {
+                Id = 1,
+                Name = "B"
+            });
+            listGroup.Add(new MyGroup()
+            {
+                Id = 2,
+                Name = "C"
+            });
+            listGroup.Add(new MyGroup()
+            {
+                Id = 3,
+                Name = "D"
+            });
+            return listGroup;
+        }
+    }
+
+    public class MyProgram
+    {
+        public int Id { get; set; }
+        public string name { get; set; }
+        public int duration { get; set; }
+        public double eff { get; set; }
+        public string group { get; set; }
+        public bool Live { get; set; }
+        public int maxShow { get; set; }
+    }
+
+    public class MyTimeFrame
+    {
+        public int Id { get; set; }
+        public int start { get; set; }
+        public int end { get; set; }
+        public bool Live { get; set; }
+        public int duration { get; set; }
+    }
+
+    public class MyGroup
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int TotalTime { get; set; }
+        public int MaxShow { get; set; }
+    }
+
+    public class MyAssignment
+    {
+        public int FrameId { get; set; }
+        public int ProgramId { get; set; }
+        public int Assignable { get; set; }
+    }
+
+    public class MyBelongToGroup
+    {
+        public int GroupId { get; set; }
+        public int ProgramId { get; set; }
+        public int BelongTo { get; set; }
+    }
+}

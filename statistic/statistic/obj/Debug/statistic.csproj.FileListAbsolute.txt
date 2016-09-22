@@ -1,0 +1,12 @@
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\bin\Debug\statistic.exe.config
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\bin\Debug\statistic.exe
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\bin\Debug\statistic.pdb
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\bin\Debug\ICSharpCode.SharpZipLib.dll
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\bin\Debug\NPOI.dll
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\bin\Debug\NPOI.OOXML.dll
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\bin\Debug\NPOI.OpenXml4Net.dll
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\bin\Debug\NPOI.OpenXmlFormats.dll
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\bin\Debug\NPOI.xml
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\obj\Debug\statistic.csprojResolveAssemblyReference.cache
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\obj\Debug\statistic.exe
+c:\users\thinh\documents\visual studio 2013\Projects\statistic\statistic\obj\Debug\statistic.pdb

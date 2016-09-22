@@ -1,0 +1,802 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GurobiPlugIn</name>
+    </assembly>
+    <members>
+        <member name="T:SolverFoundation.Plugin.Gurobi.GurobiDirective">
+            <summary>
+            Gurobi solver directive.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.BarIterLimit">
+            <summary>
+            Limit on the number of barrier iterations that will be performed.
+            Optimization will terminate when this limit is reached.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.Cutoff">
+            <summary>
+            Target solution objective value.  The Gurobi solver will only attempt
+            to find solutions whose objective values are better than the specified
+            target.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.IterationLimit">
+            <summary>
+            Limit on the number of simplex iterations that will be performed.
+            Optimization will terminate when this limit is reached.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.NodeLimit">
+            <summary>
+            Limit on the number of branch-and-bound nodes that will be explored.
+            Optimization will terminate when this limit is reached.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.SolutionLimit">
+            <summary>
+            Limit on the number of feasible solutions found by the Gurobi solver.
+            Optimization will terminate when this limit is reached.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.BarConvTol">
+            <summary>
+            Barrier convergence tolerance.  The barrier solver terminates when
+            the relative difference between the primal and dual objective is
+            less than the specified tolerance.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.FeasibilityTol">
+            <summary>
+            Primal feasibility tolerance.  All constraints must be satisfied
+            to this tolerance.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.IntFeasTol">
+            <summary>
+            Integer feasibility tolerance.  Integer variables must take
+            values that are no more than the specified tolerance away
+            from the nearest integer.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.MarkowitzTol">
+            <summary>
+            Threshold pivoting tolerance.  Used to limit numerical error in the
+            simplex algorithm.  A larger value may avoid numerical problems in rare
+            situations, but it will harm performance for most models.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.MIPGapAbs">
+            <summary>
+            Absolute MIP optimality gap. The MIP solver will terminate
+            (with an optimal result) when the gap between the lower
+            and upper objective bound is less than the specified value.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.OptimalityTol">
+            <summary>
+            Dual feasibility tolerance.  All dual constraints must be satisfied
+            to this tolerance.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.PSDTol">
+            <summary>
+            Positive semi-definite tolerance.  Sets a limit on the amount of
+            diagonal perturbation that the optimizer is allowed to perform
+            on the Q matrix in a QP model in order to correct minor PSD
+            violations.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.NormAdjust">
+            <summary>
+            Chooses from among multiple pricing norm variants.  By default, the algorithm
+            chooses automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.ObjScale">
+            <summary>
+            Simplex objective scaling.  By default, the algorithm chooses automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.PerturbValue">
+            <summary>
+            Magnitude of the simplex perturbation (when perturbation is required).
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.Quad">
+            <summary>
+            Turns quad precision computation on or off.  By default, the algorithm chooses
+            automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.ScaleFlag">
+            <summary>
+            Enable/disable model scaling.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.SimplexPricing">
+            <summary>
+            Simplex variable pricing strategy.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.BarCorrectors">
+            <summary>
+            Limits the number of central corrections performed in each barrier iteration.
+            The default value chooses automatically, depending on problem characteristics.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.BarOrder">
+            <summary>
+            Chooses the barrier sparse matrix fill-reducing algorithm. A value of 0 chooses
+            Approximate Minimum Degree ordering, while a value of 1 chooses Nested Dissection
+            ordering. The default value of -1 chooses automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.Crossover">
+            <summary>
+            Determines the crossover strategy used to transform the barrier solution into a basic
+            solution. Use value 0 to disable crossover; the solver will return an interior
+            solution. Other options control whether the crossover algorithm tries to push primal
+            or dual variables to bounds first, and then which simplex algorithm is used once
+            variable pushing is complete. Options 1 and 2 push dual variables first, then primal
+            variables. Option 1 finishes with primal, while option 2 finishes with dual. Options 
+            3 and 4 push primal variables first, then dual variables. Option 3 finishes with
+            primal, while option 4 finishes with dual.  The default value of -1 chooses
+            automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.CrossoverBasis">
+            <summary>
+            Determines the initial basis construction strategy for crossover. The default value
+            (0) chooses an initial basis quickly. A value of 1 can take much longer, but often
+            produces a much more numerically stable start basis.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.BranchDir">
+            <summary>
+            Branch direction.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.Heuristics">
+            <summary>
+            Fraction of runtime spent in MIP heuristics.  Larger values
+            produce more and better feasible solutions, at a cost of slower
+            progress in the best bound.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.ImproveStartGap">
+            <summary>
+            Reset the MIP focus to finding the best feasible solution when
+            the relative optimality gap reaches the specified value.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.ImproveStartTime">
+            <summary>
+            Reset the MIP focus to finding the best feasible solution when
+            the solver elapsed time reaches the specified value.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.MinRelNodes">
+            <summary>
+            Number of nodes to explore in the Minimum Relaxation heuristic.
+            Heuristic is performed at the end of the MIP root node, and only
+            when no feasible solution is available.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.MIPFocus">
+            <summary>
+            Controls the focus of the MIP solver.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.NodefileDir">
+            <summary>
+            Directory in which MIP node files are stored.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.NodefileStart">
+            <summary>
+            Amount of storage the MIP nodes can consume (in GB) before nodes are
+            written to disk.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.NodeMethod">
+            <summary>
+            Algorithm used to solve the MIP node relaxations.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.PumpPasses">
+            <summary>
+            Number of passes of the feasibility pump heuristic. Note that this
+            heuristic is only applied at the end of the MIP root, and only when
+            no other root heuristic found a feasible solution.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.RINS">
+            <summary>
+            Frequency of the RINS heuristic. Default value (-1) chooses
+            automatically. A value of 0 shuts off RINS. A positive value 'n'
+            applies RINS at every n-th node of the MIP search tree.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.SubMIPNodes">
+            <summary>
+            Limit on the number of nodes explored in local search heuristics.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.Symmetry">
+            <summary>
+            Controls MIP symmetry detection.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.VarBranch">
+            <summary>
+            Branch variable selection strategy.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.Cuts">
+            <summary>
+            Global cut generation control.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.CliqueCuts">
+            <summary>
+            Clique cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.CoverCuts">
+            <summary>
+            Cover cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.FlowCoverCuts">
+            <summary>
+            Flow cover cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.FlowPathCuts">
+            <summary>
+            Flow path cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.GUBCoverCuts">
+            <summary>
+            GUB cover cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.ImpliedCuts">
+            <summary>
+            Implied bound cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.MIPSepCuts">
+            <summary>
+            MIP separation cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.MIRCuts">
+            <summary>
+            Mixed Integer Rounding (MIR) cut generation.  Overrides the
+            Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.ModKCuts">
+            <summary>
+            Mod-K cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.NetworkCuts">
+            <summary>
+            Network cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.SubMIPCuts">
+            <summary>
+            Sub-MIP cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.ZeroHalfCuts">
+            <summary>
+            Zero-half cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.CutAggPasses">
+            <summary>
+            Maximum number of aggregation passes performed during cut generation.
+            Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.CutPasses">
+            <summary>
+            Maximum number of cut passes performed during cut generation.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.GomoryPasses">
+            <summary>
+            Maximum number of Gomory cut passes performed.  Overrides the Cuts
+            parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.AggFill">
+            <summary>
+            Controls the amount of fill allowed during presolve aggregation.
+            Larger values generally lead to presolved models with fewer rows
+            and columns, but with more constraint matrix non-zeros.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.Aggregate">
+            <summary>
+            Enable/disable aggregation in presolve.  In rare instances,
+            aggregation can lead to an accumulation of numerical errors.  Turning
+            it off can sometimes improve solution accuracy.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.DisplayInterval">
+            <summary>
+            Frequency at which log lines are printed (in seconds).
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.Logfile">
+            <summary>
+            The name of the Gurobi log file.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.Method">
+            <summary>
+            Algorithm used to solve relaxations.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.OutputFlag">
+            <summary>
+            Enable/disable Gurobi console output. By default, the Gurobi
+            solver produces no output.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.PreDepRow">
+            <summary>
+            Controls the presolve dependent row reduction, which eliminates
+            linearly dependent constraints from the constraint matrix. The
+            default setting (-1) applies the reduction to continuous models
+            but not to MIP models. Setting 0 turns the reduction off for all
+            models. Setting 1 turns it on for all models.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.PreDual">
+            <summary>
+            Controls whether presolve forms the dual of a continuous model.
+            Depending on the structure of the model, solving the dual can
+            reduce overall solution time. The default setting uses a heuristic
+            to decide. Setting 0 forbids presolve from forming the dual, while
+            setting 1 forces it to take the dual. Setting 2 employs a more expensive
+            heuristic that forms both the presolved primal and dual models (on
+            two threads), and heuristically chooses one of them.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.PreMIQPMethod">
+            <summary>
+            Chooses the transformation presolve performs on MIQP models.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.PrePasses">
+            <summary>
+            Limits the number of passes performed by presolve. The default setting
+            (-1) chooses the number of passes automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.Presolve">
+            <summary>
+            Presolve level.  More aggressive presolve reductions can produce
+            a model that is easier to solve, but such reductions can be expensive.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiDirective.Threads">
+            <summary>
+            Parallel Gurobi MIP thread count.  The default value of 0 uses all
+            of the processors in the machine.
+            </summary>
+        </member>
+        <member name="T:SolverFoundation.Plugin.Gurobi.Status">
+            <summary>
+            Gurobi optimization status.
+            </summary>
+        </member>
+        <member name="T:SolverFoundation.Plugin.Gurobi.GurobiSolver">
+            <summary>
+            Gurobi solver.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.BarIterLimit">
+            <summary>
+            Limit on the number of barrier iterations that will be performed.
+            Optimization will terminate when this limit is reached.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.Cutoff">
+            <summary>
+            Target solution objective value.  The Gurobi solver will only attempt
+            to find solutions whose objective values are better than the specified
+            target.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.IterationLimit">
+            <summary>
+            Limit on the number of simplex iterations that will be performed.
+            Optimization will terminate when this limit is reached.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.NodeLimit">
+            <summary>
+            Limit on the number of branch-and-bound nodes that will be explored.
+            Optimization will terminate when this limit is reached.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.SolutionLimit">
+            <summary>
+            Limit on the number of feasible solutions found by the Gurobi solver.
+            Optimization will terminate when this limit is reached.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.TimeLimit">
+            <summary>
+            Limit on Gurobi solver runtime (in milliseconds).
+            Optimization will terminate when this limit is reached.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.BarConvTol">
+            <summary>
+            Barrier convergence tolerance.  The barrier solver terminates when
+            the relative difference between the primal and dual objective is
+            less than the specified tolerance.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.FeasibilityTol">
+            <summary>
+            Primal feasibility tolerance.  All constraints must be satisfied
+            to this tolerance.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.IntFeasTol">
+            <summary>
+            Integer feasibility tolerance.  Integer variables must take
+            values that are no more than the specified tolerance away
+            from the nearest integer.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.MarkowitzTol">
+            <summary>
+            Threshold pivoting tolerance.  Used to limit numerical error in the
+            simplex algorithm.  A larger value may avoid numerical problems in rare
+            situations, but it will harm performance for most models.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.MIPGap">
+            <summary>
+            Relative MIP optimality gap.  The Gurobi MIP engine will terminate
+            with an optimal result when the relative gap between the best objective
+            bound and the best known feasible objective is less than the specified
+            tolerance.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.MIPGapAbs">
+            <summary>
+            Absolute MIP optimality gap. The MIP solver will terminate
+            (with an optimal result) when the gap between the lower
+            and upper objective bound is less than the specified value.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.OptimalityTol">
+            <summary>
+            Dual feasibility tolerance.  All dual constraints must be satisfied
+            to this tolerance.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.PSDTol">
+            <summary>
+            Positive semi-definite tolerance.  Sets a limit on the amount of
+            diagonal perturbation that the optimizer is allowed to perform
+            on the Q matrix in a QP model in order to correct minor PSD
+            violations.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.NormAdjust">
+            <summary>
+            Chooses from among multiple pricing norm variants.  By default, the algorithm chooses automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.ObjScale">
+            <summary>
+            Simplex objective scaling.  By default, the algorithm chooses automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.PerturbValue">
+            <summary>
+            Magnitude of the simplex perturbation (when perturbation is required).
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.Quad">
+            <summary>
+            Turns quad precision computation on or off.  By default, the algorithm choose automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.ScaleFlag">
+            <summary>
+            Enable/disable model scaling.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.SimplexPricing">
+            <summary>
+            Simplex variable pricing strategy.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.BarCorrectors">
+            <summary>
+            Limits the number of central corrections performed in each barrier iteration.
+            The default value chooses automatically, depending on problem characteristics.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.BarOrder">
+            <summary>
+            Chooses the barrier sparse matrix fill-reducing algorithm. A value of 0 chooses
+            Approximate Minimum Degree ordering, while a value of 1 chooses Nested Dissection
+            ordering. The default value of -1 chooses automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.Crossover">
+            <summary>
+            Determines the crossover strategy used to transform the barrier solution into a basic
+            solution. Use value 0 to disable crossover; the solver will return an interior
+            solution. Other options control whether the crossover algorithm tries to push primal
+            or dual variables to bounds first, and then which simplex algorithm is used once
+            variable pushing is complete. Options 1 and 2 push dual variables first, then primal
+            variables. Option 1 finishes with primal, while option 2 finishes with dual. Options 
+            3 and 4 push primal variables first, then dual variables. Option 3 finishes with
+            primal, while option 4 finishes with dual. The default value of -1 chooses
+            automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.CrossoverBasis">
+            <summary>
+            Determines the initial basis construction strategy for crossover. The default value
+            (0) chooses an initial basis quickly. A value of 1 can take much longer, but often
+            produces a much more numerically stable start basis.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.BranchDir">
+            <summary>
+            Branch direction.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.Heuristics">
+            <summary>
+            Fraction of runtime spent in MIP heuristics.  Larger values
+            produce more and better feasible solutions, at a cost of slower
+            progress in the best bound.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.ImproveStartGap">
+            <summary>
+            Reset the MIP focus to finding the best feasible solution when
+            the relative optimality gap reaches the specified value.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.ImproveStartTime">
+            <summary>
+            Reset the MIP focus to finding the best feasible solution when
+            the solver elapsed time reaches the specified value.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.MinRelNodes">
+            <summary>
+            Number of nodes to explore in the Minimum Relaxation heuristic.
+            Heuristic is performed at the end of the MIP root node, and only
+            when no feasible solution is available.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.MIPFocus">
+            <summary>
+            Controls the focus of the MIP solver.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.NodefileDir">
+            <summary>
+            Directory in which MIP node files are stored.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.NodefileStart">
+            <summary>
+            Amount of storage the MIP nodes can consume (in GB) before nodes are
+            written to disk.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.NodeMethod">
+            <summary>
+            Algorithm used to solve the MIP root relaxation.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.PumpPasses">
+            <summary>
+            Number of passes of the feasibility pump heuristic. Note that this
+            heuristic is only applied at the end of the MIP root, and only when
+            no other root heuristic found a feasible solution.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.RINS">
+            <summary>
+            Frequency of the RINS heuristic. Default value (-1) chooses
+            automatically. A value of 0 shuts off RINS. A positive value 'n'
+            applies RINS at every n-th node of the MIP search tree.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.SubMIPNodes">
+            <summary>
+            Limit on the number of nodes explored in local search heuristics.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.Symmetry">
+            <summary>
+            Controls MIP symmetry detection.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.VarBranch">
+            <summary>
+            Branch variable selection strategy.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.Cuts">
+            <summary>
+            Global cut generation control.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.CliqueCuts">
+            <summary>
+            Clique cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.CoverCuts">
+            <summary>
+            Cover cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.FlowCoverCuts">
+            <summary>
+            Flow cover cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.FlowPathCuts">
+            <summary>
+            Flow path cut generation.  Overrides the Cuts parameter.
+            </summary>    
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.GUBCoverCuts">
+            <summary>
+            GUB cover cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.ImpliedCuts">
+            <summary>
+            Implied bound cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.MIPSepCuts">
+            <summary>
+            MIP separation cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.MIRCuts">
+            <summary>
+            Mixed Integer Rounding (MIR) cut generation.  Overrides the
+            Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.ModKCuts">
+            <summary>
+            Mod-K cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.NetworkCuts">
+            <summary>
+            Network cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.SubMIPCuts">
+            <summary>
+            Sub-MIP cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.ZeroHalfCuts">
+            <summary>
+            Zero-half cut generation.  Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.CutAggPasses">
+            <summary>
+            Maximum number of aggregation passes performed during cut generation.
+            Overrides the Cuts parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.CutPasses">
+            <summary>
+            Maximum number of cut passes performed during cut generation.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.GomoryPasses">
+            <summary>
+            Maximum number of Gomory cut passes performed.  Overrides the Cuts
+            parameter.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.AggFill">
+            <summary>
+            Controls the amount of fill allowed during presolve aggregation.
+            Larger values generally lead to presolved models with fewer rows
+            and columns, but with more constraint matrix non-zeros.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.Aggregate">
+            <summary>
+            Enable/disable aggregation in presolve.  In rare instances,
+            aggregation can lead to an accumulation of numerical errors.  Turning
+            it off can sometimes improve solution accuracy.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.DisplayInterval">
+            <summary>
+            Frequency at which log lines are printed (in seconds).
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.Logfile">
+            <summary>
+            The name of the Gurobi log file.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.Method">
+            <summary>
+            Algorithm used to solve linear relaxations.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.OutputFlag">
+            <summary>
+            Enable/disable Gurobi console output. By default, the Gurobi
+            solver produces no output.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.PreDepRow">
+            <summary>
+            Controls the presolve dependent row reduction, which eliminates
+            linearly dependent constraints from the constraint matrix. The
+            default setting (-1) applies the reduction to continuous models
+            but not to MIP models. Setting 0 turns the reduction off for all
+            models. Setting 1 turns it on for all models.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.PreDual">
+            <summary>
+            Controls whether presolve forms the dual of a continuous model.
+            Depending on the structure of the model, solving the dual can
+            reduce overall solution time. The default setting uses a heuristic
+            to decide. Setting 0 forbids presolve from forming the dual, while
+            setting 1 forces it to take the dual. Setting 2 employs a more expensive
+            heuristic that forms both the presolved primal and dual models (on
+            two threads), and heuristically chooses one of them.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.PrePasses">
+            <summary>
+            Limits the number of passes performed by presolve. The default setting
+            (-1) chooses the number of passes automatically.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.Presolve">
+            <summary>
+            Presolve level.  More aggressive presolve reductions can produce
+            a model that is easier to solve, but such reductions can be expensive.
+            </summary>
+        </member>
+        <member name="P:SolverFoundation.Plugin.Gurobi.GurobiParams.Threads">
+            <summary>
+            Parallel Gurobi MIP thread count.  The default value of 0 uses all
+            of the processors in the machine.
+            </summary>
+        </member>
+    </members>
+</doc>
