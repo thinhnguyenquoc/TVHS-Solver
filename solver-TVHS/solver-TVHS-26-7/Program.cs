@@ -14,9 +14,7 @@ namespace solver_TVHS_26_7
     {
         private static List<List<MyResult>> AllPath = new List<List<MyResult>>();
         static void Main(string[] args)
-        {
-            #region create test
-            XSSFWorkbook xssfwb;
+        {           
             #region input
             //string filename = @"D:\thesis\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx";
             //string filename = @"D:\thesis\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx";
@@ -25,30 +23,54 @@ namespace solver_TVHS_26_7
             //string filename = @"D:\thesis\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx";
             string filename = @"D:\thesis\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx";
             #endregion
+
+            MyCase data = InitData(filename);
+            #region solve
+            //var solveResult = MySolver(data, filename);  
+            //var solveResult = 591858256.955947;
+            //GetIntegerResultFromSolverResult();
+
+            var hueristicResult = Hueristic(data, filename);
+            /*var byHandResult = revenueByHand;
+            var ratioHand = byHandResult / solveResult;*/
+            //var ratioHue = hueristicResult / solveResult;
+
+            /*Debug.WriteLine("solver: " + solveResult);
+            Debug.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
+            Debug.WriteLine("hand:" + byHandResult + "  ratio:" + ratioHand);*/
+            #region generate report
+            /*using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter(filename.Split('.').FirstOrDefault() + "_report.txt"))
+            {
+                file.WriteLine("solver: " + solveResult);
+                file.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
+                file.WriteLine("hand:" + byHandResult + "  ratio:" + ratioHand);
+            }*/
+            #endregion
+            #endregion
+        }
+
+        #region init test
+        private static MyCase InitData(string filename)
+        {
+            IWorkbook wb = null;
             MyCase data = new MyCase();
             data.Delta = 60;
             data.Alpha = 0.5;
             data.Allocates = new List<MyAssignment>();
             data.BTGroups = new List<MyBelongToGroup>();
-            data.Frames = new List<MyTimeFrame>();
-            data.Groups = new List<MyGroup>();
             data.Programs = new List<MyProgram>();
-            data.Times = new List<MyTime>();
-            double revenueByHand = 0;
-            #region init
+            #region create time frame
             using (FileStream file = new FileStream(filename, FileMode.Open, FileAccess.Read))
             {
-                xssfwb = new XSSFWorkbook(file);
+                wb = new XSSFWorkbook(file);
             }
-            var ls = filename.Split('F');
-            int startFrame = Convert.ToInt32(ls[1].Split('-').FirstOrDefault());
-            int endFrame = Convert.ToInt32(ls[2].Split('.').FirstOrDefault());
-            data.Frames = GetTimeFrame(startFrame, endFrame);
+            data.Frames = GetTimeFrame(Convert.ToInt32(filename.Split('F')[1].Split('-').FirstOrDefault()), Convert.ToInt32(filename.Split('F')[1].Split('.').FirstOrDefault()));
+            #endregion
             data.Groups = GetGroup();
             data.Times = GetTime(data.Frames.LastOrDefault().End);
-            #endregion
             #region read data to object
-            ISheet sheet = xssfwb.GetSheetAt(0);
+            ISheet sheet = wb.GetSheetAt(0);
             List<MyProgram> list = new List<MyProgram>();
             for (int row = 0; row <= sheet.LastRowNum; row++)
             {
@@ -58,15 +80,10 @@ namespace solver_TVHS_26_7
                     {
                         MyProgram pr = new MyProgram();
                         pr.Name = sheet.GetRow(row).GetCell(2).StringCellValue;
-                        if (pr.Name.ToLower().Contains("live"))
-                        {
-                            pr.Live = true;
-                        }
-                        else
-                            pr.Live = false;
+                        pr.Live = pr.Name.ToLower().Contains("live")? true: false;                       
                         pr.Duration = Convert.ToInt32(sheet.GetRow(row).GetCell(5).NumericCellValue);
-                        pr.Efficiency = Convert.ToDouble(sheet.GetRow(row).GetCell(6)!=null?sheet.GetRow(row).GetCell(6).NumericCellValue:0);
-                        pr.Group = sheet.GetRow(row).GetCell(7)!=null?sheet.GetRow(row).GetCell(7).StringCellValue:"";
+                        pr.Efficiency = Convert.ToDouble(sheet.GetRow(row).GetCell(6) != null ? sheet.GetRow(row).GetCell(6).NumericCellValue : 0);
+                        pr.Group = sheet.GetRow(row).GetCell(7) != null ? sheet.GetRow(row).GetCell(7).StringCellValue : "";
                         if (pr.Group == "E")
                             pr.Group = "D";
                         if (!string.IsNullOrEmpty(pr.Group))
@@ -75,13 +92,7 @@ namespace solver_TVHS_26_7
                         }
                     }
                 }
-            }           
-            #endregion
-            #region calculate revenue by hand schedule            
-            /*foreach (var item in list)
-            {
-                revenueByHand += item.Efficiency * item.Duration;
-            }*/
+            }
             #endregion
             #region create program list
             int programIndex = 0;
@@ -100,27 +111,22 @@ namespace solver_TVHS_26_7
             var staticTime = data.Programs.Sum(x => x.Duration);
             var totalGroup = data.Programs.Select(x => x.Group).Distinct().Count();
             var dynamicTime = totaltime - staticTime;
-            double[] ratio = new double[4];
-            ratio[0] = 3;
-            ratio[1] = 1.7;
-            ratio[2] = 0.7;
-            ratio[3] = 2;
+            double[] ratio = GetTimeRatio();
             double totalRatio = 0.0;
             for (int j = 0; j < totalGroup; j++)
             {
                 totalRatio += ratio[j];
             }
             int sum = 0;
-          
-            for (int k = totalGroup - 1; k > 0 ; k--)
-            {                
+
+            for (int k = totalGroup - 1; k > 0; k--)
+            {
                 data.Groups[k].TotalTime = Convert.ToInt32(data.Programs.Where(x => x.Group == data.Groups[k].Name).Sum(t => t.Duration) + dynamicTime * ratio[k] / totalRatio);
                 sum += data.Groups[k].TotalTime;
-                data.Groups[k].MaxShow = Convert.ToInt32(Math.Ceiling(data.Groups[k].TotalTime / (data.Programs.Where(x => x.Group == data.Groups[k].Name).Sum(t => t.Duration)*data.Alpha)));       
+                data.Groups[k].MaxShow = Convert.ToInt32(Math.Ceiling(data.Groups[k].TotalTime / (data.Programs.Where(x => x.Group == data.Groups[k].Name).Sum(t => t.Duration) * data.Alpha)));
             }
             data.Groups[0].TotalTime = totaltime - sum;
-            data.Groups[0].MaxShow = Convert.ToInt32(Math.Ceiling(data.Groups[0].TotalTime / (data.Programs.Where(x => x.Group == data.Groups[0].Name).Sum(t => t.Duration)*data.Alpha)));
-            
+            data.Groups[0].MaxShow = Convert.ToInt32(Math.Ceiling(data.Groups[0].TotalTime / (data.Programs.Where(x => x.Group == data.Groups[0].Name).Sum(t => t.Duration) * data.Alpha)));
             #endregion
             #region calculate max show time
             foreach (var pr in data.Programs)
@@ -201,8 +207,7 @@ namespace solver_TVHS_26_7
             }
             #endregion
             #region generate test
-            using (System.IO.StreamWriter file =
-                new System.IO.StreamWriter(filename.Split('.').FirstOrDefault() + "_testcase.txt"))
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(filename.Split('.').FirstOrDefault() + "_testcase.txt"))
             {
                 //total time 
                 file.WriteLine("T\t" + totaltime);
@@ -232,36 +237,12 @@ namespace solver_TVHS_26_7
                 foreach (var blt in data.BTGroups)
                 {
                     file.WriteLine("B\t" + blt.GroupId + "\t" + blt.ProgramId + "\t" + blt.BelongTo);
-                }
-                // revenue by hand mode
-                file.WriteLine("RBH\t" + revenueByHand);
+                }              
             }
-            #endregion        
             #endregion
-            #region solve
-            //var solveResult = MySolver(data, filename);  
-            //var solveResult = 591858256.955947;
-            //GetIntegerResultFromSolverResult();
-            var hueristicResult = Hueristic(data, filename);
-            /*var byHandResult = revenueByHand;
-            var ratioHand = byHandResult / solveResult;*/
-            var ratioHue = hueristicResult / solveResult;
-
-            /*Debug.WriteLine("solver: " + solveResult);
-            Debug.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
-            Debug.WriteLine("hand:" + byHandResult + "  ratio:" + ratioHand);*/
-            #region generate report
-            /*using (System.IO.StreamWriter file =
-                new System.IO.StreamWriter(filename.Split('.').FirstOrDefault() + "_report.txt"))
-            {
-                file.WriteLine("solver: " + solveResult);
-                file.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
-                file.WriteLine("hand:" + byHandResult + "  ratio:" + ratioHand);
-            }*/
-            #endregion
-            #endregion
+            return new MyCase();
         }
-        
+        #endregion
         #region solve
         private static double MySolver(MyCase myCase, string filename)
         {
@@ -270,7 +251,7 @@ namespace solver_TVHS_26_7
                 var context = SolverContext.GetContext();
                 var model = context.CreateModel();
 
-                #region get data               
+                #region get data
                 var programData = myCase.Programs;
                 var frameData = myCase.Frames;
                 var allocatedData = myCase.Allocates;
@@ -472,7 +453,7 @@ namespace solver_TVHS_26_7
                         report.TotalTime.ToString());
                 }
                 #endregion
-                
+
                 return solution.Goals.FirstOrDefault().ToDouble();
             }
             catch (Exception e)
@@ -612,7 +593,7 @@ namespace solver_TVHS_26_7
             foreach (var i in listResult)
             {
                 nodes.Add(GetNode(i, listResult));
-                
+
             }
             List<MyResult> save = new List<MyResult>();
 
@@ -624,9 +605,10 @@ namespace solver_TVHS_26_7
             foreach (var k in candidate)
             {
                 var flg = 0;
-                for(int l = 0; l <24; l++){
-                    if (k.Where(x=>x.proramId==l).FirstOrDefault()==null)
-                    {                       
+                for (int l = 0; l < 24; l++)
+                {
+                    if (k.Where(x => x.proramId == l).FirstOrDefault() == null)
+                    {
                         flg = 1;
                         break;
                     }
@@ -643,7 +625,7 @@ namespace solver_TVHS_26_7
                 if (flg == 0)
                 {
                     candidate2.Add(k);
-                }                   
+                }
             }
             List<double> revenue = new List<double>();
             foreach (var p in candidate2)
@@ -656,7 +638,7 @@ namespace solver_TVHS_26_7
                 revenue.Add(rev);
             }
             var max = revenue.Max();
-            int index =-1;
+            int index = -1;
             for (int i = 0; i < revenue.Count; i++)
             {
                 if (revenue[i] == max)
@@ -669,19 +651,19 @@ namespace solver_TVHS_26_7
             var solution = candidate2[index];
             foreach (var i in solution)
             {
-                Debug.WriteLine(i.proramId.ToString() + "\t" + i.time + "\t" + i.duration + "\t" + i.maxShowTime + " \t " + i.eff + " \t " +i.decision);
+                Debug.WriteLine(i.proramId.ToString() + "\t" + i.time + "\t" + i.duration + "\t" + i.maxShowTime + " \t " + i.eff + " \t " + i.decision);
             }
-        }     
+        }
         private static void GetTree(Node n, List<Node> nodes, List<MyResult> save)
         {
             save.Add(n.Current);
             if (n.Children.Count == 0)
-            {                
+            {
                 AllPath.Add(save);
             }
             else
             {
-                foreach (var i in n.Children.OrderBy(x=>x.time).ToList())
+                foreach (var i in n.Children.OrderBy(x => x.time).ToList())
                 {
                     var childNode = nodes.Where(x => x.Current == i).FirstOrDefault();
                     if (childNode != null)
@@ -718,7 +700,7 @@ namespace solver_TVHS_26_7
         {
             //sort program by efficiency
             myCase.Programs = myCase.Programs.OrderByDescending(x => x.Efficiency).ToList();
-            #region get data   
+            #region get data
             var programData = myCase.Programs;
             var frameData = myCase.Frames;
             var allocatedData = myCase.Allocates;
@@ -726,17 +708,18 @@ namespace solver_TVHS_26_7
             var groupData = myCase.Groups;
             var btGroup = myCase.BTGroups;
             int[] Choosen = new int[timeData.Count];
-            for(int i = 0; i < timeData.Count; i++){
+            for (int i = 0; i < timeData.Count; i++)
+            {
                 Choosen[i] = -1;
             }
             #endregion
-          
+
             #region assign program to static time
             foreach (var item in myCase.Programs)
             {
                 //check allowed frames
                 var FrameIdList = allocatedData.Where(x => x.ProgramId == item.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
-              
+
                 //add program to time frame
                 ////check program assigned in frame
                 foreach (var frameId in FrameIdList)
@@ -746,10 +729,11 @@ namespace solver_TVHS_26_7
                     {
                         if (Choosen[i - 1] == -1)
                         {
-                           startAv = i - 1;                          
+                            startAv = i - 1;
                         }
                     }
-                    if(startAv != -1){
+                    if (startAv != -1)
+                    {
                         ////check available slot
                         bool available = true;
                         if (startAv + item.Duration > timeData.Count)
@@ -831,7 +815,7 @@ namespace solver_TVHS_26_7
                     {
                         //check allowed frames
                         var FrameIdList = allocatedData.Where(x => x.ProgramId == item.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
-              
+
                         //add program to time frame
                         ////check program assigned in frame
                         foreach (var frameId in FrameIdList)
@@ -920,12 +904,12 @@ namespace solver_TVHS_26_7
                         //// decrease the maximum show time of this program
                         myCase.Programs.Where(x => x.Id == item.Id).FirstOrDefault().MaxShowTime = 0;
                     }
-                }              
+                }
             }
             #region calculate revenue
             List<TempResult> results = new List<TempResult>();
             var resultIds = Choosen.Distinct();
-            foreach (var id in resultIds.Where(x=>x!=-1).ToList())
+            foreach (var id in resultIds.Where(x => x != -1).ToList())
             {
                 var pr = new TempResult();
                 pr.proId = id;
@@ -942,76 +926,31 @@ namespace solver_TVHS_26_7
         }
         #endregion
 
+        static double[] GetTimeRatio()
+        {
+            double[] ratio = new double[4];
+            ratio[0] = 3;
+            ratio[1] = 1.7;
+            ratio[2] = 0.7;
+            ratio[3] = 2;
+            return ratio;
+        }
+
         static List<MyTimeFrame> GetTimeFrame(int start, int end)
         {
             List<MyTimeFrame> baseList = new List<MyTimeFrame>();
             #region init
-            baseList.Add(new MyTimeFrame()
-            {
-                Id = 0,
-                Duration = 60,
-                Live = false
-            });
-            baseList.Add(new MyTimeFrame()
-            {
-                Id = 1,
-                Duration = 60,
-                Live = true
-            });
-            baseList.Add(new MyTimeFrame()
-            {
-                Id = 2,
-                Duration = 120,
-                Live = false
-            });
-            baseList.Add(new MyTimeFrame()
-            {
-                Id = 3,
-                Duration = 60,
-                Live = true
-            });
-            baseList.Add(new MyTimeFrame()
-            {
-                Id = 4,
-                Duration = 240,
-                Live = false
-            });
-            baseList.Add(new MyTimeFrame()
-            {
-                Id = 5,
-                Duration = 60,
-                Live = true
-            });
-            baseList.Add(new MyTimeFrame()
-            {
-                Id = 6,
-                Duration = 240,
-                Live = false
-            });
-            baseList.Add(new MyTimeFrame()
-            {
-                Id = 7,
-                Duration = 60,
-                Live = true
-            });
-            baseList.Add(new MyTimeFrame()
-            {
-                Id = 8,
-                Duration = 60,
-                Live = false
-            });
-            baseList.Add(new MyTimeFrame()
-            {
-                Id = 9,
-                Duration = 60,
-                Live = true
-            });
-            baseList.Add(new MyTimeFrame()
-            {
-                Id = 10,
-                Duration = 90,
-                Live = false
-            });
+            baseList.Add(new MyTimeFrame() { Id = 0, Duration = 60, Live = false });
+            baseList.Add(new MyTimeFrame() { Id = 1, Duration = 60, Live = true });
+            baseList.Add(new MyTimeFrame() { Id = 2, Duration = 120, Live = false });
+            baseList.Add(new MyTimeFrame() { Id = 3, Duration = 60, Live = true });
+            baseList.Add(new MyTimeFrame() { Id = 4, Duration = 240, Live = false });
+            baseList.Add(new MyTimeFrame() { Id = 5, Duration = 60, Live = true });
+            baseList.Add(new MyTimeFrame() { Id = 6, Duration = 240, Live = false });
+            baseList.Add(new MyTimeFrame() { Id = 7, Duration = 60, Live = true });
+            baseList.Add(new MyTimeFrame() { Id = 8, Duration = 60, Live = false });
+            baseList.Add(new MyTimeFrame() { Id = 9, Duration = 60, Live = true });
+            baseList.Add(new MyTimeFrame() { Id = 10, Duration = 90, Live = false });
             #endregion
             List<MyTimeFrame> resultList = new List<MyTimeFrame>();
             int time = 1;
@@ -1033,29 +972,13 @@ namespace solver_TVHS_26_7
         static List<MyGroup> GetGroup()
         {
             List<MyGroup> listGroup = new List<MyGroup>();
-            listGroup.Add(new MyGroup()
-            {
-                Id = 0,
-                Name = "A"
-            });
-            listGroup.Add(new MyGroup()
-            {
-                Id = 1,
-                Name = "B"
-            });
-            listGroup.Add(new MyGroup()
-            {
-                Id = 2,
-                Name = "C"
-            });
-            listGroup.Add(new MyGroup()
-            {
-                Id = 3,
-                Name = "D"
-            });
+            listGroup.Add(new MyGroup() { Id = 0, Name = "A" });
+            listGroup.Add(new MyGroup() { Id = 1, Name = "B" });
+            listGroup.Add(new MyGroup() { Id = 2, Name = "C" });
+            listGroup.Add(new MyGroup() { Id = 3, Name = "D" });
             return listGroup;
         }
-    
+
     }
 
     #region define object
@@ -1078,12 +1001,13 @@ namespace solver_TVHS_26_7
         public double eff { get; set; }
         public int maxShowTime { get; set; }
     }
-    public class MyCase{
-        public List<MyProgram> Programs {get;set;}
-        public List<MyTimeFrame> Frames {get;set;}
-        public List<MyAssignment> Allocates {get; set;}
-        public List<MyTime> Times {get;set;}
-        public List<MyGroup> Groups {get;set;}
+    public class MyCase
+    {
+        public List<MyProgram> Programs { get; set; }
+        public List<MyTimeFrame> Frames { get; set; }
+        public List<MyAssignment> Allocates { get; set; }
+        public List<MyTime> Times { get; set; }
+        public List<MyGroup> Groups { get; set; }
         public List<MyBelongToGroup> BTGroups { get; set; }
         public int Delta { get; set; }
         public double Alpha { get; set; }
@@ -1114,7 +1038,7 @@ namespace solver_TVHS_26_7
             this.Name = Name;
             this.Duration = Duration;
             this.Efficiency = Efficiency;
-        }       
+        }
     }
     public class MyTimeFrame
     {
@@ -1136,7 +1060,8 @@ namespace solver_TVHS_26_7
             this.End = End;
         }
     }
-    public class MyTime{
+    public class MyTime
+    {
         public int Id { get; set; }
         public int Time { get; set; }
     }
@@ -1152,7 +1077,7 @@ namespace solver_TVHS_26_7
         public int GroupId { get; set; }
         public int ProgramId { get; set; }
         public int BelongTo { get; set; }
-    } 
+    }
     public class MyAssignment
     {
         public int FrameId { get; set; }
