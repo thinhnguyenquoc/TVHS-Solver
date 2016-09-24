@@ -90,3 +90,5 @@ C:\Users\thinh\Downloads\thesis-20160907T123632Z\thesis\solver-TVHS\solver-TVHS-
 D:\thesis\solver-TVHS\solver-TVHS-26-7\bin\Debug\Microsoft.Solver.Foundation.dll
 C:\Users\thinhnguyen.DICENTRAL\Documents\GitHub\TVHS-Solver\solver-TVHS\solver-TVHS-26-7\obj\Debug\solver-TVHS-26-7.exe
 C:\Users\thinhnguyen.DICENTRAL\Documents\GitHub\TVHS-Solver\solver-TVHS\solver-TVHS-26-7\obj\Debug\solver-TVHS-26-7.pdb
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\solver-TVHS\solver-TVHS-26-7\obj\Debug\solver-TVHS-26-7.exe
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\solver-TVHS\solver-TVHS-26-7\obj\Debug\solver-TVHS-26-7.pdb

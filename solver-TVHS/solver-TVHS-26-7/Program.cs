@@ -38,15 +38,6 @@ namespace solver_TVHS_26_7
             /*Debug.WriteLine("solver: " + solveResult);
             Debug.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
             Debug.WriteLine("hand:" + byHandResult + "  ratio:" + ratioHand);*/
-            #region generate report
-            /*using (System.IO.StreamWriter file =
-                new System.IO.StreamWriter(filename.Split('.').FirstOrDefault() + "_report.txt"))
-            {
-                file.WriteLine("solver: " + solveResult);
-                file.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
-                file.WriteLine("hand:" + byHandResult + "  ratio:" + ratioHand);
-            }*/
-            #endregion
             #endregion
         }
 
@@ -243,22 +234,14 @@ namespace solver_TVHS_26_7
             return new MyCase();
         }
         #endregion
+       
         #region solve
         private static double MySolver(MyCase myCase, string filename)
         {
             try
             {
                 var context = SolverContext.GetContext();
-                var model = context.CreateModel();
-
-                #region get data
-                var programData = myCase.Programs;
-                var frameData = myCase.Frames;
-                var allocatedData = myCase.Allocates;
-                var timeData = myCase.Times;
-                var groupData = myCase.Groups;
-                var btGroup = myCase.BTGroups;
-                #endregion
+                var model = context.CreateModel();             
 
                 #region Decision variable
                 var programs = new Set(Domain.Any, "programs");
@@ -269,57 +252,55 @@ namespace solver_TVHS_26_7
                 #endregion
 
                 #region Constraint H1: program P is only aired at allowed time frame
-                for (int i = 0; i < programData.Count; i++)
+                for (int i = 0; i < myCase.Programs.Count; i++)
                 {
-                    for (int j = 0; j < frameData.Count; j++)
+                    for (int j = 0; j < myCase.Frames.Count; j++)
                     {
-                        Term[] terms = new Term[frameData[j].End - frameData[j].Start + 1];
+                        Term[] terms = new Term[myCase.Frames[j].Duration];
                         int index = 0;
-                        for (int k = frameData[j].Start; k < frameData[j].End + 1; k++)
+                        for (int k = myCase.Frames[j].Start; k <= myCase.Frames[j].End; k++)
                         {
+                            // time starts from 1 but index of time starts from 0 => k-1
                             terms[index++] = choose[i, k - 1];
                         }
-                        var allocate = allocatedData.Where(x => x.FrameId == j && x.ProgramId == i).FirstOrDefault().Assignable;
-                        model.AddConstraint("TimeFrame" + i.ToString() + "_" + j.ToString(),
-                           Model.Sum(terms) <= allocate * programData[i].MaxShowTime
+                        var allocate = myCase.Allocates.Where(x => x.FrameId == j && x.ProgramId == i).FirstOrDefault().Assignable;
+                        model.AddConstraint("TimeFrame" + i.ToString() + "_" + j.ToString(), Model.Sum(terms) <= allocate * myCase.Programs[i].MaxShowTime
                         );
                     }
                 }
                 #endregion
 
                 #region Constraint H2: each program is showed at leat once time
-                for (int i = 0; i < programData.Count; i++)
+                for (int i = 0; i < myCase.Programs.Count; i++)
                 {
-                    Term[] terms = new Term[timeData.Count - programData[i].Duration + 1];
+                    Term[] terms = new Term[myCase.Times.Count - myCase.Programs[i].Duration + 1];
                     var index = 0;
-                    for (int j = 0; j < timeData.Count - programData[i].Duration + 1; j++)
+                    for (int j = 0; j < myCase.Times.Count - myCase.Programs[i].Duration + 1; j++)
                     {
                         terms[index++] = choose[i, j];
                     }
-                    model.AddConstraint("Exist" + i.ToString(),
-                        Model.Sum(terms) >= 1
-                    );
+                    model.AddConstraint("Exist" + i.ToString(), Model.Sum(terms) >= 1);
                 }
                 #endregion
 
                 #region Constranst H3: Can not show two programs simultaneously.
-                for (int i = 0; i < timeData.Count; i++)
+                for (int i = 0; i < myCase.Times.Count; i++)
                 {
-                    Term[] termSumPs = new Term[programData.Count];
-                    for (int j = 0; j < programData.Count; j++)
+                    Term[] termSumPs = new Term[myCase.Programs.Count];
+                    for (int j = 0; j < myCase.Programs.Count; j++)
                     {
                         Term[] terms = null;
-                        if (timeData[i].Time - programData[j].Duration < 0)
+                        if (myCase.Times[i].Time - myCase.Programs[j].Duration < 0)
                         {
-                            terms = new Term[timeData[i].Time];
-                            for (int k = 0; k < timeData[i].Time; k++)
+                            terms = new Term[myCase.Times[i].Time];
+                            for (int k = 0; k < myCase.Times[i].Time; k++)
                                 terms[k] = choose[j, k];
                         }
                         else
                         {
-                            terms = new Term[programData[j].Duration];
+                            terms = new Term[myCase.Programs[j].Duration];
                             int index = 0;
-                            for (int k = timeData[i].Time - programData[j].Duration; k < timeData[i].Time; k++)
+                            for (int k = myCase.Times[i].Time - myCase.Programs[j].Duration; k < myCase.Times[i].Time; k++)
                                 terms[index++] = choose[j, k];
                         }
                         termSumPs[j] = Model.Sum(terms);
@@ -331,42 +312,38 @@ namespace solver_TVHS_26_7
                 #endregion
 
                 #region Constraint H4: each program is showed not great than maximum show time
-                for (int i = 0; i < programData.Count; i++)
+                for (int i = 0; i < myCase.Programs.Count; i++)
                 {
-                    Term[] terms = new Term[timeData.Count - programData[i].Duration + 1];
+                    Term[] terms = new Term[myCase.Times.Count - myCase.Programs[i].Duration + 1];
                     var index = 0;
-                    for (int j = 0; j < timeData.Count - programData[i].Duration + 1; j++)
+                    for (int j = 0; j < myCase.Times.Count - myCase.Programs[i].Duration + 1; j++)
                     {
                         terms[index++] = choose[i, j];
                     }
-                    model.AddConstraint("Max" + i.ToString(),
-                        Model.Sum(terms) <= programData[i].MaxShowTime
-                    );
+                    model.AddConstraint("Max" + i.ToString(), Model.Sum(terms) <= myCase.Programs[i].MaxShowTime);
                 }
                 #endregion
 
                 #region Constraint H5: Can not show one program too close previous it's show
                 var delta = myCase.Delta;
-                for (int i = 0; i < timeData.Count; i++)
+                for (int i = 0; i < myCase.Times.Count; i++)
                 {
-                    for (int j = 0; j < programData.Count; j++)
+                    for (int j = 0; j < myCase.Programs.Count; j++)
                     {
                         Term[] terms = null;
-                        if (timeData[i].Time - delta < 0)
+                        if (myCase.Times[i].Time - delta < 0)
                         {
-                            terms = new Term[timeData[i].Time];
-                            for (int k = 0; k < timeData[i].Time; k++)
+                            terms = new Term[myCase.Times[i].Time];
+                            for (int k = 0; k < myCase.Times[i].Time; k++)
                                 terms[k] = choose[j, k];
-
                         }
                         else
                         {
                             terms = new Term[delta];
                             int index = 0;
-                            for (int k = timeData[i].Time - delta; k < timeData[i].Time; k++)
+                            for (int k = myCase.Times[i].Time - delta; k < myCase.Times[i].Time; k++)
                                 terms[index++] = choose[j, k];
-                            model.AddConstraint("TooClose" + i.ToString() + "_" + j.ToString(),
-                              Model.Sum(terms) <= 1
+                            model.AddConstraint("TooClose" + i.ToString() + "_" + j.ToString(), Model.Sum(terms) <= 1
                            );
                         }
 
@@ -375,32 +352,30 @@ namespace solver_TVHS_26_7
                 #endregion
 
                 #region Constraint H6: Total time of programs which belong to a group is less or equal to group allowed time
-                for (int i = 0; i < groupData.Count; i++)
+                for (int i = 0; i < myCase.Groups.Count; i++)
                 {
-                    Term[] SumGterms = new Term[programData.Count];
-                    for (int j = 0; j < programData.Count; j++)
+                    Term[] SumGterms = new Term[myCase.Programs.Count];
+                    for (int j = 0; j < myCase.Programs.Count; j++)
                     {
-                        Term[] terms = new Term[timeData.Count - programData[j].Duration + 1];
-                        for (int k = 0; k < timeData.Count - programData[j].Duration + 1; k++)
+                        Term[] terms = new Term[myCase.Times.Count - myCase.Programs[j].Duration + 1];
+                        for (int k = 0; k < myCase.Times.Count - myCase.Programs[j].Duration + 1; k++)
                         {
-                            terms[k] = choose[j, k] * programData[j].Duration * btGroup.Where(x => x.GroupId == i && x.ProgramId == j).FirstOrDefault().BelongTo;
+                            terms[k] = choose[j, k] * myCase.Programs[j].Duration * myCase.BTGroups.Where(x => x.GroupId == i && x.ProgramId == j).FirstOrDefault().BelongTo;
                         }
                         SumGterms[j] = Model.Sum(terms);
                     }
-                    model.AddConstraint("Group" + i.ToString(),
-                        Model.Sum(SumGterms) <= groupData[i].TotalTime
-                    );
+                    model.AddConstraint("Group" + i.ToString(), Model.Sum(SumGterms) <= myCase.Groups[i].TotalTime);
                 }
                 #endregion
 
                 #region Objective function: Get maximum revenue
-                Term[] termSumTPs = new Term[programData.Count];
-                for (int i = 0; i < programData.Count; i++)
+                Term[] termSumTPs = new Term[myCase.Programs.Count];
+                for (int i = 0; i < myCase.Programs.Count; i++)
                 {
-                    Term[] terms = new Term[timeData.Count - programData[i].Duration + 1];
-                    for (int j = 0; j < timeData.Count - programData[i].Duration + 1; j++)
+                    Term[] terms = new Term[myCase.Times.Count - myCase.Programs[i].Duration + 1];
+                    for (int j = 0; j < myCase.Times.Count - myCase.Programs[i].Duration + 1; j++)
                     {
-                        terms[j] = choose[i, j] * programData[i].Duration * programData[i].Efficiency;
+                        terms[j] = choose[i, j] * myCase.Programs[i].Duration * myCase.Programs[i].Efficiency;
                     }
                     termSumTPs[i] = Model.Sum(terms);
                 }
@@ -416,7 +391,7 @@ namespace solver_TVHS_26_7
                 var obs = choose.GetValues().ToList().Where(x => Convert.ToDouble(x.First()) > 0).ToList();
                 foreach (var i in obs)
                 {
-                    Debug.WriteLine(i[1].ToString() + "\t" + i[2] + "\t" + programData[Convert.ToInt32(i[1].ToString())].Duration + "\t" + programData[Convert.ToInt32(i[1].ToString())].MaxShowTime + " \t " + programData[Convert.ToInt32(i[1].ToString())].Efficiency + "\t" + i[0]);
+                    Debug.WriteLine(i[1].ToString() + "\t" + i[2] + "\t" + myCase.Programs[Convert.ToInt32(i[1].ToString())].Duration + "\t" + myCase.Programs[Convert.ToInt32(i[1].ToString())].MaxShowTime + " \t " + myCase.Programs[Convert.ToInt32(i[1].ToString())].Efficiency + "\t" + i[0]);
                 }
 
                 Report report = solution.GetReport();
@@ -438,7 +413,7 @@ namespace solver_TVHS_26_7
                 {
                     foreach (var i in obs)
                     {
-                        file.WriteLine(i[1].ToString() + "\t" + i[2] + "\t" + programData[Convert.ToInt32(i[1].ToString())].Duration + "\t" + programData[Convert.ToInt32(i[1].ToString())].MaxShowTime + " \t " + programData[Convert.ToInt32(i[1].ToString())].Efficiency + "\t" + i[0]);
+                        file.WriteLine(i[1].ToString() + "\t" + i[2] + "\t" + myCase.Programs[Convert.ToInt32(i[1].ToString())].Duration + "\t" + myCase.Programs[Convert.ToInt32(i[1].ToString())].MaxShowTime + " \t " + myCase.Programs[Convert.ToInt32(i[1].ToString())].Efficiency + "\t" + i[0]);
                     }
                     file.WriteLine("RBS\t" + solution.Goals.FirstOrDefault().ToDouble());
                     file.WriteLine("This is the custom report: ");
@@ -554,7 +529,7 @@ namespace solver_TVHS_26_7
             }
             return myCase;
         }
-        private static List<MyTime> GetTime(int time = 100)
+        private static List<MyTime> GetTime(int time)
         {
             var timeList = new List<MyTime>();
             for (int i = 0; i < time; i++)
