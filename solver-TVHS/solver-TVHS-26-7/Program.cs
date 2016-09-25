@@ -676,8 +676,8 @@ namespace solver_TVHS_26_7
             //sort program by efficiency
             myCase.Programs = myCase.Programs.OrderByDescending(x => x.Efficiency).ToList();
 
-            int[,] Choosen = new int[myCase.Programs.Count, myCase.Times.Count];
-            for (int i = 0; i < timeData.Count; i++)
+            int[] Choosen = new int[myCase.Times.Count];
+            for (int i = 0; i < myCase.Times.Count; i++)
             {
                 Choosen[i] = -1;
             }
@@ -687,7 +687,7 @@ namespace solver_TVHS_26_7
             foreach (var item in myCase.Programs)
             {
                 //check allowed frames
-                var FrameIdList = allocatedData.Where(x => x.ProgramId == item.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
+                var FrameIdList = myCase.Allocates.Where(x => x.ProgramId == item.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
 
                 //add program to time frame
                 ////check program assigned in frame
