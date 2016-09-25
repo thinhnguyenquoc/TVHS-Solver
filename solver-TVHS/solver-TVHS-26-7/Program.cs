@@ -675,14 +675,8 @@ namespace solver_TVHS_26_7
         {
             //sort program by efficiency
             myCase.Programs = myCase.Programs.OrderByDescending(x => x.Efficiency).ToList();
-            #region get data
-            var programData = myCase.Programs;
-            var frameData = myCase.Frames;
-            var allocatedData = myCase.Allocates;
-            var timeData = myCase.Times;
-            var groupData = myCase.Groups;
-            var btGroup = myCase.BTGroups;
-            int[] Choosen = new int[timeData.Count];
+
+            int[,] Choosen = new int[myCase.Programs.Count, myCase.Times.Count];
             for (int i = 0; i < timeData.Count; i++)
             {
                 Choosen[i] = -1;
