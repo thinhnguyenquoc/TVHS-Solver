@@ -828,6 +828,13 @@ namespace solver_TVHS_26_7
             {
                 revenue += myCase.Programs.Where(x => x.Id == i.proId).FirstOrDefault().RevenuePerTime * i.numShow;
             }
+            List<MySchedule> sche = GetSchedule(myCase, Choosen);
+            string str = "";
+            foreach (var pr in sche)
+            {
+                str += pr.Program.Id.ToString() + ", " + pr.Program.Duration + ", " + pr.Start.ToString() + " ; ";
+            }
+            Debug.WriteLine(str);
             return revenue;
             #endregion
         }
@@ -901,7 +908,7 @@ namespace solver_TVHS_26_7
                                 {
                                     //// check too close
                                     var meet = false;
-                                    for (int m = startAv + item.Duration; m < Math.Min(startAv + myCase.Delta, myCase.Times.Count); m++)
+                                    for (int m = startAv ; m < Math.Min(startAv + myCase.Delta, myCase.Times.Count); m++)
                                     {
                                         if (Choosen[m] == item.Id)
                                         {
@@ -912,7 +919,7 @@ namespace solver_TVHS_26_7
                                     if (!meet)
                                     {
                                         var meetbefore = false;
-                                        for (int m = Math.Max(startAv - myCase.Delta, 0); m < startAv; m++)
+                                        for (int m = Math.Max(startAv - myCase.Delta+1, 0); m <= startAv; m++)
                                         {
                                             if (Choosen[m] == item.Id)
                                             {
@@ -975,6 +982,13 @@ namespace solver_TVHS_26_7
             {
                 revenue += myCase.Programs.Where(x => x.Id == i.proId).FirstOrDefault().RevenuePerTime * i.numShow;
             }
+            List<MySchedule> sche = GetSchedule(myCase, Choosen);
+            string str = "";
+            foreach (var pr in sche)
+            {
+                str += pr.Program.Id.ToString() + ", " + pr.Program.Duration + ", " + pr.Start.ToString() + " ; ";
+            }
+            Debug.WriteLine(str);
             return revenue;
             #endregion
         }
@@ -1202,8 +1216,34 @@ namespace solver_TVHS_26_7
             {
                 revenue += myCase.Programs.Where(x => x.Id == i.proId).FirstOrDefault().RevenuePerTime * i.numShow;
             }
+
+            List<MySchedule> sche = GetSchedule(myCase, Choosen);
+            string str = "";
+            foreach (var pr in sche)
+            {
+                str += pr.Program.Id.ToString() + ", " + pr.Program.Duration + ", " + pr.Start.ToString() + " ; ";
+            }
+            Debug.WriteLine(str);
             return revenue;
             #endregion
+        }
+
+        static List<MySchedule> GetSchedule(MyCase myCase, int[] Choosen)
+        {
+            List<MySchedule> sche = new List<MySchedule>();
+            int anker = -1;
+            for (int j = 0; j < myCase.Times.Count; j++)
+            {
+                if (Choosen[j] != -1 && anker != Choosen[j] )
+                {
+                    anker = Choosen[j];
+                    MySchedule p = new MySchedule();
+                    p.Program = myCase.Programs.Where(x => x.Id == anker).FirstOrDefault();
+                    p.Start = j;
+                    sche.Add(p);
+                }
+            }
+            return sche;
         }
 
         private static List<int> FindBiggestFrame(MyCase myCase, int[] Choosen, List<int> listFrameId)
@@ -1327,6 +1367,11 @@ namespace solver_TVHS_26_7
     }
 
     #region define object
+    public class MySchedule
+    {
+        public MyProgram Program { get; set; }
+        public int Start { get; set; }
+    }
     public class TempResult
     {
         public int proId { get; set; }
