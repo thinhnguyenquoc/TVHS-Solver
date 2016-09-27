@@ -1,43 +1,43 @@
 T	1110
 D	60
-P	0	18	96512.3456790123	4	Bộ đồ lót nữ Vita Bella
-P	1	18	173250	4	Thiết bị hỗ trợ tập bụng Six Pack Care
-P	2	19	160000	4	Cao hồng sâm Hàn Quốc 6 năm tuổi
+P	0	18	96512.3456790123	3	Bộ đồ lót nữ Vita Bella
+P	1	18	173250	3	Thiết bị hỗ trợ tập bụng Six Pack Care
+P	2	19	160000	3	Cao hồng sâm Hàn Quốc 6 năm tuổi
 P	3	16	328479.262672811	3	Máy lọc nước CleanSui
 P	4	17	404081.632653061	3	Bộ 2 áo khoác 2 mặt Dore
-P	5	17	287239.495798319	3	Bộ cưa GoodLife
+P	5	17	287239.495798319	2	Bộ cưa GoodLife
 P	6	20	516521.739130435	3	Nệm massage Bella
 P	7	18	409387.755102041	3	Vòi nước đa năng Magic Hose
-P	8	21	284436.090225564	3	Vali Macat D3X
+P	8	21	284436.090225564	2	Vali Macat D3X
 P	9	19	647593.984962406	3	Điện thoại di động LV 18
 P	10	18	322000	3	Nồi ủ GoodLife
-P	11	20	250000	3	Bộ 3 máy tạo kiểu tóc Miss J
+P	11	20	250000	2	Bộ 3 máy tạo kiểu tóc Miss J
 P	12	16	1359107.14285714	3	Điện thoại LV 16
 P	13	30	1533333.33333333	3	Bộ dao 8 món GoodLife -LIVE 30'
 P	14	27	746234.567901235	3	Thiết bị hỗ trợ tập bụng New Six Pack Care - LIVE 30'
 P	15	19	562783.882783883	3	Đồng hồ điện thoại thông minh GoodLife
 P	16	17	424982.698961938	3	Bộ 3 quần Jegging Vita Bela 2015
-P	17	21	190000	4	Chảo lẩu đa năng Mican
+P	17	21	190000	3	Chảo lẩu đa năng Mican
 P	18	20	404875	3	Máy làm sữa đậu nành Supor 
 P	19	17	1670000	3	Võng Á Châu 
 P	20	18	539073.359073359	3	Quạt làm mát không khí Goodlife
 P	21	19	346673.992673993	3	Nồi lẩu điện Blue Star
 P	22	16	384746.543778802	3	Bộ 3 quần Jegging Vita Bela - Ver 2
-P	23	19	280336.134453782	3	Máy khoan cầm tay 103 món D.I.Y
+P	23	19	280336.134453782	2	Máy khoan cầm tay 103 món D.I.Y
 P	24	31	800714.285714286	3	Bếp ga HN RichMan 1 vòng nhiệt - LIVE 30'
 P	25	25	1122564.1025641	3	Nồi chiên không khí Goodlife - LIVE 30'
-P	26	22	178441.558441558	4	Máy làm mỳ Goodlife
+P	26	22	178441.558441558	3	Máy làm mỳ Goodlife
 P	27	19	561303.656597774	3	Bếp điện HN Bluestar
 P	28	17	327731.092436975	3	Máy làm giá GV102
 P	29	18	411380.952380952	3	Nồi điện siêu tốc Mantis
 P	30	20	633684.210526316	3	Máy tính bảng LV Kids
 P	31	31	546182.669789227	3	Khóa thông minh Kinbar - LIVE 30'
 P	32	29	915496.368038741	3	Xe đạp tập AirBike - LIVE 30'
-P	33	19	210000	3	Bộ 3 quần Short for men
-P	34	17	291176.470588235	3	Nồi cơm điện 3D Bigsun
-P	35	18	230000	3	Đồ lót nam Relax
-P	36	16	150000	4	Yến Sào Nam Kinh
-P	37	21	272727.272727273	3	Drap chống thấm Bảo Hân
+P	33	19	210000	2	Bộ 3 quần Short for men
+P	34	17	291176.470588235	2	Nồi cơm điện 3D Bigsun
+P	35	18	230000	2	Đồ lót nam Relax
+P	36	16	150000	3	Yến Sào Nam Kinh
+P	37	21	272727.272727273	2	Drap chống thấm Bảo Hân
 F	0	1	60
 F	1	61	120
 F	2	121	240
