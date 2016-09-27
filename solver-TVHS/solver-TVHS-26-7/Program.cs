@@ -981,29 +981,23 @@ namespace solver_TVHS_26_7
 
         private static double Hueristic3(MyCase myCase, string filename)
         {
-            //sort program by efficiency
-            myCase.Programs = myCase.Programs.OrderByDescending(x => x.Efficiency).ToList();
-
+            #region init array
             int[] Choosen = new int[myCase.Times.Count];
             for (int i = 0; i < myCase.Times.Count; i++)
             {
                 Choosen[i] = -1;
             }
-
+            #endregion
+            // check ability of assignment
             bool change = false;
-            // assign program to dynamic time
+            #region assign program to frame
             while (true)
             {
                 //find program which has max eff and still available
-                //// find programs still are live
-                var list1 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();
-                if (list1.Count == 0)
-                {
-                    break;
-                }
-                
+                var list1 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();         
                 foreach (var item in list1)
                 {
+                    // get group that item belong to
                     var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id).FirstOrDefault().GroupId).FirstOrDefault();
                     #region group still has cota
                     if (gr.TotalTime >= item.Duration)
@@ -1028,14 +1022,16 @@ namespace solver_TVHS_26_7
                             #region find a empty space to assign
                             if (startAv != -1)
                             {
-                                ////check available slot
+                                #region check available slot
                                 bool available = true;
-                                if (startAv + item.Duration >= myCase.Times.Count)
+                                // out bound of array time
+                                if (startAv + item.Duration -1 >= myCase.Times.Count)
                                 {
                                     available = false;
                                 }
                                 else
                                 {
+                                    // check space which has enough free space to assign program
                                     for (int m = startAv; m < startAv + item.Duration; m++)
                                     {
                                         if (Choosen[m] != -1)
@@ -1045,11 +1041,13 @@ namespace solver_TVHS_26_7
                                         }
                                     }
                                 }
+                                #endregion
                                 if (available)
                                 {
-                                    //// check too close
+                                    #region check too close
                                     var meet = false;
-                                    for (int m = startAv + item.Duration; m < Math.Min(startAv + myCase.Delta, myCase.Times.Count); m++)
+                                    // check successor program
+                                    for (int m = startAv; m < Math.Min(startAv + myCase.Delta, myCase.Times.Count); m++)
                                     {
                                         if (Choosen[m] == item.Id)
                                         {
@@ -1059,32 +1057,33 @@ namespace solver_TVHS_26_7
                                     }
                                     if (!meet)
                                     {
-                                        var meetbefore = false;
-                                        for (int m = Math.Max(startAv - myCase.Delta, 0); m < startAv; m++)
+                                        // check previous program
+                                        for (int m = Math.Max(startAv - myCase.Delta + 1, 0); m <= startAv; m++)
                                         {
                                             if (Choosen[m] == item.Id)
                                             {
-                                                meetbefore = true;
+                                                meet = true;
                                                 break;
                                             }
                                         }
-
-                                        if (!meetbefore)
-                                        {
-                                            ////assign program to frame
-                                            for (int j = 0; j < item.Duration; j++)
-                                            {
-                                                Choosen[startAv] = item.Id;
-                                                startAv++;
-                                            }
-                                            //// decrease the maximum show time of this program
-                                            myCase.Programs.Where(x => x.Id == item.Id).FirstOrDefault().MaxShowTime--;
-                                            //pr.MaxShowTime--;
-                                            myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault().TotalTime -= item.Duration;
-                                            change = true;
-                                            break;
-                                        }
                                     }
+                                    #endregion
+                                    if (!meet)
+                                    {
+                                        ////assign program to frame
+                                        for (int j = 0; j < item.Duration; j++)
+                                        {
+                                            Choosen[startAv] = item.Id;
+                                            startAv++;
+                                        }
+                                        //// decrease the maximum show time of this program
+                                        myCase.Programs.Where(x => x.Id == item.Id).FirstOrDefault().MaxShowTime--;
+                                        //pr.MaxShowTime--;
+                                        myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault().TotalTime -= item.Duration;
+                                        change = true;
+                                        break;
+                                    }
+                                    
                                 }
                                
                             }
@@ -1094,11 +1093,16 @@ namespace solver_TVHS_26_7
                     }
                     #endregion                   
                 }
+                #region if nothing changes, stop loop
                 if (change)
                     change = false;
                 else
                     break;
+                #endregion
             }
+            #endregion
+
+            #region try to assign programe between two frames
             change = false;
             // calculate the unoccupate of two continue frame
             while (true)
@@ -1112,7 +1116,6 @@ namespace solver_TVHS_26_7
                 foreach (var pro in list2)
                 {
                     var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id).FirstOrDefault().GroupId).FirstOrDefault();
-
                     if (gr.TotalTime >= pro.Duration)
                     {
                         for (int i = 0; i < Unoccupate.Count; i++)
@@ -1129,7 +1132,7 @@ namespace solver_TVHS_26_7
                                     int startAv = myCase.Frames[i].End - myCase.Frames[i].Unoccupate;
                                     //// check too close
                                     var meet = false;
-                                    for (int m = startAv + pro.Duration; m < Math.Min(startAv + myCase.Delta, myCase.Times.Count); m++)
+                                    for (int m = startAv ; m < Math.Min(startAv + myCase.Delta, myCase.Times.Count); m++)
                                     {
                                         if (Choosen[m] == pro.Id)
                                         {
@@ -1138,38 +1141,37 @@ namespace solver_TVHS_26_7
                                         }
                                     }
                                     if (!meet)
-                                    {
-                                        var meetbefore = false;
-                                        for (int m = Math.Max(startAv - myCase.Delta, 0); m < startAv; m++)
+                                    {                                        
+                                        for (int m = Math.Max(startAv - myCase.Delta +1, 0); m <= startAv; m++)
                                         {
                                             if (Choosen[m] == pro.Id)
                                             {
-                                                meetbefore = true;
+                                                meet = true;
                                                 break;
                                             }
                                         }
-
-                                        if (!meetbefore)
-                                        {
-                                            int shift = Unoccupate[i] - myCase.Frames[i].Unoccupate;
-                                            // ShiftRight
-                                            ShiftRight(myCase, Choosen, shift, i + 1);
-                                            ////assign program to frame
-                                            for (int j = 0; j < pro.Duration; j++)
-                                            {
-                                                Choosen[startAv] = pro.Id;
-                                                startAv++;
-                                            }
-                                            // sort and update frame by unoccupied slot
-                                            var orderFrameList = FindBiggestFrame(myCase, Choosen, FrameIdList);
-                                            //// decrease the maximum show time of this program
-                                            myCase.Programs.Where(x => x.Id == pro.Id).FirstOrDefault().MaxShowTime--;
-                                            //pr.MaxShowTime--;
-                                            myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault().TotalTime -= pro.Duration;
-                                            change = true;
-                                            break;
-                                        }
                                     }
+                                    if (!meet)
+                                    {
+                                        int shift = Unoccupate[i] - myCase.Frames[i].Unoccupate;
+                                        // ShiftRight
+                                        ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
+                                        ////assign program to frame
+                                        for (int j = 0; j < pro.Duration; j++)
+                                        {
+                                            Choosen[startAv] = pro.Id;
+                                            startAv++;
+                                        }
+                                        // sort and update frame by unoccupied slot
+                                        var orderFrameList = FindBiggestFrame(myCase, Choosen, FrameIdList);
+                                        //// decrease the maximum show time of this program
+                                        myCase.Programs.Where(x => x.Id == pro.Id).FirstOrDefault().MaxShowTime--;
+                                        //pr.MaxShowTime--;
+                                        myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault().TotalTime -= pro.Duration;
+                                        change = true;
+                                        break;
+                                    }
+                                    
                                 }
                             }
 
@@ -1183,6 +1185,8 @@ namespace solver_TVHS_26_7
                 else
                     break;
             }
+            #endregion
+
             #region calculate revenue
             List<TempResult> results = new List<TempResult>();
             var resultIds = Choosen.Distinct().Where(x => x != -1).ToList();
@@ -1223,15 +1227,16 @@ namespace solver_TVHS_26_7
             List<int> result = new List<int>();
             for (int i = 0; i < listFrameId.Count; i++)
             {
+                int max = Cache.Max();
                 for (int j = 0; j < listFrameId.Count; j++)
-                {
-                    int max = Cache.Max();
+                {                    
                     if (max == -1)
                         break;
                     if (Cache[j] == max)
                     {
-                        result.Add(j);
+                        result.Add(listFrameId[j]);
                         Cache[j] = -1;
+                        break;
                     }
                 }
             }
@@ -1299,7 +1304,7 @@ namespace solver_TVHS_26_7
             return JsonConvert.DeserializeObject<T>(serialized);
         }
 
-        static void ShiftRight(MyCase myCase, int[] Choosen, int k, int FrameId)
+        static void ShiftRight(MyCase myCase, int[] Choosen, int k, int FrameId, List<int> Unoccupate = null)
         {
             int start = -1;
             for (int i = myCase.Frames[FrameId].Start - 1; i < myCase.Frames[FrameId].End; i++)
