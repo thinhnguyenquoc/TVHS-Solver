@@ -557,5 +557,5 @@
 33	1028	30	4 	 570508.474576271	1.41950721636638E-16
 RBS	531439843.654251
 This is the custom report: 
-The DefaultModel model used the LP capability and Simplex(TimeLimit = -1, MaximumGoalCount = -1, Arithmetic = Default, Pricing = Default, IterationLimit = -1, Algorithm = Default, Basis = Default, GetSensitivity = False) solution directive and had an Optimal quality setting. 
+The DefaultModel model used the LP capability and Simplex(TimeLimit = -1, MaximumGoalCount = -1, Arithmetic = Default, Pricing = Default, IterationLimit = -1, Algorithm = Default, Basis = Default, GetSensitivity = False) solution directive and had an Optimal quality setting.
 The Microsoft.SolverFoundation.Solvers.SimplexSolver solver finished in 4499781 ms with a total time of 4509517 ms.

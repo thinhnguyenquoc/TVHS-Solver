@@ -20,41 +20,107 @@ namespace solver_TVHS_26_7
             double solverResult = 7000000000;
             List<string> fileList = new List<string>(){
                 @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx"
-                , @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx"
-                , @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx"
-                , @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx"
-                , @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx"
-                , @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx"
+                //, @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx"
+                //, @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx"
+                //, @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx"
+                //, @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx"
+                //, @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx"
             };
            
             #endregion
+           
+            //var olveResult = MySolver(input, fileList.FirstOrDefault());  
             foreach (var filename in fileList)
             {
                 MyCase input = InitData(filename);
                 MyCase data = Clone<MyCase>(input);
                 MyCase data2 = Clone<MyCase>(input);
+                MyCase data3= Clone<MyCase>(input);
                 #region solve
-                //var solveResult = MySolver(data, filename);  
+                var solveResult = MySolver(data3, filename);  
                 //var solveResult = 591858256.955947;
                 //GetIntegerResultFromSolverResult();
+                //var solverR = FindFeasibleSFS(data3, filename);
 
-                var hueristicResult = Hueristic(data, filename);
+                /*var hueristicResult = Hueristic(data, filename);
                 var hueristicResult2 = Hueristic2(data2, filename);
 
-                var ratioHue = hueristicResult / solverResult;
-                var ratioHue2 = hueristicResult2 / solverResult;
+                var ratioHue = hueristicResult / solverR;
+                var ratioHue2 = hueristicResult2 / solverR;
 
+                Debug.WriteLine("solver:" + solverR);
                 Debug.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
-                Debug.WriteLine("hueristic2:" + hueristicResult2 + "  ratio2:" + ratioHue2);
+                Debug.WriteLine("hueristic2:" + hueristicResult2 + "  ratio2:" + ratioHue2);*/
+                #endregion
             }
-            #endregion
+            
         }
 
+        #region find feasible solution from solver
+        static double FindFeasibleSFS(MyCase myCase, string filename)
+        {
+            List<MyProgram> proList = new List<MyProgram>();
+            string solverUrl = filename.Split('.').FirstOrDefault() + "_resultBS.txt";
+            string[] lines = System.IO.File.ReadAllLines(solverUrl);
+            foreach (string line in lines)
+            {
+                if (line.Contains("RBS"))
+                {
+                    break;
+                }
+                string[] paras = line.Split('\t');
+                MyProgram pro = new MyProgram();
+                pro.Id = Convert.ToInt32(paras[0]);
+                pro.Start = Convert.ToInt32(paras[1]);
+                pro.Duration = Convert.ToInt32(paras[2]);
+                pro.MaxShowTime = Convert.ToInt32(paras[3]);
+                pro.Efficiency = Convert.ToDouble(paras[4]);
+                pro.Probability = Convert.ToDouble(paras[5]);
+                proList.Add(pro);
+            }
+
+            #region init array
+            int[] Choosen = new int[myCase.Times.Count];
+            for (int i = 0; i < myCase.Times.Count; i++)
+            {
+                Choosen[i] = -1;
+            }
+            #endregion
+            proList = proList.OrderByDescending(x => x.Probability).ToList();
+            foreach (var item in proList)
+            {
+                var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id).FirstOrDefault().GroupId).FirstOrDefault();
+                #region group still has cota
+                if (gr.TotalTime >= item.Duration)
+                {
+                    var FrameIdList = myCase.Allocates.Where(x => x.ProgramId == item.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
+                    int FrameID = FindTimeFrame(item.Start, myCase).Id;
+                    if (FrameIdList.Contains(FrameID))
+                    {
+                        if (CheckAvailableSlot(Choosen, item))
+                        {
+                            if (CheckTooClose(myCase, Choosen, item.Start, item))
+                            {
+                                AssignProgramToSche(myCase, Choosen, item.Start, item);
+                            }
+                        }
+                    }
+                }
+                #endregion
+            }
+            #region calculate revenue
+            return CalculateRevenue(myCase, Choosen);
+            #endregion               
+        }
+        #endregion
+       
         #region init test
         private static MyCase InitData(string filename)
         {
             IWorkbook wb = null;
             MyCase data = new MyCase();
+            data.Theta1 = 10;
+            data.Theta2 = 1;
             data.Delta = 60;
             data.Alpha = 0.7;
             data.Allocates = new List<MyAssignment>();
@@ -384,7 +450,7 @@ namespace solver_TVHS_26_7
                     Term[] terms = new Term[myCase.Times.Count - myCase.Programs[i].Duration + 1];
                     for (int j = 0; j < myCase.Times.Count - myCase.Programs[i].Duration + 1; j++)
                     {
-                        terms[j] = choose[i, j] * myCase.Programs[i].Duration * myCase.Programs[i].Efficiency;
+                        terms[j] = choose[i, j] * myCase.Programs[i].Duration * myCase.Programs[i].Efficiency* myCase.Theta1 + choose[i, j] * myCase.Theta2 * 1000000;
                     }
                     termSumTPs[i] = Model.Sum(terms);
                 }
@@ -1226,6 +1292,7 @@ namespace solver_TVHS_26_7
         }
 */
         #endregion
+
         #region heuristic
         static double Hueristic(MyCase myCase, string filename)
         {
@@ -1469,6 +1536,17 @@ namespace solver_TVHS_26_7
             }
         }
 
+        static bool CheckAvailableSlot(int[] Choosen, MyProgram item){ 
+            for (int i = item.Start; i < item.Start + item.Duration; i++)
+            {
+                if (Choosen[i] != -1)
+                {
+                    return false;
+                }
+            }
+            return true;           
+        }
+
         static bool CheckAssignableProgram(MyCase myCase, int[] Choosen, int startAv, MyProgram item)
         {
             // out bound of array time
@@ -1526,7 +1604,7 @@ namespace solver_TVHS_26_7
             double revenue = 0;
             foreach (var i in results)
             {
-                revenue += myCase.Programs.Where(x => x.Id == i.proId).FirstOrDefault().RevenuePerTime * i.numShow * 10 + i.numShow * 1000000;
+                revenue += myCase.Programs.Where(x => x.Id == i.proId).FirstOrDefault().RevenuePerTime * i.numShow * myCase.Theta1 + i.numShow * 1000000 * myCase.Theta2;
             }
             List<MySchedule> sche = GetSchedule(myCase, Choosen);
             string str = "";
@@ -1616,6 +1694,11 @@ namespace solver_TVHS_26_7
                 }
             }
             return result;
+        }
+
+        static MyTimeFrame FindTimeFrame(int start, MyCase myCase)
+        {
+            return myCase.Frames.Where(x => x.Start - 1 <= start && x.End - 1 >= start).FirstOrDefault();
         }
         #endregion
 
@@ -1736,6 +1819,8 @@ namespace solver_TVHS_26_7
         public List<MyBelongToGroup> BTGroups { get; set; }
         public int Delta { get; set; }
         public double Alpha { get; set; }
+        public double Theta1 { get; set; }
+        public double Theta2 { get; set; }
 
     }
     public class MyProgram
@@ -1754,6 +1839,8 @@ namespace solver_TVHS_26_7
                 return this.Duration * this.Efficiency;
             }
         }
+        public double Probability { get; set; }
+        public int Start { get; set; }
         public MyProgram()
         {
 
