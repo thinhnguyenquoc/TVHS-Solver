@@ -37,12 +37,12 @@ namespace solver_TVHS_26_7
                 MyCase data2 = Clone<MyCase>(input);
                 MyCase data3= Clone<MyCase>(input);
                 #region solve
-                var solveResult = MySolver(data3, filename);  
+                //var solveResult = MySolver(data3, filename);  
                 //var solveResult = 591858256.955947;
                 //GetIntegerResultFromSolverResult();
-                //var solverR = FindFeasibleSFS(data3, filename);
+                var solverR = FindFeasibleSFS(data3, filename);
 
-                /*var hueristicResult = Hueristic(data, filename);
+                var hueristicResult = Hueristic(data, filename);
                 var hueristicResult2 = Hueristic2(data2, filename);
 
                 var ratioHue = hueristicResult / solverR;
@@ -50,7 +50,7 @@ namespace solver_TVHS_26_7
 
                 Debug.WriteLine("solver:" + solverR);
                 Debug.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
-                Debug.WriteLine("hueristic2:" + hueristicResult2 + "  ratio2:" + ratioHue2);*/
+                Debug.WriteLine("hueristic2:" + hueristicResult2 + "  ratio2:" + ratioHue2);
                 #endregion
             }
             
