@@ -20,7 +20,7 @@ namespace solver_TVHS_26_7
             double solverResult = 7000000000;
             List<string> fileList = new List<string>(){
                 @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx"
-                //, @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx"
+                , @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx"
                 //, @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx"
                 //, @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx"
                 //, @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx"
@@ -60,7 +60,7 @@ namespace solver_TVHS_26_7
         static double FindFeasibleSFS(MyCase myCase, string filename)
         {
             List<MyProgram> proList = new List<MyProgram>();
-            string solverUrl = filename.Split('.').FirstOrDefault() + "_resultBS.txt";
+            string solverUrl = filename.Split(new string[]{".xlsx"},StringSplitOptions.None).FirstOrDefault() + "_resultBS.txt";
             string[] lines = System.IO.File.ReadAllLines(solverUrl);
             foreach (string line in lines)
             {
@@ -86,27 +86,36 @@ namespace solver_TVHS_26_7
                 Choosen[i] = -1;
             }
             #endregion
-            proList = proList.OrderByDescending(x => x.Probability).ToList();
-            foreach (var item in proList)
+            bool change = false;
+            while (true)
             {
-                var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id).FirstOrDefault().GroupId).FirstOrDefault();
-                #region group still has cota
-                if (gr.TotalTime >= item.Duration)
+                proList = proList.OrderByDescending(x => x.Probability).ToList();
+                foreach (var item in proList)
                 {
-                    var FrameIdList = myCase.Allocates.Where(x => x.ProgramId == item.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
-                    int FrameID = FindTimeFrame(item.Start, myCase).Id;
-                    if (FrameIdList.Contains(FrameID))
+                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id).FirstOrDefault().GroupId).FirstOrDefault();
+                    #region group still has cota
+                    if (gr.TotalTime >= item.Duration)
                     {
-                        if (CheckAvailableSlot(Choosen, item))
+                        var FrameIdList = myCase.Allocates.Where(x => x.ProgramId == item.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
+                        int FrameID = FindTimeFrame(item.Start, myCase).Id;
+                        if (FrameIdList.Contains(FrameID))
                         {
-                            if (CheckTooClose(myCase, Choosen, item.Start, item))
+                            if (CheckAvailableSlot(Choosen, item))
                             {
-                                AssignProgramToSche(myCase, Choosen, item.Start, item);
+                                if (CheckTooClose(myCase, Choosen, item.Start, item))
+                                {
+                                    AssignProgramToSche(myCase, Choosen, item.Start, item);
+                                    change = true;
+                                }
                             }
                         }
                     }
+                    #endregion
                 }
-                #endregion
+                if (change)
+                    change = false;
+                else
+                    break;
             }
             #region calculate revenue
             return CalculateRevenue(myCase, Choosen);
