@@ -19,10 +19,10 @@ namespace solver_TVHS_26_7
             #region input           
             double solverResult = 7000000000;
             List<string> fileList = new List<string>(){
-                @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx"
-                //, @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx"
-                //, @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx"
-                //, @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx"
+                /*@"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
+                 @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
+                 @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx"*/
+                @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx"
                 //, @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx"
                 //, @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx"
             };
@@ -37,35 +37,40 @@ namespace solver_TVHS_26_7
                 MyCase data2 = Clone<MyCase>(input);
                 MyCase data3= Clone<MyCase>(input);
                 #region solve
-                //var solveResult = MySolver(data3, filename);  
-                //var solveResult = 591858256.955947;
+                var solveResult = MySolver(data3, filename); 
                 //GetIntegerResultFromSolverResult();
-                var solverR = FindFeasibleSFS(data3, filename);
-
+                /*
+                #region calculate heuristic
+                var solverR = FindFeasibleSFS(data3, filename,ref solverResult);
                 var hueristicResult = Hueristic(data, filename);
                 var hueristicResult2 = Hueristic2(data2, filename);
 
-                var ratioHue = hueristicResult / solverR;
-                var ratioHue2 = hueristicResult2 / solverR;
+                var ratioFeasible = solverR / solverResult;
+                var ratioHue = hueristicResult / solverResult;
+                var ratioHue2 = hueristicResult2 / solverResult;
 
-                Debug.WriteLine("solver:" + solverR);
+                Debug.WriteLine("solver:" + solverResult);
+                Debug.WriteLine("solverR:" + solverR + "  ratio:" + ratioFeasible);
                 Debug.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
                 Debug.WriteLine("hueristic2:" + hueristicResult2 + "  ratio2:" + ratioHue2);
+                #endregion
+                */
                 #endregion
             }
             
         }
 
         #region find feasible solution from solver
-        static double FindFeasibleSFS(MyCase myCase, string filename)
+        static double FindFeasibleSFS(MyCase myCase, string filename,ref double solverResult)
         {
             List<MyProgram> proList = new List<MyProgram>();
-            string solverUrl = filename.Split('.').FirstOrDefault() + "_resultBS.txt";
+            string solverUrl = filename.Split(new string[]{".xlsx"}, StringSplitOptions.None).FirstOrDefault() + "_resultBS.txt";
             string[] lines = System.IO.File.ReadAllLines(solverUrl);
             foreach (string line in lines)
             {
                 if (line.Contains("RBS"))
                 {
+                    solverResult = Convert.ToDouble(line.Split(new string[]{"RBS"}, StringSplitOptions.None)[1]);
                     break;
                 }
                 string[] paras = line.Split('\t');

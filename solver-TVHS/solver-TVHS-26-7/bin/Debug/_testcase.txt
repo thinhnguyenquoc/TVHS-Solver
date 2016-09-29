@@ -1,39 +1,39 @@
 T	1110
 D	60
-P	0	17	68571.4285714286	4	Nước yến ĐTHT
-P	1	17	434453.781512605	2	Nồi cơm điện 3D Bigsun
-P	2	18	146010.101010101	4	Bộ đồ lót nữ Vita Bella
-P	3	16	381408.602150538	2	Nồi lẩu điện Mantis
-P	4	17	313028.571428571	2	Bộ 2 áo khoác 2 mặt Dore
-P	5	20	513025.210084034	4	Nệm massage Bella
-P	6	19	401036.414565826	2	Máy khoan cầm tay 103 món D.I.Y
-P	7	18	313061.224489796	2	Vòi nước đa năng Magic Hose
-P	8	15	210000	2	Bộ nữ trang Hương Nắng Mai
-P	9	19	123779.90430622	4	Cao hồng sâm Hàn Quốc 6 năm tuổi
-P	10	18	350000	2	Bộ đồ lót Hide & Show
-P	11	16	135662.020905923	4	Ba lô Tomi Future 6
-P	12	17	337558.823529412	2	Bộ cưa GoodLife
-P	13	31	336082.949308756	2	Bộ nữ trang Hoa Biển và Biển Đêm - LIVE 30'
-P	14	33	373067.915690867	2	Khóa thông minh - LIVE 30'
-P	15	3	60000	4	TPCN giảm béo Lactoferrin (file 3p)
-P	16	16	308709.677419355	2	Máy lọc nước CleanSui
-P	17	18	1039500	4	Điện thoại di động Coocel M6
-P	18	17	420378.151260504	2	Bộ 3 quần Jegging Vita Bela 2015
-P	19	18	216550.836550837	2	Quạt làm mát không khí Goodlife
-P	20	20	293250	2	Thiết bị hỗ trợ tập bụng Six Pack Care
-P	21	19	410488.721804511	2	Điện thoại di động Coocel M4
-P	22	20	237606.837606838	2	Bếp điện đơn HN Takashi
-P	23	21	110000	4	Drap chống thấm Bảo Hân
-P	24	16	333870.967741935	2	Bộ 3 quần Jegging Vita Bela - Ver 2
-P	25	19	104432.432432432	2	Bộ nữ trang Tình Yêu Màu Nắng
-P	26	31	600875.576036866	4	Bếp ga HN RichMan 1 vòng nhiệt - LIVE 30'
-P	27	27	647936.507936508	4	Thiết bị hỗ trợ tập bụng New Six Pack Care - LIVE 30'
-P	28	17	210707.070707071	2	Bếp gas Richman vân gỗ
-P	29	18	350000	2	Điện thoại di động Kingcom Sigma M1
-P	30	16	1979791.66666667	4	Điện thoại di động LV 16
-P	31	18	250000	2	Dầu gội nhuộm Hicara
-P	32	21	262556.390977444	2	Vali Macat D3X
-P	33	30	570508.474576271	4	Đồng hộ mạ vàng kim cương Swissguard - LIVE 30'
+P	0	20	297500	2	Thiết bị hỗ trợ tập bụng Six Pack Care
+P	1	17	36302.5210084034	3	Nước yến ĐTHT
+P	2	16	231741.935483871	2	Nồi lẩu điện Mantis
+P	3	19	194511.278195489	3	Cao hồng sâm Hàn Quốc 6 năm tuổi
+P	4	17	223591.836734694	2	Bộ 2 áo khoác 2 mặt Dore
+P	5	17	443697.478991597	3	Nồi cơm điện 3D Bigsun
+P	6	19	401036.414565826	3	Máy khoan cầm tay 103 món D.I.Y
+P	7	18	441657.142857143	3	Vòi nước đa năng Magic Hose
+P	8	15	222333.333333333	2	Bộ nữ trang Hương Nắng Mai
+P	9	20	557394.957983193	3	Nệm massage Bella
+P	10	18	167166.666666667	3	Bộ đồ lót nữ Vita Bella
+P	11	21	157054.87804878	3	Ba lô Tomi 8C
+P	12	30	350000	3	Khóa thông minh Smart Key - LIVE 30'
+P	13	26	700000	3	Dụng cụ tập bụng Newbody 2016 - LIVE 30'
+P	14	3	60000	3	TPCN giảm béo Lactoferrin (file 3p)
+P	15	18	224000	2	Dầu gội nhuộm Hicara
+P	16	18	1037142.85714286	3	Điện thoại di động Coocel M6
+P	17	17	405882.352941176	3	Bộ 3 quần Jegging Vita Bela 2015
+P	18	16	1792946.42857143	3	Điện thoại LV 16
+P	19	18	225765.765765766	2	Quạt làm mát không khí Goodlife
+P	20	20	198571.428571429	3	Bếp điện đơn HN Takashi
+P	21	17	345945.37815126	3	Bộ cưa GoodLife
+P	22	21	171296.296296296	3	Drap chống thấm Bảo Hân
+P	23	16	321152.073732719	3	Bộ 3 quần Jegging Vita Bela - Ver 2
+P	24	31	717788.01843318	3	Bếp ga HN RichMan 1 vòng nhiệt - LIVE 30'
+P	25	27	606402.116402116	3	Thiết bị hỗ trợ tập bụng New Six Pack Care - LIVE 30'
+P	26	18	539861.111111111	3	Điện thoại thông minh Kingcom Sigma M2
+P	27	17	245108.225108225	2	Bếp gas Richman vân gỗ
+P	28	19	329736.842105263	3	Điện thoại di động Coocel M4
+P	29	18	210000	2	Nồi điện siêu tốc Mantis
+P	30	21	320902.255639098	3	Vali Macat D3X
+P	31	31	294746.543778802	2	Bộ nữ trang Hoa Biển và Biển Đêm - LIVE 30'
+P	32	30	605084.745762712	3	Đồng hộ mạ vàng kim cương Swissguard - LIVE 30'
+P	33	29	1551525.42372881	3	Xe đạp tập AirBike - LIVE 30'
 F	0	1	60
 F	1	61	120
 F	2	121	240
@@ -45,10 +45,10 @@ F	7	841	900
 F	8	901	960
 F	9	961	1020
 F	10	1021	1110
-G	0	326	A
-G	1	376	B
-G	2	191	C
-G	3	217	D
+G	0	390	A
+G	1	273	B
+G	2	211	C
+G	3	236	D
 A	0	0	1
 A	0	1	1
 A	0	2	1
@@ -61,9 +61,9 @@ A	0	8	1
 A	0	9	1
 A	0	10	1
 A	0	11	1
-A	0	12	1
+A	0	12	0
 A	0	13	0
-A	0	14	0
+A	0	14	1
 A	0	15	1
 A	0	16	1
 A	0	17	1
@@ -73,15 +73,15 @@ A	0	20	1
 A	0	21	1
 A	0	22	1
 A	0	23	1
-A	0	24	1
-A	0	25	1
-A	0	26	0
-A	0	27	0
+A	0	24	0
+A	0	25	0
+A	0	26	1
+A	0	27	1
 A	0	28	1
 A	0	29	1
 A	0	30	1
-A	0	31	1
-A	0	32	1
+A	0	31	0
+A	0	32	0
 A	0	33	0
 A	1	0	1
 A	1	1	1
@@ -129,9 +129,9 @@ A	2	8	1
 A	2	9	1
 A	2	10	1
 A	2	11	1
-A	2	12	1
+A	2	12	0
 A	2	13	0
-A	2	14	0
+A	2	14	1
 A	2	15	1
 A	2	16	1
 A	2	17	1
@@ -141,15 +141,15 @@ A	2	20	1
 A	2	21	1
 A	2	22	1
 A	2	23	1
-A	2	24	1
-A	2	25	1
-A	2	26	0
-A	2	27	0
+A	2	24	0
+A	2	25	0
+A	2	26	1
+A	2	27	1
 A	2	28	1
 A	2	29	1
 A	2	30	1
-A	2	31	1
-A	2	32	1
+A	2	31	0
+A	2	32	0
 A	2	33	0
 A	3	0	1
 A	3	1	1
@@ -197,9 +197,9 @@ A	4	8	1
 A	4	9	1
 A	4	10	1
 A	4	11	1
-A	4	12	1
+A	4	12	0
 A	4	13	0
-A	4	14	0
+A	4	14	1
 A	4	15	1
 A	4	16	1
 A	4	17	1
@@ -209,15 +209,15 @@ A	4	20	1
 A	4	21	1
 A	4	22	1
 A	4	23	1
-A	4	24	1
-A	4	25	1
-A	4	26	0
-A	4	27	0
+A	4	24	0
+A	4	25	0
+A	4	26	1
+A	4	27	1
 A	4	28	1
 A	4	29	1
 A	4	30	1
-A	4	31	1
-A	4	32	1
+A	4	31	0
+A	4	32	0
 A	4	33	0
 A	5	0	1
 A	5	1	1
@@ -265,9 +265,9 @@ A	6	8	1
 A	6	9	1
 A	6	10	1
 A	6	11	1
-A	6	12	1
+A	6	12	0
 A	6	13	0
-A	6	14	0
+A	6	14	1
 A	6	15	1
 A	6	16	1
 A	6	17	1
@@ -277,15 +277,15 @@ A	6	20	1
 A	6	21	1
 A	6	22	1
 A	6	23	1
-A	6	24	1
-A	6	25	1
-A	6	26	0
-A	6	27	0
+A	6	24	0
+A	6	25	0
+A	6	26	1
+A	6	27	1
 A	6	28	1
 A	6	29	1
 A	6	30	1
-A	6	31	1
-A	6	32	1
+A	6	31	0
+A	6	32	0
 A	6	33	0
 A	7	0	1
 A	7	1	1
@@ -333,9 +333,9 @@ A	8	8	1
 A	8	9	1
 A	8	10	1
 A	8	11	1
-A	8	12	1
+A	8	12	0
 A	8	13	0
-A	8	14	0
+A	8	14	1
 A	8	15	1
 A	8	16	1
 A	8	17	1
@@ -345,15 +345,15 @@ A	8	20	1
 A	8	21	1
 A	8	22	1
 A	8	23	1
-A	8	24	1
-A	8	25	1
-A	8	26	0
-A	8	27	0
+A	8	24	0
+A	8	25	0
+A	8	26	1
+A	8	27	1
 A	8	28	1
 A	8	29	1
 A	8	30	1
-A	8	31	1
-A	8	32	1
+A	8	31	0
+A	8	32	0
 A	8	33	0
 A	9	0	1
 A	9	1	1
@@ -401,9 +401,9 @@ A	10	8	1
 A	10	9	1
 A	10	10	1
 A	10	11	1
-A	10	12	1
+A	10	12	0
 A	10	13	0
-A	10	14	0
+A	10	14	1
 A	10	15	1
 A	10	16	1
 A	10	17	1
@@ -413,89 +413,89 @@ A	10	20	1
 A	10	21	1
 A	10	22	1
 A	10	23	1
-A	10	24	1
-A	10	25	1
-A	10	26	0
-A	10	27	0
+A	10	24	0
+A	10	25	0
+A	10	26	1
+A	10	27	1
 A	10	28	1
 A	10	29	1
 A	10	30	1
-A	10	31	1
-A	10	32	1
+A	10	31	0
+A	10	32	0
 A	10	33	0
 B	0	0	0
 B	0	1	0
 B	0	2	0
 B	0	3	0
 B	0	4	0
-B	0	5	1
+B	0	5	0
 B	0	6	0
 B	0	7	0
 B	0	8	0
-B	0	9	0
+B	0	9	1
 B	0	10	0
 B	0	11	0
 B	0	12	0
-B	0	13	0
+B	0	13	1
 B	0	14	0
 B	0	15	0
-B	0	16	0
-B	0	17	1
-B	0	18	0
+B	0	16	1
+B	0	17	0
+B	0	18	1
 B	0	19	0
 B	0	20	0
 B	0	21	0
 B	0	22	0
 B	0	23	0
-B	0	24	0
-B	0	25	0
+B	0	24	1
+B	0	25	1
 B	0	26	1
-B	0	27	1
+B	0	27	0
 B	0	28	0
 B	0	29	0
-B	0	30	1
+B	0	30	0
 B	0	31	0
-B	0	32	0
+B	0	32	1
 B	0	33	1
 B	1	0	0
-B	1	1	1
+B	1	1	0
 B	1	2	0
-B	1	3	1
-B	1	4	1
-B	1	5	0
+B	1	3	0
+B	1	4	0
+B	1	5	1
 B	1	6	1
 B	1	7	1
 B	1	8	0
 B	1	9	0
-B	1	10	1
+B	1	10	0
 B	1	11	0
 B	1	12	1
-B	1	13	1
-B	1	14	1
+B	1	13	0
+B	1	14	0
 B	1	15	0
-B	1	16	1
-B	1	17	0
-B	1	18	1
+B	1	16	0
+B	1	17	1
+B	1	18	0
 B	1	19	0
 B	1	20	0
 B	1	21	1
 B	1	22	0
-B	1	23	0
-B	1	24	1
+B	1	23	1
+B	1	24	0
 B	1	25	0
 B	1	26	0
 B	1	27	0
-B	1	28	0
-B	1	29	1
-B	1	30	0
+B	1	28	1
+B	1	29	0
+B	1	30	1
 B	1	31	0
 B	1	32	0
 B	1	33	0
-B	2	0	0
+B	2	0	1
 B	2	1	0
-B	2	2	0
+B	2	2	1
 B	2	3	0
-B	2	4	0
+B	2	4	1
 B	2	5	0
 B	2	6	0
 B	2	7	0
@@ -506,49 +506,49 @@ B	2	11	0
 B	2	12	0
 B	2	13	0
 B	2	14	0
-B	2	15	0
+B	2	15	1
 B	2	16	0
 B	2	17	0
 B	2	18	0
 B	2	19	1
-B	2	20	1
+B	2	20	0
 B	2	21	0
-B	2	22	1
+B	2	22	0
 B	2	23	0
 B	2	24	0
-B	2	25	1
+B	2	25	0
 B	2	26	0
-B	2	27	0
-B	2	28	1
-B	2	29	0
+B	2	27	1
+B	2	28	0
+B	2	29	1
 B	2	30	0
 B	2	31	1
-B	2	32	1
+B	2	32	0
 B	2	33	0
-B	3	0	1
-B	3	1	0
-B	3	2	1
-B	3	3	0
+B	3	0	0
+B	3	1	1
+B	3	2	0
+B	3	3	1
 B	3	4	0
 B	3	5	0
 B	3	6	0
 B	3	7	0
 B	3	8	0
-B	3	9	1
-B	3	10	0
+B	3	9	0
+B	3	10	1
 B	3	11	1
 B	3	12	0
 B	3	13	0
-B	3	14	0
-B	3	15	1
+B	3	14	1
+B	3	15	0
 B	3	16	0
 B	3	17	0
 B	3	18	0
 B	3	19	0
-B	3	20	0
+B	3	20	1
 B	3	21	0
-B	3	22	0
-B	3	23	1
+B	3	22	1
+B	3	23	0
 B	3	24	0
 B	3	25	0
 B	3	26	0
