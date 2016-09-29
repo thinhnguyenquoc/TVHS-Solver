@@ -19,12 +19,13 @@ namespace solver_TVHS_26_7
             #region input           
             double solverResult = 7000000000;
             List<string> fileList = new List<string>(){
-                /*@"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
-                 @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
-                 @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx"*/
-                @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx"
-                //, @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx"
-                //, @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx"
+               // @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx"
             };
            
             #endregion
@@ -127,7 +128,7 @@ namespace solver_TVHS_26_7
             data.Theta1 = 10;
             data.Theta2 = 1;
             data.Delta = 60;
-            data.Alpha = 0.7;
+            data.Alpha = 0.6;
             data.Allocates = new List<MyAssignment>();
             data.BTGroups = new List<MyBelongToGroup>();
             data.Programs = new List<MyProgram>();
@@ -278,7 +279,7 @@ namespace solver_TVHS_26_7
             }
             #endregion
             #region generate test
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(filename.Split('.').FirstOrDefault() + "_testcase.txt"))
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(filename.Split(new string[]{".xlsx"}, StringSplitOptions.None).FirstOrDefault() + "_testcase.txt"))
             {
                 //total time 
                 file.WriteLine("T\t" + totaltime);
@@ -489,7 +490,7 @@ namespace solver_TVHS_26_7
 
                 #region generate result
                 using (System.IO.StreamWriter file =
-                    new System.IO.StreamWriter(filename.Split('.').FirstOrDefault() + "_resultBS.txt"))
+                    new System.IO.StreamWriter(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultBS.txt"))
                 {
                     foreach (var i in obs)
                     {

@@ -1,39 +1,39 @@
 T	1110
 D	60
-P	0	17	68571.4285714286	5	Nước yến ĐTHT
+P	0	17	68571.4285714286	4	Nước yến ĐTHT
 P	1	17	434453.781512605	3	Nồi cơm điện 3D Bigsun
-P	2	18	146010.101010101	5	Bộ đồ lót nữ Vita Bella
+P	2	18	146010.101010101	4	Bộ đồ lót nữ Vita Bella
 P	3	16	381408.602150538	3	Nồi lẩu điện Mantis
 P	4	17	313028.571428571	3	Bộ 2 áo khoác 2 mặt Dore
-P	5	20	513025.210084034	5	Nệm massage Bella
+P	5	20	513025.210084034	4	Nệm massage Bella
 P	6	19	401036.414565826	3	Máy khoan cầm tay 103 món D.I.Y
 P	7	18	313061.224489796	3	Vòi nước đa năng Magic Hose
 P	8	15	210000	3	Bộ nữ trang Hương Nắng Mai
-P	9	19	123779.90430622	5	Cao hồng sâm Hàn Quốc 6 năm tuổi
+P	9	19	123779.90430622	4	Cao hồng sâm Hàn Quốc 6 năm tuổi
 P	10	18	350000	3	Bộ đồ lót Hide & Show
-P	11	16	135662.020905923	5	Ba lô Tomi Future 6
+P	11	16	135662.020905923	4	Ba lô Tomi Future 6
 P	12	17	337558.823529412	3	Bộ cưa GoodLife
 P	13	31	336082.949308756	3	Bộ nữ trang Hoa Biển và Biển Đêm - LIVE 30'
 P	14	33	373067.915690867	3	Khóa thông minh - LIVE 30'
-P	15	3	60000	5	TPCN giảm béo Lactoferrin (file 3p)
+P	15	3	60000	4	TPCN giảm béo Lactoferrin (file 3p)
 P	16	16	308709.677419355	3	Máy lọc nước CleanSui
-P	17	18	1039500	5	Điện thoại di động Coocel M6
+P	17	18	1039500	4	Điện thoại di động Coocel M6
 P	18	17	420378.151260504	3	Bộ 3 quần Jegging Vita Bela 2015
 P	19	18	216550.836550837	3	Quạt làm mát không khí Goodlife
 P	20	20	293250	3	Thiết bị hỗ trợ tập bụng Six Pack Care
 P	21	19	410488.721804511	3	Điện thoại di động Coocel M4
 P	22	20	237606.837606838	3	Bếp điện đơn HN Takashi
-P	23	21	110000	5	Drap chống thấm Bảo Hân
+P	23	21	110000	4	Drap chống thấm Bảo Hân
 P	24	16	333870.967741935	3	Bộ 3 quần Jegging Vita Bela - Ver 2
 P	25	19	104432.432432432	3	Bộ nữ trang Tình Yêu Màu Nắng
-P	26	31	600875.576036866	5	Bếp ga HN RichMan 1 vòng nhiệt - LIVE 30'
-P	27	27	647936.507936508	5	Thiết bị hỗ trợ tập bụng New Six Pack Care - LIVE 30'
+P	26	31	600875.576036866	4	Bếp ga HN RichMan 1 vòng nhiệt - LIVE 30'
+P	27	27	647936.507936508	4	Thiết bị hỗ trợ tập bụng New Six Pack Care - LIVE 30'
 P	28	17	210707.070707071	3	Bếp gas Richman vân gỗ
 P	29	18	350000	3	Điện thoại di động Kingcom Sigma M1
-P	30	16	1979791.66666667	5	Điện thoại di động LV 16
+P	30	16	1979791.66666667	4	Điện thoại di động LV 16
 P	31	18	250000	3	Dầu gội nhuộm Hicara
 P	32	21	262556.390977444	3	Vali Macat D3X
-P	33	30	570508.474576271	5	Đồng hộ mạ vàng kim cương Swissguard - LIVE 30'
+P	33	30	570508.474576271	4	Đồng hộ mạ vàng kim cương Swissguard - LIVE 30'
 F	0	1	60
 F	1	61	120
 F	2	121	240
@@ -559,4 +559,3 @@ B	3	30	0
 B	3	31	0
 B	3	32	0
 B	3	33	0
-RBH	454560887.649582

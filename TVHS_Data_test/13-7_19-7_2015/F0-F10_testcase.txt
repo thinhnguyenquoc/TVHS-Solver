@@ -1,37 +1,37 @@
 T	1110
 D	60
-P	0	17	94117.6470588235	4	Nước yến ĐTHT
+P	0	17	94117.6470588235	3	Nước yến ĐTHT
 P	1	17	320833.333333333	3	Nồi cơm điện 3D Bigsun
-P	2	20	238000	4	Thiết bị hỗ trợ tập bụng Six Pack Care
-P	3	18	229444.444444444	4	Bộ đồ lót nữ Vita Bella
-P	4	19	172067.669172932	4	Cao hồng sâm Hàn Quốc 6 năm tuổi
+P	2	20	238000	3	Thiết bị hỗ trợ tập bụng Six Pack Care
+P	3	18	229444.444444444	3	Bộ đồ lót nữ Vita Bella
+P	4	19	172067.669172932	3	Cao hồng sâm Hàn Quốc 6 năm tuổi
 P	5	20	485294.117647059	3	Nệm massage Bella
 P	6	19	354117.647058824	3	Máy khoan cầm tay 103 món D.I.Y
-P	7	18	166991.869918699	4	Máy xay cầm tay Donlim
-P	8	20	269032.258064516	4	Bếp điện HN Bluestar
+P	7	18	166991.869918699	3	Máy xay cầm tay Donlim
+P	8	20	269032.258064516	3	Bếp điện HN Bluestar
 P	9	16	415483.870967742	3	Bộ 3 quần Jegging Vita Bela - Ver 2
-P	10	21	210000	4	Bộ nồi chảo Neoflame
-P	11	18	145138.888888889	4	Bộ 03 áo thời trang Hen
-P	12	20	56615.3846153846	4	Túi xách Magicom
+P	10	21	210000	3	Bộ nồi chảo Neoflame
+P	11	18	145138.888888889	3	Bộ 03 áo thời trang Hen
+P	12	20	56615.3846153846	3	Túi xách Magicom
 P	13	30	470000	3	Bộ dao 8 món GoodLife - LIVE 30'
-P	14	33	150000	4	Khóa thông minh - LIVE 30'
-P	15	20	632647.058823529	5	Quạt phun sương Magic A44
+P	14	33	150000	3	Khóa thông minh - LIVE 30'
+P	15	20	632647.058823529	4	Quạt phun sương Magic A44
 P	16	17	382205.882352941	3	Bộ 3 quần Jegging Vita Bela 2015
 P	17	18	478078.078078078	3	Quạt làm mát không khí Goodlife
-P	18	16	140645.161290323	4	Bếp điện quang Saijodenki
+P	18	16	140645.161290323	3	Bếp điện quang Saijodenki
 P	19	15	358448.275862069	3	Bếp gas HN Miroka 2 vòng nhiệt
-P	20	17	172857.142857143	4	Bộ 2 áo khoác 2 mặt Dore
-P	21	20	136756.756756757	4	Bộ nữ trang Tình Yêu Màu Nắng
-P	22	27	678395.061728395	5	Thiết bị hỗ trợ tập bụng New Six Pack Care - LIVE 30'
-P	23	31	583655.913978495	5	Bếp ga HN RichMan 1 vòng nhiệt - LIVE 30'
+P	20	17	172857.142857143	3	Bộ 2 áo khoác 2 mặt Dore
+P	21	20	136756.756756757	3	Bộ nữ trang Tình Yêu Màu Nắng
+P	22	27	678395.061728395	4	Thiết bị hỗ trợ tập bụng New Six Pack Care - LIVE 30'
+P	23	31	583655.913978495	4	Bếp ga HN RichMan 1 vòng nhiệt - LIVE 30'
 P	24	31	362741.935483871	3	Bộ nữ trang Hoa Biển và Biển Đêm - LIVE 30'
-P	25	32	904895.833333333	5	Dụng cụ hỗ trợ tập bụng Elips Body - LIVE 30'
-P	26	18	800081.632653061	5	Điện thoại di động Coocel M6
-P	27	18	170270.27027027	4	Máy bơm chìm Patio
+P	25	32	904895.833333333	4	Dụng cụ hỗ trợ tập bụng Elips Body - LIVE 30'
+P	26	18	800081.632653061	4	Điện thoại di động Coocel M6
+P	27	18	170270.27027027	3	Máy bơm chìm Patio
 P	28	21	433947.368421053	3	Vali Macat D3X
 P	29	19	337897.435897436	3	Nồi lẩu điện Blue Star
 P	30	31	392131.147540984	3	Khóa thông minh Kinbar - LIVE 30'
-P	31	30	900903.95480226	5	Đồng hộ mạ vàng kim cương Swissguard - LIVE 30'
+P	31	30	900903.95480226	4	Đồng hộ mạ vàng kim cương Swissguard - LIVE 30'
 F	0	1	60
 F	1	61	120
 F	2	121	240
@@ -527,4 +527,3 @@ B	3	28	0
 B	3	29	0
 B	3	30	0
 B	3	31	0
-RBH	448765837.304888
