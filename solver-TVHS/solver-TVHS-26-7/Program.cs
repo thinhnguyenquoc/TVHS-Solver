@@ -19,7 +19,7 @@ namespace solver_TVHS_26_7
             #region input           
             double solverResult = 7000000000;
             List<string> fileList = new List<string>(){
-                @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
+                /*@"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
@@ -27,7 +27,8 @@ namespace solver_TVHS_26_7
                 @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx"
+                @"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx",*/
+                @"..\..\..\..\TVHS_Data_test\8-1_9-1_2015\F0-F10.xlsx"
             };
            
             #endregion
