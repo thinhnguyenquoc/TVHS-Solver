@@ -19,13 +19,15 @@ namespace solver_TVHS_26_7
             #region input           
             double solverResult = 7000000000;
             List<string> fileList = new List<string>(){
-               // @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx"
+                @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx"
             };
            
             #endregion
@@ -38,9 +40,9 @@ namespace solver_TVHS_26_7
                 MyCase data2 = Clone<MyCase>(input);
                 MyCase data3= Clone<MyCase>(input);
                 #region solve
-                var solveResult = MySolver(data3, filename); 
-                //GetIntegerResultFromSolverResult();
-                /*
+                #region call solver
+                //var solveResult = MySolver(data3, filename); 
+                #endregion
                 #region calculate heuristic
                 var solverR = FindFeasibleSFS(data3, filename,ref solverResult);
                 var hueristicResult = Hueristic(data, filename);
@@ -54,8 +56,7 @@ namespace solver_TVHS_26_7
                 Debug.WriteLine("solverR:" + solverR + "  ratio:" + ratioFeasible);
                 Debug.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
                 Debug.WriteLine("hueristic2:" + hueristicResult2 + "  ratio2:" + ratioHue2);
-                #endregion
-                */
+                #endregion                
                 #endregion
             }
             
@@ -114,6 +115,60 @@ namespace solver_TVHS_26_7
                 }
                 #endregion
             }
+
+            #region try to assign programe between two frames
+            var change = false;
+            // calculate the unoccupate of two continue frame
+            while (true)
+            {
+                List<int> Unoccupate = new List<int>();
+                for (int i = 0; i < myCase.Frames.Count - 1; i++)
+                {
+                    Unoccupate.Add(myCase.Frames[i].Unoccupate + myCase.Frames[i + 1].Unoccupate);
+                }
+                var list2 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();
+                foreach (var pro in list2)
+                {
+                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id).FirstOrDefault().GroupId).FirstOrDefault();
+                    if (gr.TotalTime >= pro.Duration)
+                    {
+                        for (int i = 0; i < Unoccupate.Count; i++)
+                        {
+                            if (pro.Duration <= Unoccupate[i])
+                            {
+                                //check allowed frames
+                                var FrameIdList = myCase.Allocates.Where(x => x.ProgramId == pro.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
+
+                                //add program to time frame
+                                if (FrameIdList.Contains(i))
+                                {
+                                    ////check available slot                      
+                                    int startAv = myCase.Frames[i].End - myCase.Frames[i].Unoccupate;
+                                    if (CheckTooClose(myCase, Choosen, startAv, pro))
+                                    {
+                                        int shift = pro.Duration - myCase.Frames[i].Unoccupate;
+                                        // ShiftRight
+                                        ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
+                                        AssignProgramToSche(myCase, Choosen, startAv, pro);
+                                        change = true;
+                                        break;
+                                    }
+
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
+                if (change)
+                    change = false;
+                else
+                    break;
+            }
+            #endregion
+
             #region calculate revenue
             return CalculateRevenue(myCase, Choosen);
             #endregion               
@@ -322,6 +377,7 @@ namespace solver_TVHS_26_7
             try
             {
                 var context = SolverContext.GetContext();
+                context.ClearModel();
                 var model = context.CreateModel();             
 
                 #region Decision variable
@@ -624,133 +680,7 @@ namespace solver_TVHS_26_7
             return timeList;
         }
         #endregion
-
-        #region find integer result
-        private static void GetIntegerResultFromSolverResult()
-        {
-            var realtest3 = @"D:\solver-TVHS-26-8\24_30_8-9_30-19_30result.txt";
-            List<MyResult> listResult = new List<MyResult>();
-            System.IO.StreamReader file = new System.IO.StreamReader(realtest3);
-            string line;
-            while ((line = file.ReadLine()) != null)
-            {
-                var ls = line.Split('\t');
-                MyResult result = new MyResult();
-                result.proramId = Convert.ToInt32(ls[0]);
-                result.time = Convert.ToInt32(ls[1]);
-                result.duration = Convert.ToInt32(ls[2]);
-                result.maxShowTime = Convert.ToInt32(ls[3]);
-                result.eff = Convert.ToDouble(ls[4]);
-                result.decision = Convert.ToDouble(ls[5]);
-                listResult.Add(result);
-            }
-            listResult = listResult.Where(x => x.decision > 0.1).ToList();
-            List<Node> nodes = new List<Node>();
-            foreach (var i in listResult)
-            {
-                nodes.Add(GetNode(i, listResult));
-
-            }
-            List<MyResult> save = new List<MyResult>();
-
-            /// change node index
-            GetTree(nodes[0], nodes, save);
-
-            var candidate = AllPath.Where(x => x.Count >= 24).ToList();
-            List<List<MyResult>> candidate2 = new List<List<MyResult>>();
-            foreach (var k in candidate)
-            {
-                var flg = 0;
-                for (int l = 0; l < 24; l++)
-                {
-                    if (k.Where(x => x.proramId == l).FirstOrDefault() == null)
-                    {
-                        flg = 1;
-                        break;
-                    }
-                    else
-                    {
-                        if (k.Where(x => x.proramId == l).Count() > listResult.Where(x => x.proramId == l).FirstOrDefault().maxShowTime)
-                        {
-                            flg = 1;
-                            break;
-                        }
-                    }
-
-                }
-                if (flg == 0)
-                {
-                    candidate2.Add(k);
-                }
-            }
-            List<double> revenue = new List<double>();
-            foreach (var p in candidate2)
-            {
-                double rev = 0;
-                foreach (var h in p)
-                {
-                    rev += listResult.Where(x => x.proramId == h.proramId).FirstOrDefault().duration * listResult.Where(x => x.proramId == h.proramId).FirstOrDefault().eff;
-                }
-                revenue.Add(rev);
-            }
-            var max = revenue.Max();
-            int index = -1;
-            for (int i = 0; i < revenue.Count; i++)
-            {
-                if (revenue[i] == max)
-                {
-                    index = i;
-                    break;
-                }
-
-            }
-            var solution = candidate2[index];
-            foreach (var i in solution)
-            {
-                Debug.WriteLine(i.proramId.ToString() + "\t" + i.time + "\t" + i.duration + "\t" + i.maxShowTime + " \t " + i.eff + " \t " + i.decision);
-            }
-        }
-        private static void GetTree(Node n, List<Node> nodes, List<MyResult> save)
-        {
-            save.Add(n.Current);
-            if (n.Children.Count == 0)
-            {
-                AllPath.Add(save);
-            }
-            else
-            {
-                foreach (var i in n.Children.OrderBy(x => x.time).ToList())
-                {
-                    var childNode = nodes.Where(x => x.Current == i).FirstOrDefault();
-                    if (childNode != null)
-                    {
-                        List<MyResult> saveRep = new List<MyResult>();
-                        foreach (var j in save)
-                        {
-                            saveRep.Add(j);
-                        }
-                        GetTree(childNode, nodes, saveRep);
-                    }
-                }
-
-            }
-        }
-        private static Node GetNode(MyResult m, List<MyResult> r)
-        {
-            Node a = new Node();
-            a.Current = m;
-            a.Children = new List<MyResult>();
-            foreach (var item in r)
-            {
-                if (m.time + m.duration <= item.time && item.time < m.time + m.duration + 15 && item.proramId != m.proramId)
-                {
-                    a.Children.Add(item);
-                }
-            }
-            return a;
-        }
-        #endregion
-
+       
         #region old
         /*private static double Hueristic(MyCase myCase, string filename)
         {
@@ -1800,11 +1730,6 @@ namespace solver_TVHS_26_7
     {
         public int proId { get; set; }
         public int numShow { get; set; }
-    }
-    public class Node
-    {
-        public MyResult Current { get; set; }
-        public List<MyResult> Children { get; set; }
     }
     public class MyResult
     {
