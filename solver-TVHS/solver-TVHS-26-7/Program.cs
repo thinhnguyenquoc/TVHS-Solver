@@ -38,15 +38,16 @@ namespace solver_TVHS_26_7
             {
                 MyCase input = InitData(filename);
                 MyCase data = Utility.Clone<MyCase>(input);
-               // MyCase data2 = Utility.Clone<MyCase>(input);
-               // MyCase data3 = Utility.Clone<MyCase>(input);
+                MyCase data2 = Utility.Clone<MyCase>(input);
+                MyCase data3 = Utility.Clone<MyCase>(input);
+                MyCase data4 = Utility.Clone<MyCase>(input);
                 #region solve
                 #region call solver
                 /*var solver = new Solver();
                 var solveResult = solver.Solve(data3, filename);*/
                 #endregion
                 #region calculate heuristic
-                /*var solverR = FindFeasibleSFS(data3, filename,ref solverResult);
+                var solverR = FindFeasibleSFS(data3, filename,ref solverResult);
                 var hueristicResult = Hueristic(data, filename);
                 var hueristicResult2 = Hueristic2(data2, filename);
 
@@ -57,11 +58,11 @@ namespace solver_TVHS_26_7
                 Debug.WriteLine("solver:" + solverResult);
                 Debug.WriteLine("solverR:" + solverR + "  ratio:" + ratioFeasible);
                 Debug.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
-                Debug.WriteLine("hueristic2:" + hueristicResult2 + "  ratio2:" + ratioHue2);*/
+                Debug.WriteLine("hueristic2:" + hueristicResult2 + "  ratio2:" + ratioHue2);
                 #endregion                
                 #region call genetic
                 Genetic gen = new Genetic();
-                var initPopulation = gen.Solve(data);
+                var initPopulation = gen.Solve(data4);
                 #endregion
                 #endregion
             }
@@ -102,7 +103,7 @@ namespace solver_TVHS_26_7
             proList = proList.OrderByDescending(x => x.Probability).ToList();
             foreach (var item in proList)
             {
-                var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id).FirstOrDefault().GroupId).FirstOrDefault();
+                var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault();
                 #region group still has cota
                 if (gr.TotalTime >= item.Duration)
                 {
@@ -135,7 +136,7 @@ namespace solver_TVHS_26_7
                 var list2 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();
                 foreach (var pro in list2)
                 {
-                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id).FirstOrDefault().GroupId).FirstOrDefault();
+                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault();
                     if (gr.TotalTime >= pro.Duration)
                     {
                         for (int i = 0; i < Unoccupate.Count; i++)
@@ -150,16 +151,18 @@ namespace solver_TVHS_26_7
                                 {
                                     ////check available slot                      
                                     int startAv = myCase.Frames[i].End - myCase.Frames[i].Unoccupate;
-                                    if (Utility.CheckTooClose(myCase, Choosen, startAv, pro))
+                                    if (startAv != myCase.Frames[i].End)
                                     {
-                                        int shift = pro.Duration - myCase.Frames[i].Unoccupate;
-                                        // ShiftRight
-                                        Utility.ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
-                                        Utility.AssignProgramToSche(myCase, Choosen, startAv, pro);
-                                        change = true;
-                                        break;
+                                        if (Utility.CheckTooClose(myCase, Choosen, startAv, pro))
+                                        {
+                                            int shift = pro.Duration - myCase.Frames[i].Unoccupate;
+                                            // ShiftRight
+                                            Utility.ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
+                                            Utility.AssignProgramToSche(myCase, Choosen, startAv, pro);
+                                            change = true;
+                                            break;
+                                        }
                                     }
-
                                 }
                             }
 
@@ -958,7 +961,7 @@ namespace solver_TVHS_26_7
                 var list1 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();
                 foreach (var item in list1)
                 {
-                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id).FirstOrDefault().GroupId).FirstOrDefault();
+                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault();
                     #region group still has cota
                     if (gr.TotalTime >= item.Duration)
                     {
@@ -1006,7 +1009,7 @@ namespace solver_TVHS_26_7
                 var list2 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();
                 foreach (var pro in list2)
                 {
-                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id).FirstOrDefault().GroupId).FirstOrDefault();
+                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault();
                     if (gr.TotalTime >= pro.Duration)
                     {
                         for (int i = 0; i < Unoccupate.Count; i++)
@@ -1021,16 +1024,18 @@ namespace solver_TVHS_26_7
                                 {
                                     ////check available slot                      
                                     int startAv = myCase.Frames[i].End - myCase.Frames[i].Unoccupate;
-                                    if (Utility.CheckTooClose(myCase, Choosen, startAv, pro))
+                                    if (startAv != myCase.Frames[i].End)
                                     {
-                                        int shift = pro.Duration - myCase.Frames[i].Unoccupate;
-                                        // ShiftRight
-                                        Utility.ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
-                                        Utility.AssignProgramToSche(myCase, Choosen, startAv, pro);
-                                        change = true;
-                                        break;
+                                        if (Utility.CheckTooClose(myCase, Choosen, startAv, pro))
+                                        {
+                                            int shift = pro.Duration - myCase.Frames[i].Unoccupate;
+                                            // ShiftRight
+                                            Utility.ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
+                                            Utility.AssignProgramToSche(myCase, Choosen, startAv, pro);
+                                            change = true;
+                                            break;
+                                        }
                                     }
-
                                 }
                             }
 
@@ -1070,7 +1075,7 @@ namespace solver_TVHS_26_7
                 var list1 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();
                 foreach (var item in list1)
                 {
-                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id).FirstOrDefault().GroupId).FirstOrDefault();
+                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault();
                     #region group still has cota
                     if (gr.TotalTime >= item.Duration)
                     {
@@ -1119,7 +1124,7 @@ namespace solver_TVHS_26_7
                 var list2 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();
                 foreach (var pro in list2)
                 {
-                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id).FirstOrDefault().GroupId).FirstOrDefault();
+                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault();
                     if (gr.TotalTime >= pro.Duration)
                     {
                         for (int i = 0; i < Unoccupate.Count; i++)
@@ -1134,14 +1139,17 @@ namespace solver_TVHS_26_7
                                 {
                                     ////check available slot                      
                                     int startAv = myCase.Frames[i].End - myCase.Frames[i].Unoccupate;
-                                    if (Utility.CheckTooClose(myCase, Choosen, startAv, pro))
-                                    {                                    
-                                        int shift = pro.Duration - myCase.Frames[i].Unoccupate;
-                                        // ShiftRight
-                                        Utility.ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
-                                        Utility.AssignProgramToSche(myCase, Choosen, startAv, pro);
-                                        change = true;
-                                        break;
+                                    if (startAv != myCase.Frames[i].End)
+                                    {
+                                        if (Utility.CheckTooClose(myCase, Choosen, startAv, pro))
+                                        {
+                                            int shift = pro.Duration - myCase.Frames[i].Unoccupate;
+                                            // ShiftRight
+                                            Utility.ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
+                                            Utility.AssignProgramToSche(myCase, Choosen, startAv, pro);
+                                            change = true;
+                                            break;
+                                        }
                                     }
 
                                 }
@@ -1164,8 +1172,7 @@ namespace solver_TVHS_26_7
             #endregion
         
         }
-
-        
+      
         static bool CheckAvailableSlot(int[] Choosen, MyProgram item){ 
             for (int i = item.Start; i < item.Start + item.Duration; i++)
             {
@@ -1176,12 +1183,7 @@ namespace solver_TVHS_26_7
             }
             return true;           
         }
-
-        
-       
-        
-        
-        
+             
         static List<int> FindBiggestFrame(MyCase myCase, int[] Choosen, List<int> listFrameId)
         {
             int[] Cache = new int[listFrameId.Count];

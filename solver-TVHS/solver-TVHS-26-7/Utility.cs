@@ -153,13 +153,13 @@ namespace solver_TVHS_26_7
             {
                 revenue += myCase.Programs.Where(x => x.Id == i.proId).FirstOrDefault().RevenuePerTime * i.numShow * myCase.Theta1 + i.numShow * 1000000 * myCase.Theta2;
             }
-            List<MySchedule> sche = GetSchedule(myCase, Choosen);
+            /*List<MySchedule> sche = GetSchedule(myCase, Choosen);
             string str = "";
             foreach (var pr in sche)
             {
                 str += pr.Program.Id.ToString() + ", " + pr.Program.Duration + ", " + pr.Start.ToString() + " ; ";
             }
-            Debug.WriteLine(str);
+            Debug.WriteLine(str);*/
             return revenue;
         }
 
