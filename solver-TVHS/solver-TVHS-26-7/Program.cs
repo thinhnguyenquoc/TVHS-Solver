@@ -11,7 +11,7 @@ using System.Text;
 
 namespace solver_TVHS_26_7
 {
-    class Program
+    public class Program
     {
         private static List<List<MyResult>> AllPath = new List<List<MyResult>>();
         static void Main(string[] args)
@@ -37,15 +37,16 @@ namespace solver_TVHS_26_7
             foreach (var filename in fileList)
             {
                 MyCase input = InitData(filename);
-                MyCase data = Clone<MyCase>(input);
-                MyCase data2 = Clone<MyCase>(input);
-                MyCase data3= Clone<MyCase>(input);
+                MyCase data = Utility.Clone<MyCase>(input);
+               // MyCase data2 = Utility.Clone<MyCase>(input);
+               // MyCase data3 = Utility.Clone<MyCase>(input);
                 #region solve
                 #region call solver
-                //var solveResult = MySolver(data3, filename); 
+                /*var solver = new Solver();
+                var solveResult = solver.Solve(data3, filename);*/
                 #endregion
                 #region calculate heuristic
-                var solverR = FindFeasibleSFS(data3, filename,ref solverResult);
+                /*var solverR = FindFeasibleSFS(data3, filename,ref solverResult);
                 var hueristicResult = Hueristic(data, filename);
                 var hueristicResult2 = Hueristic2(data2, filename);
 
@@ -56,8 +57,12 @@ namespace solver_TVHS_26_7
                 Debug.WriteLine("solver:" + solverResult);
                 Debug.WriteLine("solverR:" + solverR + "  ratio:" + ratioFeasible);
                 Debug.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
-                Debug.WriteLine("hueristic2:" + hueristicResult2 + "  ratio2:" + ratioHue2);
+                Debug.WriteLine("hueristic2:" + hueristicResult2 + "  ratio2:" + ratioHue2);*/
                 #endregion                
+                #region call genetic
+                Genetic gen = new Genetic();
+                var initPopulation = gen.Solve(data);
+                #endregion
                 #endregion
             }
             
@@ -107,9 +112,9 @@ namespace solver_TVHS_26_7
                     {
                         if (CheckAvailableSlot(Choosen, item))
                         {
-                            if (CheckTooClose(myCase, Choosen, item.Start, item))
+                            if (Utility.CheckTooClose(myCase, Choosen, item.Start, item))
                             {
-                                AssignProgramToSche(myCase, Choosen, item.Start, item);
+                                Utility.AssignProgramToSche(myCase, Choosen, item.Start, item);
                             }
                         }
                     }
@@ -145,12 +150,12 @@ namespace solver_TVHS_26_7
                                 {
                                     ////check available slot                      
                                     int startAv = myCase.Frames[i].End - myCase.Frames[i].Unoccupate;
-                                    if (CheckTooClose(myCase, Choosen, startAv, pro))
+                                    if (Utility.CheckTooClose(myCase, Choosen, startAv, pro))
                                     {
                                         int shift = pro.Duration - myCase.Frames[i].Unoccupate;
                                         // ShiftRight
-                                        ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
-                                        AssignProgramToSche(myCase, Choosen, startAv, pro);
+                                        Utility.ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
+                                        Utility.AssignProgramToSche(myCase, Choosen, startAv, pro);
                                         change = true;
                                         break;
                                     }
@@ -171,7 +176,7 @@ namespace solver_TVHS_26_7
             #endregion
 
             #region calculate revenue
-            return CalculateRevenue(myCase, Choosen);
+            return Utility.CalculateRevenue(myCase, Choosen);
             #endregion               
         }
         #endregion
@@ -371,302 +376,7 @@ namespace solver_TVHS_26_7
             return data;
         }
         #endregion
-       
-        #region solve
-        private static double MySolver(MyCase myCase, string filename)
-        {
-            try
-            {
-                var context = SolverContext.GetContext();
-                context.ClearModel();
-                var model = context.CreateModel();             
 
-                #region Decision variable
-                var programs = new Set(Domain.Any, "programs");
-                var times = new Set(Domain.Any, "times");
-                var choose = new Decision(Domain.RealRange(0, 1), "choose", programs, times);
-                //var choose = new Decision(Domain.IntegerRange(0, 1), "choose", programs, times);
-                model.AddDecision(choose);
-                #endregion
-
-                #region Constraint H1: program P is only aired at allowed time frame
-                for (int i = 0; i < myCase.Programs.Count; i++)
-                {
-                    for (int j = 0; j < myCase.Frames.Count; j++)
-                    {
-                        Term[] terms = new Term[myCase.Frames[j].Duration];
-                        int index = 0;
-                        for (int k = myCase.Frames[j].Start; k <= myCase.Frames[j].End; k++)
-                        {
-                            // time starts from 1 but index of time starts from 0 => k-1
-                            terms[index++] = choose[i, k - 1];
-                        }
-                        var allocate = myCase.Allocates.Where(x => x.FrameId == j && x.ProgramId == i).FirstOrDefault().Assignable;
-                        model.AddConstraint("TimeFrame" + i.ToString() + "_" + j.ToString(), Model.Sum(terms) <= allocate * myCase.Programs[i].MaxShowTime
-                        );
-                    }
-                }
-                #endregion
-
-                #region Constraint H2: each program is showed at leat once time
-                for (int i = 0; i < myCase.Programs.Count; i++)
-                {
-                    Term[] terms = new Term[myCase.Times.Count - myCase.Programs[i].Duration + 1];
-                    var index = 0;
-                    for (int j = 0; j < myCase.Times.Count - myCase.Programs[i].Duration + 1; j++)
-                    {
-                        terms[index++] = choose[i, j];
-                    }
-                    model.AddConstraint("Exist" + i.ToString(), Model.Sum(terms) >= 1);
-                }
-                #endregion
-
-                #region Constranst H3: Can not show two programs simultaneously.
-                for (int i = 0; i < myCase.Times.Count; i++)
-                {
-                    Term[] termSumPs = new Term[myCase.Programs.Count];
-                    for (int j = 0; j < myCase.Programs.Count; j++)
-                    {
-                        Term[] terms = null;
-                        if (myCase.Times[i].Time - myCase.Programs[j].Duration < 0)
-                        {
-                            terms = new Term[myCase.Times[i].Time];
-                            for (int k = 0; k < myCase.Times[i].Time; k++)
-                                terms[k] = choose[j, k];
-                        }
-                        else
-                        {
-                            terms = new Term[myCase.Programs[j].Duration];
-                            int index = 0;
-                            for (int k = myCase.Times[i].Time - myCase.Programs[j].Duration; k < myCase.Times[i].Time; k++)
-                                terms[index++] = choose[j, k];
-                        }
-                        termSumPs[j] = Model.Sum(terms);
-                    }
-                    model.AddConstraint("Simultaneous" + i.ToString(),
-                        Model.Sum(termSumPs) <= 1
-                    );
-                }
-                #endregion
-
-                #region Constraint H4: each program is showed not great than maximum show time
-                for (int i = 0; i < myCase.Programs.Count; i++)
-                {
-                    Term[] terms = new Term[myCase.Times.Count - myCase.Programs[i].Duration + 1];
-                    var index = 0;
-                    for (int j = 0; j < myCase.Times.Count - myCase.Programs[i].Duration + 1; j++)
-                    {
-                        terms[index++] = choose[i, j];
-                    }
-                    model.AddConstraint("Max" + i.ToString(), Model.Sum(terms) <= myCase.Programs[i].MaxShowTime);
-                }
-                #endregion
-
-                #region Constraint H5: Can not show one program too close previous it's show
-                var delta = myCase.Delta;
-                for (int i = 0; i < myCase.Times.Count; i++)
-                {
-                    for (int j = 0; j < myCase.Programs.Count; j++)
-                    {
-                        Term[] terms = null;
-                        if (myCase.Times[i].Time - delta < 0)
-                        {
-                            terms = new Term[myCase.Times[i].Time];
-                            for (int k = 0; k < myCase.Times[i].Time; k++)
-                                terms[k] = choose[j, k];
-                        }
-                        else
-                        {
-                            terms = new Term[delta];
-                            int index = 0;
-                            for (int k = myCase.Times[i].Time - delta; k < myCase.Times[i].Time; k++)
-                                terms[index++] = choose[j, k];
-                            model.AddConstraint("TooClose" + i.ToString() + "_" + j.ToString(), Model.Sum(terms) <= 1
-                           );
-                        }
-
-                    }
-                }
-                #endregion
-
-                #region Constraint H6: Total time of programs which belong to a group is less or equal to group allowed time
-                for (int i = 0; i < myCase.Groups.Count; i++)
-                {
-                    Term[] SumGterms = new Term[myCase.Programs.Count];
-                    for (int j = 0; j < myCase.Programs.Count; j++)
-                    {
-                        Term[] terms = new Term[myCase.Times.Count - myCase.Programs[j].Duration + 1];
-                        for (int k = 0; k < myCase.Times.Count - myCase.Programs[j].Duration + 1; k++)
-                        {
-                            terms[k] = choose[j, k] * myCase.Programs[j].Duration * myCase.BTGroups.Where(x => x.GroupId == i && x.ProgramId == j).FirstOrDefault().BelongTo;
-                        }
-                        SumGterms[j] = Model.Sum(terms);
-                    }
-                    model.AddConstraint("Group" + i.ToString(), Model.Sum(SumGterms) <= myCase.Groups[i].TotalTime);
-                }
-                #endregion
-
-                #region Objective function: Get maximum revenue
-                Term[] termSumTPs = new Term[myCase.Programs.Count];
-                for (int i = 0; i < myCase.Programs.Count; i++)
-                {
-                    Term[] terms = new Term[myCase.Times.Count - myCase.Programs[i].Duration + 1];
-                    for (int j = 0; j < myCase.Times.Count - myCase.Programs[i].Duration + 1; j++)
-                    {
-                        terms[j] = choose[i, j] * myCase.Programs[i].Duration * myCase.Programs[i].Efficiency* myCase.Theta1 + choose[i, j] * myCase.Theta2 * 1000000;
-                    }
-                    termSumTPs[i] = Model.Sum(terms);
-                }
-
-                model.AddGoal("revenue", GoalKind.Maximize, Model.Sum(termSumTPs));
-                #endregion
-
-                #region result
-                var directive = new SimplexDirective();
-                //directive.TimeLimit = 60000;
-                var solution = context.Solve(directive);
-                context.PropagateDecisions();
-                var obs = choose.GetValues().ToList().Where(x => Convert.ToDouble(x.First()) > 0).ToList();
-                foreach (var i in obs)
-                {
-                    Debug.WriteLine(i[1].ToString() + "\t" + i[2] + "\t" + myCase.Programs[Convert.ToInt32(i[1].ToString())].Duration + "\t" + myCase.Programs[Convert.ToInt32(i[1].ToString())].MaxShowTime + " \t " + myCase.Programs[Convert.ToInt32(i[1].ToString())].Efficiency + "\t" + i[0]);
-                }
-
-                Report report = solution.GetReport();
-                Debug.WriteLine("This is the custom report: ");
-                Debug.WriteLine("The {0} model used the {1} capability and {2} solution directive and had an {3} quality setting. \n Goal: {4}",
-                    report.ModelName.ToString(),
-                    report.SolverCapability.ToString(),
-                    report.SolutionDirective.ToString(),
-                    report.SolutionQuality.ToString(), solution.Goals.FirstOrDefault().ToDouble());
-                Debug.WriteLine("The {0} solver finished in {1} ms with a total time of {2} ms.",
-                    report.SolverType.ToString(),
-                    report.SolveTime.ToString(),
-                    report.TotalTime.ToString());
-                #endregion
-
-                #region generate result
-                using (System.IO.StreamWriter file =
-                    new System.IO.StreamWriter(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultBS.txt"))
-                {
-                    foreach (var i in obs)
-                    {
-                        file.WriteLine(i[1].ToString() + "\t" + i[2] + "\t" + myCase.Programs[Convert.ToInt32(i[1].ToString())].Duration + "\t" + myCase.Programs[Convert.ToInt32(i[1].ToString())].MaxShowTime + " \t " + myCase.Programs[Convert.ToInt32(i[1].ToString())].Efficiency + "\t" + i[0]);
-                    }
-                    file.WriteLine("RBS\t" + solution.Goals.FirstOrDefault().ToDouble());
-                    file.WriteLine("This is the custom report: ");
-                    file.WriteLine("The {0} model used the {1} capability and {2} solution directive and had an {3} quality setting.",
-                        report.ModelName.ToString(),
-                        report.SolverCapability.ToString(),
-                        report.SolutionDirective.ToString(),
-                        report.SolutionQuality.ToString());
-                    file.WriteLine("The {0} solver finished in {1} ms with a total time of {2} ms.",
-                        report.SolverType.ToString(),
-                        report.SolveTime.ToString(),
-                        report.TotalTime.ToString());
-                }
-                #endregion
-
-                return solution.Goals.FirstOrDefault().ToDouble();
-            }
-            catch (Exception e)
-            {
-                return -1;
-            }
-        }
-        private static MyCase GetCase(string url)
-        {
-            MyCase myCase = new MyCase();
-            myCase.Programs = new List<MyProgram>();
-            myCase.Frames = new List<MyTimeFrame>();
-            myCase.Groups = new List<MyGroup>();
-            myCase.Allocates = new List<MyAssignment>();
-            myCase.BTGroups = new List<MyBelongToGroup>();
-            System.IO.StreamReader file = new System.IO.StreamReader(url);
-            string line;
-            while ((line = file.ReadLine()) != null)
-            {
-                var ls = line.Split('\t');
-
-                if (ls[0] == "T")
-                {
-                    myCase.Times = GetTime(Convert.ToInt32(ls[1]));
-                }
-                else if (ls[0] == "P")
-                {
-                    var Name = "";
-                    if (ls.Count() <= 5)
-                        Name = ls[1];
-                    else
-                    {
-                        for (int i = 5; i < ls.Count(); i++)
-                        {
-                            Name += ls[i] + " ";
-                        }
-                    }
-                    myCase.Programs.Add(new MyProgram()
-                    {
-                        Id = Convert.ToInt32(ls[1]),
-                        Name = Name,
-                        Duration = Convert.ToInt32(ls[2]),
-                        Efficiency = Convert.ToDouble(ls[3]),
-                        MaxShowTime = Convert.ToInt32(ls[4]),
-                    });
-                }
-                else if (ls[0] == "F")
-                {
-                    var Name = "";
-                    if (ls.Count() <= 4)
-                        Name = ls[1];
-                    else
-                        Name = ls[4];
-                    myCase.Frames.Add(new MyTimeFrame()
-                    {
-                        Id = Convert.ToInt32(ls[1]),
-                        Name = Name,
-                        Start = Convert.ToInt32(ls[2]),
-                        End = Convert.ToInt32(ls[3])
-                    });
-                }
-                else if (ls[0] == "G")
-                {
-                    var Name = "";
-                    if (ls.Count() <= 3)
-                        Name = ls[1];
-                    else
-                        Name = ls[3];
-                    myCase.Groups.Add(new MyGroup()
-                    {
-                        Id = Convert.ToInt32(ls[1]),
-                        Name = Name,
-                        TotalTime = Convert.ToInt32(ls[2])
-                    });
-                }
-                else if (ls[0] == "A")
-                {
-                    myCase.Allocates.Add(new MyAssignment()
-                    {
-                        FrameId = Convert.ToInt32(ls[1]),
-                        ProgramId = Convert.ToInt32(ls[2]),
-                        Assignable = Convert.ToInt32(ls[3])
-                    });
-                }
-                else if (ls[0] == "B")
-                {
-                    myCase.BTGroups.Add(new MyBelongToGroup()
-                    {
-                        GroupId = Convert.ToInt32(ls[1]),
-                        ProgramId = Convert.ToInt32(ls[2]),
-                        BelongTo = Convert.ToInt32(ls[3])
-                    });
-                }
-                else if (ls[0] == "D")
-                {
-                    myCase.Delta = Convert.ToInt32(ls[1]);
-                }
-            }
-            return myCase;
-        }
         private static List<MyTime> GetTime(int time)
         {
             var timeList = new List<MyTime>();
@@ -680,7 +390,6 @@ namespace solver_TVHS_26_7
             }
             return timeList;
         }
-        #endregion
        
         #region old
         /*private static double Hueristic(MyCase myCase, string filename)
@@ -1256,15 +965,15 @@ namespace solver_TVHS_26_7
                         var FrameIdList = myCase.Allocates.Where(x => x.ProgramId == item.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
                         foreach (var frameId in FrameIdList)
                         {
-                            int startAv = GetFirstAvailableSlotInFrame(myCase, Choosen, frameId);
+                            int startAv = Utility.GetFirstAvailableSlotInFrame(myCase, Choosen, frameId);
                             #region find a empty space to assign
                             if (startAv != -1)
                             {
-                                if (CheckAssignableProgram(myCase, Choosen, startAv, item))
+                                if (Utility.CheckAssignableProgram(myCase, Choosen, startAv, item))
                                 {
-                                    if (CheckTooClose(myCase, Choosen, startAv, item))
+                                    if (Utility.CheckTooClose(myCase, Choosen, startAv, item))
                                     {
-                                        AssignProgramToSche(myCase, Choosen, startAv, item);
+                                        Utility.AssignProgramToSche(myCase, Choosen, startAv, item);
                                         change = true;
                                         break;
                                     }
@@ -1312,12 +1021,12 @@ namespace solver_TVHS_26_7
                                 {
                                     ////check available slot                      
                                     int startAv = myCase.Frames[i].End - myCase.Frames[i].Unoccupate;
-                                    if (CheckTooClose(myCase, Choosen, startAv, pro))
+                                    if (Utility.CheckTooClose(myCase, Choosen, startAv, pro))
                                     {
                                         int shift = pro.Duration - myCase.Frames[i].Unoccupate;
                                         // ShiftRight
-                                        ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
-                                        AssignProgramToSche(myCase, Choosen, startAv, pro);
+                                        Utility.ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
+                                        Utility.AssignProgramToSche(myCase, Choosen, startAv, pro);
                                         change = true;
                                         break;
                                     }
@@ -1338,7 +1047,7 @@ namespace solver_TVHS_26_7
             #endregion
 
             #region calculate revenue
-            return CalculateRevenue(myCase, Choosen);
+            return Utility.CalculateRevenue(myCase, Choosen);
             #endregion
 
         }
@@ -1369,15 +1078,15 @@ namespace solver_TVHS_26_7
                         var orderFrameList = FindBiggestFrame(myCase, Choosen, FrameIdList);
                         foreach (var frameId in orderFrameList)
                         {
-                            int startAv = GetFirstAvailableSlotInFrame(myCase, Choosen, frameId);                           
+                            int startAv = Utility.GetFirstAvailableSlotInFrame(myCase, Choosen, frameId);                           
                             #region find a empty space to assign
                             if (startAv != -1)
                             {
-                                if (CheckAssignableProgram(myCase, Choosen, startAv, item))
+                                if (Utility.CheckAssignableProgram(myCase, Choosen, startAv, item))
                                 {
-                                    if (CheckTooClose(myCase,Choosen, startAv, item))
+                                    if (Utility.CheckTooClose(myCase, Choosen, startAv, item))
                                     {
-                                        AssignProgramToSche(myCase, Choosen, startAv, item);
+                                        Utility.AssignProgramToSche(myCase, Choosen, startAv, item);
                                         change = true;
                                         break;
                                     }
@@ -1425,12 +1134,12 @@ namespace solver_TVHS_26_7
                                 {
                                     ////check available slot                      
                                     int startAv = myCase.Frames[i].End - myCase.Frames[i].Unoccupate;
-                                    if (CheckTooClose(myCase,Choosen, startAv, pro))
+                                    if (Utility.CheckTooClose(myCase, Choosen, startAv, pro))
                                     {                                    
                                         int shift = pro.Duration - myCase.Frames[i].Unoccupate;
                                         // ShiftRight
-                                        ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
-                                        AssignProgramToSche(myCase, Choosen, startAv, pro);
+                                        Utility.ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
+                                        Utility.AssignProgramToSche(myCase, Choosen, startAv, pro);
                                         change = true;
                                         break;
                                     }
@@ -1451,28 +1160,12 @@ namespace solver_TVHS_26_7
             #endregion
 
             #region calculate revenue
-            return CalculateRevenue(myCase, Choosen);
+            return Utility.CalculateRevenue(myCase, Choosen);
             #endregion
         
         }
 
-        static int GetFirstAvailableSlotInFrame(MyCase myCase, int[] Choosen, int frameId){
-            var frame = myCase.Frames.Where(x => x.Id == frameId).FirstOrDefault();
-            if (frame == null)
-                return -1;
-            else
-            {
-                for (int i = frame.Start; i <= frame.End; i++)
-                {
-                    if (Choosen[i - 1] == -1)
-                    {
-                        return i - 1;
-                    }
-                }
-                return -1;
-            }
-        }
-
+        
         static bool CheckAvailableSlot(int[] Choosen, MyProgram item){ 
             for (int i = item.Start; i < item.Start + item.Duration; i++)
             {
@@ -1484,119 +1177,11 @@ namespace solver_TVHS_26_7
             return true;           
         }
 
-        static bool CheckAssignableProgram(MyCase myCase, int[] Choosen, int startAv, MyProgram item)
-        {
-            // out bound of array time
-            if (startAv + item.Duration - 1 >= myCase.Times.Count)
-            {
-                return false;
-            }
-            else
-            {
-                // check space which has enough free space to assign program
-                for (int m = startAv; m < startAv + item.Duration; m++)
-                {
-                    if (Choosen[m] != -1)
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        static bool CheckTooClose(MyCase myCase, int[] Choosen, int startAv, MyProgram item)
-        {
-            // check successor program
-            for (int m = startAv; m < Math.Min(startAv + myCase.Delta, myCase.Times.Count); m++)
-            {
-                if (Choosen[m] == item.Id)
-                {
-                    return false;
-                }
-            }
-           
-            // check previous program
-            for (int m = Math.Max(startAv - myCase.Delta + 1, 0); m <= startAv; m++)
-            {
-                if (Choosen[m] == item.Id)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        static double CalculateRevenue(MyCase myCase, int[] Choosen)
-        {
-            List<TempResult> results = new List<TempResult>();
-            var resultIds = Choosen.Distinct().Where(x => x != -1).ToList();
-            foreach (var id in resultIds)
-            {
-                var pr = new TempResult();
-                pr.proId = id;
-                pr.numShow = Choosen.Where(x => x == id).ToList().Count / myCase.Programs.Where(x => x.Id == id).FirstOrDefault().Duration;
-                results.Add(pr);
-            }
-            double revenue = 0;
-            foreach (var i in results)
-            {
-                revenue += myCase.Programs.Where(x => x.Id == i.proId).FirstOrDefault().RevenuePerTime * i.numShow * myCase.Theta1 + i.numShow * 1000000 * myCase.Theta2;
-            }
-            List<MySchedule> sche = GetSchedule(myCase, Choosen);
-            string str = "";
-            foreach (var pr in sche)
-            {
-                str += pr.Program.Id.ToString() + ", " + pr.Program.Duration + ", " + pr.Start.ToString() + " ; ";
-            }
-            Debug.WriteLine(str);
-            return revenue ;
-        }
-
-        static void AssignProgramToSche(MyCase myCase, int[] Choosen, int startAv, MyProgram item)
-        {
-            ////assign program to frame
-            for (int j = 0; j < item.Duration; j++)
-            {
-                Choosen[startAv] = item.Id;
-                startAv++;
-            }
-            //// decrease the maximum show time of this program
-            myCase.Programs.Where(x => x.Id == item.Id).FirstOrDefault().MaxShowTime--;
-            myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault().TotalTime -= item.Duration;
-            //// update frame unoccupate
-            for (int i = 0; i < myCase.Frames.Count; i++)
-            {
-                var unocc = 0;
-                for (int j = myCase.Frames[i].Start; j <= myCase.Frames[i].End; j++)
-                {
-                    if (Choosen[j - 1] == -1)
-                    {
-                        unocc += 1;
-                    }
-                }
-                myCase.Frames[i].Unoccupate = unocc;
-            }                
-        }
-
-        static List<MySchedule> GetSchedule(MyCase myCase, int[] Choosen)
-        {
-            List<MySchedule> sche = new List<MySchedule>();
-            int anker = -1;
-            for (int j = 0; j < myCase.Times.Count; j++)
-            {
-                if (Choosen[j] != -1 && anker != Choosen[j] )
-                {
-                    anker = Choosen[j];
-                    MySchedule p = new MySchedule();
-                    p.Program = myCase.Programs.Where(x => x.Id == anker).FirstOrDefault();
-                    p.Start = j;
-                    sche.Add(p);
-                }
-            }
-            return sche;
-        }
-
+        
+       
+        
+        
+        
         static List<int> FindBiggestFrame(MyCase myCase, int[] Choosen, List<int> listFrameId)
         {
             int[] Cache = new int[listFrameId.Count];
@@ -1693,33 +1278,8 @@ namespace solver_TVHS_26_7
             return listGroup;
         }
 
-        static T Clone<T>(T source)
-        {
-            var serialized = JsonConvert.SerializeObject(source);
-            return JsonConvert.DeserializeObject<T>(serialized);
+        
         }
-
-        static void ShiftRight(MyCase myCase, int[] Choosen, int k, int FrameId, List<int> Unoccupate = null)
-        {
-            int start = -1;
-            for (int i = myCase.Frames[FrameId].Start - 1; i < myCase.Frames[FrameId].End; i++)
-            {
-                if (Choosen[i] == -1)
-                {
-                    start = i;
-                    break;
-                }
-            }
-            for (int i = start -1; i >= myCase.Frames[FrameId].Start - 1; i--)
-            {
-                Choosen[i + k] = Choosen[i];                
-            }
-            for (int i = myCase.Frames[FrameId].Start - 1; i < myCase.Frames[FrameId].Start - 1 + k; i++)
-            {
-                Choosen[i] = -1;
-            }
-        }
-    }
 
     #region define object
     public class MySchedule
