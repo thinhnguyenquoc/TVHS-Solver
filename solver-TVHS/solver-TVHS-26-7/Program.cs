@@ -26,9 +26,9 @@ namespace solver_TVHS_26_7
                 @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx",*/
-                @"..\..\..\..\TVHS_Data_test\8-1_9-1_2015\F0-F10.xlsx"
+                @"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",*/
+                @"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\8-1_9-1_2015\F0-F10.xlsx"
             };
            
             #endregion
