@@ -54,16 +54,18 @@ namespace solver_TVHS_26_7
                 var ratioFeasible = solverR / solverResult;
                 var ratioHue = hueristicResult / solverResult;
                 var ratioHue2 = hueristicResult2 / solverResult;
+                #region call genetic
+                Genetic gen = new Genetic();
+                var initPopulation = gen.Solve(data4);
+                #endregion
 
                 Debug.WriteLine("solver:" + solverResult);
                 Debug.WriteLine("solverR:" + solverR + "  ratio:" + ratioFeasible);
                 Debug.WriteLine("hueristic:" + hueristicResult + "  ratio:" + ratioHue);
                 Debug.WriteLine("hueristic2:" + hueristicResult2 + "  ratio2:" + ratioHue2);
+                Debug.WriteLine("gen:" + initPopulation + "  ratio2:" + initPopulation / solverResult);
                 #endregion                
-                #region call genetic
-                Genetic gen = new Genetic();
-                var initPopulation = gen.Solve(data4);
-                #endregion
+                
                 #endregion
             }
             

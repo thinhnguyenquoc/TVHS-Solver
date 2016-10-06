@@ -14,12 +14,12 @@ namespace solver_TVHS_26_7
             var initPopulation = CreateInitPopulation(myOriginalCase, 50);
             revenue = Utility.CalculateRevenue(myOriginalCase, EvaluateAndSelect(myOriginalCase, initPopulation, 1).FirstOrDefault());
             Debug.WriteLine(revenue);
-            for (var lop = 0; lop < 10; lop++)
+            for (var lop = 0; lop < 20; lop++)
             {             
                 var Parents = EvaluateAndSelect(myOriginalCase, initPopulation, 20);
                 var Children = MakeChildren(myOriginalCase, initPopulation);
                 // add children to population
-                //initPopulation = initPopulation.Concat(Children).ToList();
+                initPopulation = initPopulation.Concat(Children).ToList();
                 // resize of population
                 initPopulation = EvaluateAndSelect(myOriginalCase, Children, 50);
                 double re = Utility.CalculateRevenue(myOriginalCase, initPopulation.FirstOrDefault());
@@ -174,7 +174,9 @@ namespace solver_TVHS_26_7
                     couple.Add(parents[i]);
                     couple.Add(parents[j]);
                     List<int[]> r = SingleCross(myOriginalCase, couple);
-                    result.Add(r.FirstOrDefault());
+                    if (r.FirstOrDefault()!=null)
+                        result.Add(r.FirstOrDefault()); 
+                    if (r.LastOrDefault() != null)
                     result.Add(r.LastOrDefault());
                 }
             }
@@ -246,6 +248,45 @@ namespace solver_TVHS_26_7
             }
             #region assign program to frame
             var list1 = child;
+            
+            var MissingPro = new List<MyProgram>();
+            foreach (var pro in myCase.Programs)
+            {
+                if (list1.Where(x => x.Id == pro.Id).FirstOrDefault() == null)
+                {
+                    MissingPro.Add(pro);
+                }
+            }
+            if (MissingPro.Count() > 0)
+            {
+                List<int> doublePro = new List<int>();
+                var ids = child.Select(x => x.Id).Distinct().ToList();
+                foreach (var id in ids)
+                {
+                    if (child.Where(x => x.Id == id).Count() > 1)
+                    {
+                        doublePro.Add(id);
+                    }
+                }
+                if (MissingPro.Count() > doublePro.Count)
+                {
+                    return null;
+                }
+                foreach (var item in MissingPro)
+                {
+                    for(int k=0; k <child.Count; k++){
+                        if (child[k].Id == doublePro.FirstOrDefault())
+                        {
+                            child[k] = item;
+                            doublePro.RemoveAt(0);
+                            break;
+                        }
+                    }
+                   
+                }
+            }
+            
+           
             foreach (var item in list1)
             {
                 var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault();
@@ -274,7 +315,6 @@ namespace solver_TVHS_26_7
                 #endregion                               
             }
             #endregion
-
             #region try to assign programe between two frames
             var change = false;
             // calculate the unoccupate of two continue frame
@@ -285,7 +325,7 @@ namespace solver_TVHS_26_7
                 {
                     Unoccupate.Add(myCase.Frames[i].Unoccupate + myCase.Frames[i + 1].Unoccupate);
                 }
-                var list2 = Utility.RandomProgramList(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
+                var list2 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x=>x.Efficiency).ToList();
                 foreach (var pro in list2)
                 {
                     var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id && y.BelongTo==1).FirstOrDefault().GroupId).FirstOrDefault();
@@ -329,6 +369,13 @@ namespace solver_TVHS_26_7
                     break;
             }
             #endregion
+            foreach (var pro in myCase.Programs)
+            {
+                if (Choosen.Where(x => x == pro.Id).Count() ==0)
+                {
+                    return null;
+                }
+            }
             return Choosen;
         }
 
