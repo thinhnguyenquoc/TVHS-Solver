@@ -181,5 +181,41 @@ namespace solver_TVHS_26_7
             return sche;
         }
 
+        public static List<int> FindBiggestFrame(MyCase myCase, int[] Choosen, List<int> listFrameId)
+        {
+            int[] Cache = new int[listFrameId.Count];
+            for (int i = 0; i < listFrameId.Count; i++)
+            {
+                Cache[i] = 0;
+            }
+            for (int i = 0; i < listFrameId.Count; i++)
+            {
+                for (int j = myCase.Frames.Where(x => x.Id == listFrameId[i]).First().Start; j <= myCase.Frames.Where(x => x.Id == listFrameId[i]).First().End; j++)
+                {
+                    if (Choosen[j - 1] == -1)
+                    {
+                        Cache[i] += 1;
+                    }
+                }
+            }
+            List<int> result = new List<int>();
+            for (int i = 0; i < listFrameId.Count; i++)
+            {
+                int max = Cache.Max();
+                for (int j = 0; j < listFrameId.Count; j++)
+                {
+                    if (max == -1)
+                        break;
+                    if (Cache[j] == max)
+                    {
+                        result.Add(listFrameId[j]);
+                        Cache[j] = -1;
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+
     }
 }
