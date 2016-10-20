@@ -9,22 +9,16 @@ namespace solver_TVHS_26_7
 {
     public static class Utility
     {
-        public static int GetFirstAvailableSlotInFrame(MyCase myCase, int[] Choosen, int frameId)
+        public static int GetFirstAvailableSlotInFrame(MyCase myCase, int[] Choosen, MyTimeFrame frame)
         {
-            var frame = myCase.Frames.Where(x => x.Id == frameId).FirstOrDefault();
-            if (frame == null)
-                return -1;
-            else
+            for (int i = frame.Start; i <= frame.End; i++)
             {
-                for (int i = frame.Start; i <= frame.End; i++)
+                if (Choosen[i - 1] == -1)
                 {
-                    if (Choosen[i - 1] == -1)
-                    {
-                        return i - 1;
-                    }
+                    return i - 1;
                 }
-                return -1;
             }
+            return -1;
         }
 
         public static bool CheckAssignableProgram(MyCase myCase, int[] Choosen, int startAv, MyProgram item)
@@ -80,7 +74,11 @@ namespace solver_TVHS_26_7
             }
             //// decrease the maximum show time of this program
             myCase.Programs.Where(x => x.Id == item.Id).FirstOrDefault().MaxShowTime--;
-            myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault().TotalTime -= item.Duration;
+            myCase.Groups.Where(x => x.Id == item.GroupId).FirstOrDefault().TotalTime -= item.Duration;       
+        }
+
+        public static void UpdateUnOccupiedFrameTime(MyCase myCase, int[] Choosen)
+        {
             //// update frame unoccupate
             for (int i = 0; i < myCase.Frames.Count; i++)
             {
@@ -125,14 +123,23 @@ namespace solver_TVHS_26_7
 
         public static List<MyProgram> RandomProgramList(List<MyProgram> OriginalPrograms)
         {
-            List<MyProgram> Programs = Utility.Clone<List<MyProgram>>(OriginalPrograms);
-            Random a = new Random();            
-            List<MyProgram> result = new List<MyProgram>();
-            while (Programs.Count()!= 0)
+            Random r = new Random();
+            int[] a = new int[OriginalPrograms.Count];
+            for (int i = 0; i < OriginalPrograms.Count; i++)
             {
-                int index = a.Next(0, Programs.Count() - 1);
-                result.Add(Programs.ElementAt(index));
-                Programs.RemoveAt(index);
+                a[i] = i;
+            }
+            for (int i = 0; i < OriginalPrograms.Count; i++)
+            {
+                int j = r.Next(OriginalPrograms.Count - 1);
+                int t = a[0];
+                a[0] = a[j];
+                a[j] = t;
+            }     
+            List<MyProgram> result = new List<MyProgram>();
+            for (int i = 0; i < a.Count(); i++ )
+            {
+                result.Add(OriginalPrograms[a[i]]);
             }
             return result;
         }
@@ -181,5 +188,83 @@ namespace solver_TVHS_26_7
             return sche;
         }
 
+        public static List<MyTimeFrame> OrderOccupiedFrame(MyCase myCase, int[] Choosen, List<int> frameList)
+        {
+            int[] Cache = new int[frameList.Count];
+            for (int i = 0; i < frameList.Count; i++)
+            {
+                Cache[i] = myCase.Frames.Where(x=>x.Id == frameList[i]).FirstOrDefault().Unoccupate;
+            }
+            List<MyTimeFrame> result = new List<MyTimeFrame>();
+            for (int i = 0; i < frameList.Count; i++)
+            {
+                int max = Cache.Max();
+                for (int j = 0; j < frameList.Count; j++)
+                {
+                    if (max == -1)
+                        break;
+                    if (Cache[j] == max)
+                    {
+                        result.Add(myCase.Frames.Where(x => x.Id == frameList[j]).FirstOrDefault());
+                        Cache[j] = -1;
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public static MyTimeFrame FindTimeFrame(int start, MyCase myCase)
+        {
+            return myCase.Frames.Where(x => x.Start - 1 <= start && x.End - 1 >= start).FirstOrDefault();
+        }
+
+        public static bool CheckAvailableSlot(int[] Choosen, MyProgram item)
+        {
+            for (int i = item.Start; i < item.Start + item.Duration; i++)
+            {
+                if (Choosen[i] != -1)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static bool CheckOneShow(int[] Choosen, MyCase myCase)
+        {
+            foreach (var pro in myCase.Programs)
+            {
+                bool flag2 = false;
+                for (int i = 0; i < Choosen.Count(); i++)
+                {
+                    if (Choosen[i] == pro.Id)
+                    {
+                        flag2 = true;
+                        break;
+                    }
+                }
+                if (flag2)
+                    break;
+                else
+                    return false;
+            }
+            return true;
+        }
+
+        public static List<MyProgram> ConvertToProgram(MyCase myCase, int[] array)
+        {
+            int mark = -1;
+            List<MyProgram> proList = new List<MyProgram>();
+            for (int i = 0; i < array.Count(); i++)
+            {
+                if (array[i] != -1 && array[i] != mark)
+                {
+                    proList.Add(myCase.Programs.Where(x => x.Id == array[i]).FirstOrDefault());
+                    mark = array[i];
+                }
+            }
+            return proList;
+        } 
     }
 }

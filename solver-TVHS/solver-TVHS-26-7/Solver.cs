@@ -9,7 +9,7 @@ namespace solver_TVHS_26_7
 {
     public class Solver
     {
-        #region solve
+       
         public double Solve(MyCase myCase, string filename)
         {
             try
@@ -211,7 +211,6 @@ namespace solver_TVHS_26_7
                 return -1;
             }
         }
-       
-        #endregion
+      
     }
 }

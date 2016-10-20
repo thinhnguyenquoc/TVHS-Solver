@@ -8,28 +8,27 @@ namespace solver_TVHS_26_7
 {
     public class Genetic
     {
-        public double Solve(MyCase myOriginalCase)
+        public int[] Solve(MyCase myOriginalCase)
         {
             double revenue = 0;
-            var initPopulation = CreateInitPopulation(myOriginalCase, 50);
+            var initPopulation = CreateInitPopulation(myOriginalCase, 30);
             revenue = Utility.CalculateRevenue(myOriginalCase, EvaluateAndSelect(myOriginalCase, initPopulation, 1).FirstOrDefault());
             Debug.WriteLine(revenue);
             for (var lop = 0; lop < 20; lop++)
             {             
-                var Parents = EvaluateAndSelect(myOriginalCase, initPopulation, 20);
+                var Parents = EvaluateAndSelect(myOriginalCase, initPopulation, 14);
                 var Children = MakeChildren(myOriginalCase, initPopulation);
                 // add children to population
                 initPopulation = initPopulation.Concat(Children).ToList();
                 // resize of population
-                initPopulation = EvaluateAndSelect(myOriginalCase, Children, 50);
+                initPopulation = EvaluateAndSelect(myOriginalCase, Children, 30);
                 double re = Utility.CalculateRevenue(myOriginalCase, initPopulation.FirstOrDefault());
                 if(re > revenue)
                     revenue = re;
                 Debug.WriteLine(revenue);
                 Debug.WriteLine(re);
             }
-            Debug.WriteLine(revenue);
-            return revenue;
+            return EvaluateAndSelect(myOriginalCase, initPopulation, 1).FirstOrDefault();
         }
         public List<int[]> CreateInitPopulation(MyCase myOriginalCase, int Size)
         {
@@ -49,14 +48,14 @@ namespace solver_TVHS_26_7
                     var list1 = Utility.RandomProgramList(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
                     foreach (var item in list1)
                     {
-                        var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id && y.BelongTo==1).FirstOrDefault().GroupId).FirstOrDefault();
+                        var gr = myCase.Groups.Where(x => x.Id == item.GroupId).FirstOrDefault();
                         #region group still has cota
                         if (gr.TotalTime >= item.Duration)
                         {
-                            var FrameIdList = myCase.Allocates.Where(x => x.ProgramId == item.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
-                            foreach (var frameId in FrameIdList)
+                            var FrameList = item.FrameList;
+                            foreach (var frame in FrameList)
                             {
-                                int startAv = Utility.GetFirstAvailableSlotInFrame(myCase, Choosen, frameId);
+                                int startAv = Utility.GetFirstAvailableSlotInFrame(myCase, Choosen, frame);
                                 #region find a empty space to assign
                                 if (startAv != -1)
                                 {
@@ -83,21 +82,21 @@ namespace solver_TVHS_26_7
                     #endregion
                 }
                 #endregion
-
                 #region try to assign programe between two frames
                 change = false;
                 // calculate the unoccupate of two continue frame
                 while (true)
                 {
+                    Utility.UpdateUnOccupiedFrameTime(myCase, Choosen);
                     List<int> Unoccupate = new List<int>();
                     for (int i = 0; i < myCase.Frames.Count - 1; i++)
                     {
                         Unoccupate.Add(myCase.Frames[i].Unoccupate + myCase.Frames[i + 1].Unoccupate);
                     }
-                    var list2 = Utility.RandomProgramList(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
+                    var list2 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();
                     foreach (var pro in list2)
                     {
-                        var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id&& y.BelongTo==1).FirstOrDefault().GroupId).FirstOrDefault();
+                        var gr = myCase.Groups.Where(x => x.Id == pro.GroupId).FirstOrDefault();
                         if (gr.TotalTime >= pro.Duration)
                         {
                             for (int i = 0; i < Unoccupate.Count; i++)
@@ -105,8 +104,7 @@ namespace solver_TVHS_26_7
                                 if (pro.Duration <= Unoccupate[i])
                                 {
                                     //check allowed frames
-                                    var FrameIdList = myCase.Allocates.Where(x => x.ProgramId == pro.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
-
+                                    var FrameIdList = pro.FrameList.Select(x => x.Id).ToList();
                                     //add program to time frame
                                     if (FrameIdList.Contains(i))
                                     {
@@ -128,9 +126,9 @@ namespace solver_TVHS_26_7
                                 }
 
                             }
-
                         }
-
+                        if (change)
+                            break;
                     }
                     if (change)
                         change = false;
@@ -138,7 +136,7 @@ namespace solver_TVHS_26_7
                         break;
                 }
                 #endregion
-
+           
                 initPopulation.Add(Choosen);
             }
             return initPopulation;
@@ -185,27 +183,8 @@ namespace solver_TVHS_26_7
 
         public List<int[]> SingleCross(MyCase myOriginalCase, List<int[]> couple)
         {
-            int mark = -1;
-            List<MyProgram> parent1 = new List<MyProgram>();
-            for (int i = 0; i < couple[0].Count(); i++)
-            {
-                if (couple[0][i] != -1 && couple[0][i] != mark)
-                {
-                    parent1.Add(myOriginalCase.Programs.Where(x=>x.Id==couple[0][i]).FirstOrDefault());
-                    mark = couple[0][i];
-                }
-            }
-            mark = -1;
-            List<MyProgram> parent2 = new List<MyProgram>();
-            for (int i = 0; i < couple[1].Count(); i++)
-            {
-                if (couple[1][i] != -1 && couple[1][i] != mark)
-                {
-                    parent2.Add(myOriginalCase.Programs.Where(x => x.Id == couple[1][i]).FirstOrDefault());
-                    mark = couple[1][i];
-                }
-            }
-
+            List<MyProgram> parent1 = Utility.ConvertToProgram(myOriginalCase, couple[0]);
+            List<MyProgram> parent2 = Utility.ConvertToProgram(myOriginalCase, couple[1]);
             int splitPoint = Convert.ToInt32(Math.Min(parent1.Count(), parent2.Count()) * 0.3);
             var child1 = new List<MyProgram>();
             var child2 = new List<MyProgram>();
@@ -247,8 +226,7 @@ namespace solver_TVHS_26_7
                 Choosen[j] = -1;
             }
             #region assign program to frame
-            var list1 = child;
-            
+            var list1 = child;            
             var MissingPro = new List<MyProgram>();
             foreach (var pro in myCase.Programs)
             {
@@ -257,46 +235,18 @@ namespace solver_TVHS_26_7
                     MissingPro.Add(pro);
                 }
             }
-            if (MissingPro.Count() > 0)
-            {
-                List<int> doublePro = new List<int>();
-                var ids = child.Select(x => x.Id).Distinct().ToList();
-                foreach (var id in ids)
-                {
-                    if (child.Where(x => x.Id == id).Count() > 1)
-                    {
-                        doublePro.Add(id);
-                    }
-                }
-                if (MissingPro.Count() > doublePro.Count)
-                {
-                    return null;
-                }
-                foreach (var item in MissingPro)
-                {
-                    for(int k=0; k <child.Count; k++){
-                        if (child[k].Id == doublePro.FirstOrDefault())
-                        {
-                            child[k] = item;
-                            doublePro.RemoveAt(0);
-                            break;
-                        }
-                    }
-                   
-                }
-            }
-            
-           
+            list1 = MissingPro.Concat(list1).ToList();
+
             foreach (var item in list1)
             {
-                var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == item.Id && y.BelongTo == 1).FirstOrDefault().GroupId).FirstOrDefault();
+                var gr = myCase.Groups.Where(x => x.Id == item.GroupId).FirstOrDefault();
                 #region group still has cota
                 if (gr.TotalTime >= item.Duration)
                 {
-                    var FrameIdList = myCase.Allocates.Where(x => x.ProgramId == item.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
-                    foreach (var frameId in FrameIdList)
+                    var FrameList = item.FrameList;
+                    foreach (var frame in FrameList)
                     {
-                        int startAv = Utility.GetFirstAvailableSlotInFrame(myCase, Choosen, frameId);
+                        int startAv = Utility.GetFirstAvailableSlotInFrame(myCase, Choosen, frame);
                         #region find a empty space to assign
                         if (startAv != -1)
                         {
@@ -320,15 +270,16 @@ namespace solver_TVHS_26_7
             // calculate the unoccupate of two continue frame
             while (true)
             {
+                Utility.UpdateUnOccupiedFrameTime(myCase, Choosen);
                 List<int> Unoccupate = new List<int>();
                 for (int i = 0; i < myCase.Frames.Count - 1; i++)
                 {
                     Unoccupate.Add(myCase.Frames[i].Unoccupate + myCase.Frames[i + 1].Unoccupate);
                 }
-                var list2 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x=>x.Efficiency).ToList();
+                var list2 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();
                 foreach (var pro in list2)
                 {
-                    var gr = myCase.Groups.Where(x => x.Id == myCase.BTGroups.Where(y => y.ProgramId == pro.Id && y.BelongTo==1).FirstOrDefault().GroupId).FirstOrDefault();
+                    var gr = myCase.Groups.Where(x => x.Id == pro.GroupId).FirstOrDefault();
                     if (gr.TotalTime >= pro.Duration)
                     {
                         for (int i = 0; i < Unoccupate.Count; i++)
@@ -336,8 +287,7 @@ namespace solver_TVHS_26_7
                             if (pro.Duration <= Unoccupate[i])
                             {
                                 //check allowed frames
-                                var FrameIdList = myCase.Allocates.Where(x => x.ProgramId == pro.Id && x.Assignable == 1).Select(x => x.FrameId).ToList();
-
+                                var FrameIdList = pro.FrameList.Select(x => x.Id).ToList();
                                 //add program to time frame
                                 if (FrameIdList.Contains(i))
                                 {
@@ -359,9 +309,9 @@ namespace solver_TVHS_26_7
                             }
 
                         }
-
                     }
-
+                    if (change)
+                        break;
                 }
                 if (change)
                     change = false;
@@ -369,14 +319,11 @@ namespace solver_TVHS_26_7
                     break;
             }
             #endregion
-            foreach (var pro in myCase.Programs)
-            {
-                if (Choosen.Where(x => x == pro.Id).Count() ==0)
-                {
-                    return null;
-                }
-            }
-            return Choosen;
+
+            if (Utility.CheckOneShow(Choosen, myCase))
+                return Choosen;
+            else
+                return null;
         }
 
         private class EvaluatePopulation
@@ -384,5 +331,6 @@ namespace solver_TVHS_26_7
             public int[] resident { get; set; }
             public double revenue { get; set; }
         }
+
     }
 }
