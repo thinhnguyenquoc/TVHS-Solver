@@ -117,11 +117,9 @@ namespace solver_TVHS_26_7
                             terms = new Term[delta];
                             int index = 0;
                             for (int k = myCase.Times[i].Time - delta; k < myCase.Times[i].Time; k++)
-                                terms[index++] = choose[j, k];
-                            model.AddConstraint("TooClose" + i.ToString() + "_" + j.ToString(), Model.Sum(terms) <= 1
-                           );
+                                terms[index++] = choose[j, k];                            
                         }
-
+                        model.AddConstraint("TooClose" + i.ToString() + "_" + j.ToString(), Model.Sum(terms) <= 1);
                     }
                 }
                 #endregion
