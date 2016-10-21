@@ -8,28 +8,265 @@ namespace solver_TVHS_26_7
 {
     public class Genetic
     {
+        public int[] Solve2(MyCase myOriginalCase)
+        {
+            int[] result = null;
+            double revenue = 0;           
+            var initPopulation = CreateInitPopulation2(myOriginalCase, 30);
+            List<EvaluatePopulation2> evaluations = new List<EvaluatePopulation2>();
+            foreach (var i in initPopulation)
+            {                
+                var eva = new EvaluatePopulation2();
+                eva.resident = i;
+                eva.revenue = Utility.CalculateRevenue(myOriginalCase, i.Choosen);
+                evaluations.Add(eva);
+            }
+            result = evaluations.OrderByDescending(x=>x.revenue).FirstOrDefault().resident.Choosen;
+            revenue = Utility.CalculateRevenue(myOriginalCase,result);
+            Debug.WriteLine(revenue);
+            int count = 0;
+            for (var lop = 0; lop < 100; lop++)
+            {
+                var Parents = EvaluateAndSelect2(myOriginalCase, initPopulation, 30);
+                var Children = MakeChildren2(myOriginalCase, Parents);
+                // add children to population
+                initPopulation = initPopulation.Concat(Children).ToList();
+                // resize of population
+                evaluations = new List<EvaluatePopulation2>();
+                foreach (var i in initPopulation)
+                {
+                    var eva = new EvaluatePopulation2();
+                    eva.resident = i;
+                    eva.revenue = Utility.CalculateRevenue(myOriginalCase, i.Choosen);
+                    evaluations.Add(eva);
+                }
+                var theBest = evaluations.OrderByDescending(x => x.revenue).FirstOrDefault().resident.Choosen;
+                double re = Utility.CalculateRevenue(myOriginalCase, theBest);
+                if (re > revenue)
+                {
+                    revenue = re;
+                    result = theBest;
+                    count = 0;
+                }
+                Debug.WriteLine(revenue);
+                Debug.WriteLine(re);
+                count++;
+                if (count > 9)
+                {
+                    break;
+                }
+                initPopulation = initPopulation.Where(x => x.CanBorn == true).ToList();
+            }
+            return result;
+        }
+
+        public List<Chromosome> MakeChildren2(MyCase myOriginalCase, List<Chromosome> parents)
+        {
+            List<Chromosome> result = new List<Chromosome>();
+            for (int i = 0; i < parents.Count() - 1; i++)
+            {
+                int flag = -1;
+                for (int j = i + 1; j < parents.Count(); j++)
+                {
+                    List<int[]> couple = new List<int[]>();
+                    couple.Add(parents[i].Choosen);
+                    couple.Add(parents[j].Choosen);
+                    List<int[]> r = SingleCross(myOriginalCase, couple);
+                    if (r.FirstOrDefault() != null)
+                    {
+                        Chromosome new1 = new Chromosome();
+                        new1.Choosen = r.FirstOrDefault();
+                        new1.CanBorn = true;
+                        result.Add(new1);
+                        flag = 1;
+                    }
+                    if (r.LastOrDefault() != null)
+                    {
+                        Chromosome new2 = new Chromosome();
+                        new2.Choosen = r.LastOrDefault();
+                        new2.CanBorn = true;
+                        result.Add(new2);
+                        flag = 1;
+                    }
+                }
+                if (flag == -1)
+                {
+                    parents[i].CanBorn = false;
+                }
+            }
+            return result;
+        }
+
+
+        public List<Chromosome> EvaluateAndSelect2(MyCase myOriginalCase, List<Chromosome> population, int Size)
+        {
+            List<EvaluatePopulation2> evaluations = new List<EvaluatePopulation2>();
+            List<Chromosome> result = new List<Chromosome>();
+            foreach (var i in population)
+            {
+                if (i.CanBorn)
+                {
+                    var eva = new EvaluatePopulation2();
+                    eva.resident = i;
+                    eva.revenue = Utility.CalculateRevenue(myOriginalCase, i.Choosen);
+                    evaluations.Add(eva);
+                }
+            }
+            var parents = evaluations.Where(i=>i.resident.CanBorn==true).OrderByDescending(x => x.revenue).Take(Size).ToList();
+            foreach (var j in parents)
+            {
+                result.Add(j.resident);
+            }
+            return result;
+        }
+
+
+        public List<Chromosome> CreateInitPopulation2(MyCase myOriginalCase, int Size)
+        {
+            List<Chromosome> initPopulation = new List<Chromosome>();
+            for (int l = 0; l < Size; l++)
+            {
+                MyCase myCase = Utility.Clone<MyCase>(myOriginalCase);
+                int[] Choosen = new int[myCase.Times.Count];
+                for (int j = 0; j < myCase.Times.Count; j++)
+                {
+                    Choosen[j] = -1;
+                }
+                bool change = false;
+                #region assign program to frame
+                while (true)
+                {
+                    var list1 = Utility.RandomProgramList(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
+                    foreach (var item in list1)
+                    {
+                        var gr = myCase.Groups.Where(x => x.Id == item.GroupId).FirstOrDefault();
+                        #region group still has cota
+                        if (gr.TotalTime >= item.Duration)
+                        {
+                            var FrameList = item.FrameList;
+                            foreach (var frame in FrameList)
+                            {
+                                int startAv = Utility.GetFirstAvailableSlotInFrame(myCase, Choosen, frame);
+                                #region find a empty space to assign
+                                if (startAv != -1)
+                                {
+                                    if (Utility.CheckAssignableProgram(myCase, Choosen, startAv, item))
+                                    {
+                                        if (Utility.CheckTooClose(myCase, Choosen, startAv, item))
+                                        {
+                                            Utility.AssignProgramToSche(myCase, Choosen, startAv, item);
+                                            change = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                #endregion
+                            }
+                        }
+                        #endregion
+                    }
+                    #region if nothing changes, stop loop
+                    if (change)
+                        change = false;
+                    else
+                        break;
+                    #endregion
+                }
+                #endregion
+                #region try to assign programe between two frames
+                change = false;
+                // calculate the unoccupate of two continue frame
+                while (true)
+                {
+                    Utility.UpdateUnOccupiedFrameTime(myCase, Choosen);
+                    List<int> Unoccupate = new List<int>();
+                    for (int i = 0; i < myCase.Frames.Count - 1; i++)
+                    {
+                        Unoccupate.Add(myCase.Frames[i].Unoccupate + myCase.Frames[i + 1].Unoccupate);
+                    }
+                    var list2 = myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();
+                    foreach (var pro in list2)
+                    {
+                        var gr = myCase.Groups.Where(x => x.Id == pro.GroupId).FirstOrDefault();
+                        if (gr.TotalTime >= pro.Duration)
+                        {
+                            for (int i = 0; i < Unoccupate.Count; i++)
+                            {
+                                if (pro.Duration <= Unoccupate[i])
+                                {
+                                    //check allowed frames
+                                    var FrameIdList = pro.FrameList.Select(x => x.Id).ToList();
+                                    //add program to time frame
+                                    if (FrameIdList.Contains(i))
+                                    {
+                                        ////check available slot                      
+                                        int startAv = myCase.Frames[i].End - myCase.Frames[i].Unoccupate;
+                                        if (startAv != myCase.Frames[i].End)
+                                        {
+                                            if (Utility.CheckTooClose(myCase, Choosen, startAv, pro))
+                                            {
+                                                int shift = pro.Duration - myCase.Frames[i].Unoccupate;
+                                                // ShiftRight
+                                                Utility.ShiftRight(myCase, Choosen, shift, i + 1, Unoccupate);
+                                                Utility.AssignProgramToSche(myCase, Choosen, startAv, pro);
+                                                change = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                        if (change)
+                            break;
+                    }
+                    if (change)
+                        change = false;
+                    else
+                        break;
+                }
+                #endregion
+                var chromosome = new Chromosome();
+                chromosome.Choosen = Choosen;
+                chromosome.CanBorn = true;
+                initPopulation.Add(chromosome);
+            }
+            return initPopulation;
+        }
+
+
         public int[] Solve(MyCase myOriginalCase)
         {
             double revenue = 0;
             var initPopulation = CreateInitPopulation(myOriginalCase, 30);
             revenue = Utility.CalculateRevenue(myOriginalCase, EvaluateAndSelect(myOriginalCase, initPopulation, 1).FirstOrDefault());
             Debug.WriteLine(revenue);
-            for (var lop = 0; lop < 20; lop++)
-            {             
-                var Parents = EvaluateAndSelect(myOriginalCase, initPopulation, 14);
+            int count = 0;
+            for (var lop = 0; lop < 100; lop++)
+            { 
                 var Children = MakeChildren(myOriginalCase, initPopulation);
                 // add children to population
                 initPopulation = initPopulation.Concat(Children).ToList();
                 // resize of population
                 initPopulation = EvaluateAndSelect(myOriginalCase, Children, 30);
                 double re = Utility.CalculateRevenue(myOriginalCase, initPopulation.FirstOrDefault());
-                if(re > revenue)
+                if (re > revenue)
+                {
                     revenue = re;
+                    count = 0;
+                }
                 Debug.WriteLine(revenue);
                 Debug.WriteLine(re);
+                count++;
+                if (count > 9)
+                {
+                    break;
+                }
             }
             return EvaluateAndSelect(myOriginalCase, initPopulation, 1).FirstOrDefault();
         }
+        
         public List<int[]> CreateInitPopulation(MyCase myOriginalCase, int Size)
         {
             List<int[]> initPopulation = new List<int[]>();
@@ -136,7 +373,7 @@ namespace solver_TVHS_26_7
                         break;
                 }
                 #endregion
-           
+            
                 initPopulation.Add(Choosen);
             }
             return initPopulation;
@@ -239,27 +476,30 @@ namespace solver_TVHS_26_7
 
             foreach (var item in list1)
             {
-                var gr = myCase.Groups.Where(x => x.Id == item.GroupId).FirstOrDefault();
-                #region group still has cota
-                if (gr.TotalTime >= item.Duration)
+                if (myCase.Programs.Where(x=>x.Id == item.Id).First().MaxShowTime > 0)
                 {
-                    var FrameList = item.FrameList;
-                    foreach (var frame in FrameList)
+                    var gr = myCase.Groups.Where(x => x.Id == item.GroupId).FirstOrDefault();
+                    #region group still has cota
+                    if (gr.TotalTime >= item.Duration)
                     {
-                        int startAv = Utility.GetFirstAvailableSlotInFrame(myCase, Choosen, frame);
-                        #region find a empty space to assign
-                        if (startAv != -1)
+                        var FrameList = item.FrameList;
+                        foreach (var frame in FrameList)
                         {
-                            if (Utility.CheckAssignableProgram(myCase, Choosen, startAv, item))
+                            int startAv = Utility.GetFirstAvailableSlotInFrame(myCase, Choosen, frame);
+                            #region find a empty space to assign
+                            if (startAv != -1)
                             {
-                                if (Utility.CheckTooClose(myCase, Choosen, startAv, item))
+                                if (Utility.CheckAssignableProgram(myCase, Choosen, startAv, item))
                                 {
-                                    Utility.AssignProgramToSche(myCase, Choosen, startAv, item);
-                                    break;
+                                    if (Utility.CheckTooClose(myCase, Choosen, startAv, item))
+                                    {
+                                        Utility.AssignProgramToSche(myCase, Choosen, startAv, item);
+                                        break;
+                                    }
                                 }
                             }
+                            #endregion
                         }
-                        #endregion
                     }
                 }
                 #endregion                               
@@ -320,10 +560,11 @@ namespace solver_TVHS_26_7
             }
             #endregion
 
-            if (Utility.CheckOneShow(Choosen, myCase))
-                return Choosen;
-            else
+            var va = Validate.ValidateResult(myOriginalCase, Choosen);
+            if(va.Where(x=>x!=0).Any())
                 return null;
+            else
+                return Choosen;
         }
 
         private class EvaluatePopulation
@@ -332,5 +573,17 @@ namespace solver_TVHS_26_7
             public double revenue { get; set; }
         }
 
+        private class EvaluatePopulation2
+        {
+            public Chromosome resident { get; set; }
+            public double revenue { get; set; }
+        }
+
+
+        public class Chromosome
+        {
+            public int[] Choosen { get; set; }
+            public bool CanBorn { get; set; }
+        }
     }
 }

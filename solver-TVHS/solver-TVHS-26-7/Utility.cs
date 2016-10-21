@@ -52,15 +52,20 @@ namespace solver_TVHS_26_7
                     return false;
                 }
             }
+            var nearest = -1;
 
-            // check previous program
-            for (int m = Math.Max(startAv - myCase.Delta + 1, 0); m <= startAv; m++)
+            for (int i = startAv; i >=0 ; i--)
             {
-                if (Choosen[m] == item.Id)
+                if (Choosen[i] == item.Id)
                 {
-                    return false;
+                    nearest = i;
+                    break;
                 }
             }
+
+            if(nearest != -1 && startAv-nearest + item.Duration <= myCase.Delta )               
+                return false;
+                  
             return true;
         }
 

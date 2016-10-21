@@ -147,8 +147,14 @@ namespace solver_TVHS_26_7
                 }
                 for (int k = 0; k < p.Count-1; k++)
                 {
-                    if (p[k][1] + myCase.Delta > p[k + 1][0])
-                        return false;
+                    for (int l = p[k][1] + 1; l < p[k][0] + myCase.Delta; l++)
+                    {
+                        if (l < Choosen.Count())
+                        {
+                            if (Choosen[l] == pro.Id)
+                                return false;
+                        }
+                    }
                 }
                 
             }

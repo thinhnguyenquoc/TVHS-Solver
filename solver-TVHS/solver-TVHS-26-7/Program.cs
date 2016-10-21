@@ -20,7 +20,7 @@ namespace solver_TVHS_26_7
             double solverResult = 7000000000;
             List<string> fileList = new List<string>(){
                 @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
+               /* @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
@@ -28,7 +28,7 @@ namespace solver_TVHS_26_7
                 @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\8-1_9-1_2015\F0-F10.xlsx"
+                @"..\..\..\..\TVHS_Data_test\8-1_9-1_2015\F0-F10.xlsx"*/
             };
            
             #endregion
@@ -41,7 +41,6 @@ namespace solver_TVHS_26_7
                 MyCase data2 = Utility.Clone<MyCase>(input);
                 MyCase data3 = Utility.Clone<MyCase>(input);
                 MyCase data4 = Utility.Clone<MyCase>(input);
-                #region solve
                 #region call solver
                 /*var solver = new Solver();
                 var solveResult = solver.Solve(data3, filename);*/
@@ -49,32 +48,50 @@ namespace solver_TVHS_26_7
                 #region calculate heuristic
                 var fix = new FixSR();
                 var solverR = fix.FindFeasibleSFS(data3, filename,ref solverResult);
-                var heuristic = new Heuristic();
-                var hueristicResult = heuristic.strategy1(data, filename);
-                var hueristicResult2 = heuristic.strategy2(data2, filename);
-
-                if (Utility.CheckOneShow(solverR, input))
-                    if (Utility.CheckOneShow(hueristicResult, input))
-                        if (Utility.CheckOneShow(hueristicResult2, input))
-                            Debug.WriteLine("Ok");
-
-                var ratioFeasible = Utility.CalculateRevenue(input,solverR) / solverResult;
-                var ratioHue = Utility.CalculateRevenue(input,hueristicResult) / solverResult;
-                var ratioHue2 = Utility.CalculateRevenue(input,hueristicResult2) / solverResult;
-                #region call genetic
+                //var heuristic = new Heuristic();
+                //var hueristicResult = heuristic.strategy1(data, filename);
+                //var hueristicResult2 = heuristic.strategy2(data2, filename);
                 Genetic gen = new Genetic();
-                var initPopulation = gen.Solve(data4);
+                //var initPopulation = gen.Solve(data4);
+                var initPopulation2 = gen.Solve2(data2);
 
-                if (Utility.CheckOneShow(initPopulation, input))
-                    Debug.WriteLine("Ok2");
-                #endregion
+
+                //var v = Validate.ValidateResult(input, hueristicResult);
+                //foreach (var i in v)
+                //{
+                //    Debug.WriteLine(i);
+                //}
+                //Debug.WriteLine("");
+
+                //v = Validate.ValidateResult(input, hueristicResult2);
+                //foreach (var i in v)
+                //{
+                //    Debug.WriteLine(i);
+                //}
+                //Debug.WriteLine("");
+                var v = Validate.ValidateResult(input, initPopulation2);
+                foreach (var i in v)
+                {
+                    Debug.WriteLine(i);
+                }
+                Debug.WriteLine("");
+                
+                var ratioFeasible = Utility.CalculateRevenue(input,solverR) / solverResult;
+                //var ratioHue = Utility.CalculateRevenue(input,hueristicResult) / solverResult;
+                //var ratioHue2 = Utility.CalculateRevenue(input,hueristicResult2) / solverResult;
+                //#region call genetic
+                //Genetic gen = new Genetic();
+                //var initPopulation = gen.Solve(data4);
+               
+                //#endregion
 
                 Debug.WriteLine("solver:" + solverResult);
-                Debug.WriteLine("solverR:" +  "  ratio:" + ratioFeasible);
-                Debug.WriteLine("hueristic:" +  "  ratio:" + ratioHue);
-                Debug.WriteLine("hueristic2:" +  "  ratio2:" + ratioHue2);
-                Debug.WriteLine("gen:" + "  ratio2:" + Utility.CalculateRevenue(input,initPopulation) / solverResult);
-                #endregion                
+                Debug.WriteLine("solverR:" + "  ratio:" + ratioFeasible);
+                //Debug.WriteLine("hueristic:" + "  ratio:" + ratioHue);
+                //Debug.WriteLine("hueristic2:" + "  ratio2:" + ratioHue2);
+                //Debug.WriteLine("gen:" + "  ratio2:" + Utility.CalculateRevenue(input, initPopulation) / solverResult);
+                Debug.WriteLine("gen2:" + "  ratio2:" + Utility.CalculateRevenue(input, initPopulation2) / solverResult);
+                //#endregion                
                 
                 #endregion
             }

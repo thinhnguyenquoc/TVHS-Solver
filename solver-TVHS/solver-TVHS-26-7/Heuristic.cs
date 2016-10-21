@@ -173,7 +173,7 @@ namespace solver_TVHS_26_7
             #endregion
 
             #region try to assign programe between two frames
-            change = false;
+            /*change = false;
             // calculate the unoccupate of two continue frame
             while (true)
             {
@@ -224,7 +224,7 @@ namespace solver_TVHS_26_7
                     change = false;
                 else
                     break;
-            }
+            }*/
             #endregion
            
             return Choosen;
