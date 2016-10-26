@@ -53,7 +53,7 @@ namespace solver_TVHS_26_7
         public string Group { get; set; }
         public int GroupId { get; set; }
         public List<MyTimeFrame> FrameList { get; set; }
-        public double RevenuePerTime
+        public double RevenuePerShow
         {
             get
             {
@@ -118,5 +118,14 @@ namespace solver_TVHS_26_7
         public int FrameId { get; set; }
         public int ProgramId { get; set; }
         public int Assignable { get; set; }
+    }
+
+    public class MyStatictis
+    {
+        public int[] Choosen { get; set; }
+        public long Elapsed { get; set; }
+        public double Ratio { get; set; }
+        public double Revenue { get; set; }
+        public int noGen { get; set; }
     }
 }

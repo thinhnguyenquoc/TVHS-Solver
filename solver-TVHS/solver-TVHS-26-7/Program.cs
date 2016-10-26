@@ -18,44 +18,94 @@ namespace solver_TVHS_26_7
         {           
             #region input           
             double solverResult = 7000000000;
+            double elapsedSolver = 0;
             List<string> fileList = new List<string>(){
-                @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
-               /* @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\8-1_9-1_2015\F0-F10.xlsx"*/
+                //@"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\8-1_9-1_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\24-8_30-8_2015\F0-F10.xlsx"
             };
            
             #endregion
-           
-            //var olveResult = MySolver(input, fileList.FirstOrDefault());  
+
             foreach (var filename in fileList)
             {
                 MyCase input = InitData(filename);
-                MyCase data = Utility.Clone<MyCase>(input);
-                MyCase data2 = Utility.Clone<MyCase>(input);
-                MyCase data3 = Utility.Clone<MyCase>(input);
-                MyCase data4 = Utility.Clone<MyCase>(input);
                 #region call solver
-                /*var solver = new Solver();
-                var solveResult = solver.Solve(data3, filename);*/
+                //var solver = new Solver();
+                //var solveResult = solver.Solve(input, filename);
                 #endregion
-                #region calculate heuristic
-                var fix = new FixSR();
-                var solverR = fix.FindFeasibleSFS(data3, filename,ref solverResult);
-                //var heuristic = new Heuristic();
-                //var hueristicResult = heuristic.strategy1(data, filename);
-                //var hueristicResult2 = heuristic.strategy2(data2, filename);
+                
+                #region read solver result 
+                string solverUrl = filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultBS.txt";
+                string[] lines = System.IO.File.ReadAllLines(solverUrl);
+                foreach (string line in lines)
+                {
+                    if (line.Contains("RBS"))
+                    {
+                        solverResult = Convert.ToDouble(line.Split(new string[] { "RBS" }, StringSplitOptions.None)[1]);
+                      
+                    }
+                    if (line.Contains("total time of"))
+                    {
+                        var a = line.Split(new string[] { "total time of" }, StringSplitOptions.None)[1];
+                        var b = a.Split( new string[] { "ms" }, StringSplitOptions.None)[0];
+                        elapsedSolver = Convert.ToDouble(b);
+                    }
+                }
+                #endregion
+                #region calculate heuristic              
+                var heuristic = new Heuristic();
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                // the code that you want to measure comes here         
+     
+                var heuristicResult = heuristic.strategy1(input, filename);
+                heuristicResult.Ratio = heuristicResult.Revenue / solverResult;
+                var heuristicResult2 = heuristic.strategy2(input, filename);
+                heuristicResult2.Ratio = heuristicResult2.Revenue / solverResult;
+                var heuristicResult3 = heuristic.strategy3(input, filename);
+                heuristicResult3.Ratio = heuristicResult3.Revenue / solverResult;
+                var heuristicResult4 = heuristic.strategy4(input, filename);
+                heuristicResult4.Ratio = heuristicResult4.Revenue / solverResult;
+
                 Genetic gen = new Genetic();
-                //var initPopulation = gen.Solve(data4);
-                var initPopulation2 = gen.Solve2(data2);
+                var genResult = gen.Solve(input, 50, 200, 0.2, 10, 200);
+                genResult.Ratio = genResult.Revenue / solverResult;
+
+                var genResult2 = gen.Solve2(input, 50, 200, 0.2, 10, 200);
+                genResult2.Ratio = genResult2.Revenue / solverResult;
+
+                List<int[]> h = new List<int[]>();
+                h.Add(heuristicResult.Choosen);
+                h.Add(heuristicResult2.Choosen);
+                h.Add(heuristicResult3.Choosen);
+                h.Add(heuristicResult4.Choosen);
+
+                var genResult3 = gen.Solve3(input, 50, 200, 0.2, 10, 200, h);
+                genResult3.Ratio = genResult3.Revenue / solverResult;
+
+                var genResult4 = gen.Solve3(input, 50, 200, 0.2, 10, 200, h);
+                genResult4.Ratio = genResult4.Revenue / solverResult;
+
+                Debug.WriteLine("h1 r:\t" + heuristicResult.Revenue + "\t ratio:\t" + heuristicResult.Ratio + "\t elasped: \t"+ heuristicResult.Elapsed + " ms");
+                Debug.WriteLine("h2 r:\t" + heuristicResult2.Revenue + "\t ratio:\t" + heuristicResult2.Ratio + "\t elasped: \t" + heuristicResult2.Elapsed + " ms");
+                Debug.WriteLine("h3 r:\t" + heuristicResult3.Revenue + "\t ratio:\t" + heuristicResult3.Ratio + "\t elasped: \t" + heuristicResult3.Elapsed + " ms");
+                Debug.WriteLine("h4 r:\t" + heuristicResult4.Revenue + "\t ratio:\t" + heuristicResult4.Ratio + "\t elasped: \t" + heuristicResult4.Elapsed + " ms");
+                Debug.WriteLine("g1 r:\t" + genResult.Revenue + "\t ratio:\t" + genResult.Ratio + "\t elasped: \t" + genResult.Elapsed + " ms"+ "\t noGen: \t" + genResult.noGen);//g1 r:	5220124453.79103	 ratio:	0.967199329015871	 elasped: 	896640 ms
+                Debug.WriteLine("g2 r:\t" + genResult2.Revenue + "\t ratio:\t" + genResult2.Ratio + "\t elasped: \t" + genResult2.Elapsed + " ms" + "\t noGen: \t" + genResult2.noGen);// g2 r:	5221982089.49032	 ratio:	0.967543516978785	 elasped: 	491167 ms	 noGen: 	12
+                Debug.WriteLine("g3 r:\t" + genResult3.Revenue + "\t ratio:\t" + genResult3.Ratio + "\t elasped: \t" + genResult3.Elapsed + " ms" + "\t noGen: \t" + genResult3.noGen);//g3 r:	5201718810.36878	 ratio:	0.963789079676856	 elasped: 	884550 ms	 noGen: 	21
+                Debug.WriteLine("g4 r:\t" + genResult4.Revenue + "\t ratio:\t" + genResult4.Ratio + "\t elasped: \t" + genResult4.Elapsed + " ms" + "\t noGen: \t" + genResult4.noGen);// g4 r:	5211478657.07107	 ratio:	0.965597411502145	 elasped: 	672431 ms	 noGen: 	17
+                Debug.WriteLine(" ");
 
 
+              
                 //var v = Validate.ValidateResult(input, hueristicResult);
                 //foreach (var i in v)
                 //{
@@ -69,31 +119,47 @@ namespace solver_TVHS_26_7
                 //    Debug.WriteLine(i);
                 //}
                 //Debug.WriteLine("");
-                var v = Validate.ValidateResult(input, initPopulation2);
-                foreach (var i in v)
-                {
-                    Debug.WriteLine(i);
-                }
-                Debug.WriteLine("");
-                
-                var ratioFeasible = Utility.CalculateRevenue(input,solverR) / solverResult;
-                //var ratioHue = Utility.CalculateRevenue(input,hueristicResult) / solverResult;
-                //var ratioHue2 = Utility.CalculateRevenue(input,hueristicResult2) / solverResult;
-                //#region call genetic
-                //Genetic gen = new Genetic();
-                //var initPopulation = gen.Solve(data4);
-               
-                //#endregion
+                //var v = Validate.ValidateResult(input, initPopulation);
+                //foreach (var i in v)
+                //{
+                //    Debug.WriteLine(i);
+                //}
+                //Debug.WriteLine("");
+                //v = Validate.ValidateResult(input, initPopulation2);
+                //foreach (var i in v)
+                //{
+                //    Debug.WriteLine(i);
+                //}
+                //Debug.WriteLine("");
 
-                Debug.WriteLine("solver:" + solverResult);
-                Debug.WriteLine("solverR:" + "  ratio:" + ratioFeasible);
-                //Debug.WriteLine("hueristic:" + "  ratio:" + ratioHue);
-                //Debug.WriteLine("hueristic2:" + "  ratio2:" + ratioHue2);
-                //Debug.WriteLine("gen:" + "  ratio2:" + Utility.CalculateRevenue(input, initPopulation) / solverResult);
-                Debug.WriteLine("gen2:" + "  ratio2:" + Utility.CalculateRevenue(input, initPopulation2) / solverResult);
-                //#endregion                
                 
+                //#endregion                
+
+                if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultGen.txt"))
+                {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultGen.txt"))
+                    {
+                    }
+                }
+
+                 using (System.IO.StreamWriter file =File.AppendText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultGen.txt"))
+                 {
+                     file.WriteLine(DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString());
+                     file.WriteLine("solver r:\t" + solverResult + "\t elasped: \t" + elapsedSolver);
+                     file.WriteLine("50, 200, 0.2, 10, 200");
+                     file.WriteLine("h1 r:\t" + heuristicResult.Revenue + "\t ratio:\t" + heuristicResult.Ratio + "\t elasped: \t" + heuristicResult.Elapsed + " ms");
+                     file.WriteLine("h2 r:\t" + heuristicResult2.Revenue + "\t ratio:\t" + heuristicResult2.Ratio + "\t elasped: \t" + heuristicResult2.Elapsed + " ms");
+                     file.WriteLine("h3 r:\t" + heuristicResult3.Revenue + "\t ratio:\t" + heuristicResult3.Ratio + "\t elasped: \t" + heuristicResult3.Elapsed + " ms");
+                     file.WriteLine("h4 r:\t" + heuristicResult4.Revenue + "\t ratio:\t" + heuristicResult4.Ratio + "\t elasped: \t" + heuristicResult4.Elapsed + " ms");
+                     file.WriteLine("g1 r:\t" + genResult.Revenue + "\t ratio:\t" + genResult.Ratio + "\t elasped: \t" + genResult.Elapsed + " ms" + "\t noGen: \t" + genResult.noGen);//g1 r:	5220124453.79103	 ratio:	0.967199329015871	 elasped: 	896640 ms
+                     file.WriteLine("g2 r:\t" + genResult2.Revenue + "\t ratio:\t" + genResult2.Ratio + "\t elasped: \t" + genResult2.Elapsed + " ms" + "\t noGen: \t" + genResult2.noGen);// g2 r:	5221982089.49032	 ratio:	0.967543516978785	 elasped: 	491167 ms	 noGen: 	12
+                     file.WriteLine("g3 r:\t" + genResult3.Revenue + "\t ratio:\t" + genResult3.Ratio + "\t elasped: \t" + genResult3.Elapsed + " ms" + "\t noGen: \t" + genResult3.noGen);//g3 r:	5201718810.36878	 ratio:	0.963789079676856	 elasped: 	884550 ms	 noGen: 	21
+                     file.WriteLine("g4 r:\t" + genResult4.Revenue + "\t ratio:\t" + genResult4.Ratio + "\t elasped: \t" + genResult4.Elapsed + " ms" + "\t noGen: \t" + genResult4.noGen);// g4 r:	5211478657.07107	 ratio:	0.965597411502145	 elasped: 	672431 ms	 noGen: 	17
+                     file.WriteLine(" ");
+                 }
                 #endregion
+                
             }
             
         }

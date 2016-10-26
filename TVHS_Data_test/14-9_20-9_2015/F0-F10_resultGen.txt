@@ -1,0 +1,39 @@
+Monday, October 24, 2016 2:20:37 PM
+Solver	6775507654.60013
+Solver	6775507654.60013
+Solver Elapsed	2291795ms
+Heuristic 1 revenue	6210270958.56611
+Heuristic 1 ratio	0.916576480339409
+H1 Elapsed	35ms
+Heuristic 2 revenue	6170013815.70897
+Heuristic 2 ratio	0.910634911838661
+H2 Elapsed	36ms
+Gen 1 revenue	6390378325.9021
+Gen 1 ratio	0.943158601785867
+Gen 1 generation	18
+G1 Elapsed	459767ms
+Gen 2 revenue	6410877576.0556
+Gen 2 ratio	0.946184094663819
+Gen 2 generation	16
+G2 Elapsed	405195ms
+Gen 3 revenue	6314784748.92971
+Gen 3 ratio	0.932001714239431
+Gen 3 generation	16
+G3 Elapsed	2862498ms
+Gen 4 revenue	6403852106.0264
+Gen 4 ratio	0.945147202612722
+Gen 4 generation	19
+G4 Elapsed	515839ms
+
+Tuesday, October 25, 2016 1:50:38 PM
+solver r:	6775507654.60013	 elasped: 	2291795
+50, 200, 0.2, 10, 200
+h1 r:	6210270958.56611	 ratio:	0.916576480339409	 elasped: 	10 ms
+h2 r:	6234383815.70897	 ratio:	0.920135306979725	 elasped: 	9 ms
+h3 r:	6127223966.08491	 ratio:	0.904319540090095	 elasped: 	2 ms
+h4 r:	6208939379.61874	 ratio:	0.916379952047323	 elasped: 	4 ms
+g1 r:	6454950584.03298	 ratio:	0.952688848288806	 elasped: 	1014411 ms	 noGen: 	22
+g2 r:	6432237840.93574	 ratio:	0.949336665064303	 elasped: 	871878 ms	 noGen: 	19
+g3 r:	6536088524.43992	 ratio:	0.964664030746439	 elasped: 	766133 ms	 noGen: 	17
+g4 r:	6313066471.86224	 ratio:	0.931748113010554	 elasped: 	752183 ms	 noGen: 	17
+ 

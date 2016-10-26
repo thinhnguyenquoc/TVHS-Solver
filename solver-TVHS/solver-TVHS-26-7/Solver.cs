@@ -8,8 +8,7 @@ using System.Text;
 namespace solver_TVHS_26_7
 {
     public class Solver
-    {
-       
+    {      
         public double Solve(MyCase myCase, string filename)
         {
             try
@@ -208,7 +207,6 @@ namespace solver_TVHS_26_7
             {
                 return -1;
             }
-        }
-      
+        }      
     }
 }

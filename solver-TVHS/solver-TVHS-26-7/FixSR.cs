@@ -7,8 +7,9 @@ namespace solver_TVHS_26_7
 {
     public class FixSR
     {
-        public int[] FindFeasibleSFS(MyCase myCase, string filename, ref double solverResult)
+        public int[] FindFeasibleSFS(MyCase input, string filename, ref double solverResult)
         {
+            MyCase myCase = Utility.Clone<MyCase>(input);
             List<MyProgram> proList = new List<MyProgram>();
             string solverUrl = filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultBS.txt";
             string[] lines = System.IO.File.ReadAllLines(solverUrl);
