@@ -1,0 +1,4 @@
+g5 r:	5616778149.15749	 ratio:	0.970142089107108	 elasped: 	1437445 ms	 noGen: 	350
+Thursday, October 27, 2016 9:41:51 AM
+g5 r:	5618769673.46583	 ratio:	0.970486069499726	 elasped: 	580348 ms	 noGen: 	150
+ 

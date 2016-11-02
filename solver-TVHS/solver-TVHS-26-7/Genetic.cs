@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -353,12 +354,13 @@ namespace solver_TVHS_26_7
             result.noGen = 0;
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var initPopulation = CreateInitPopulation(myOriginalCase, initSize);
+           
             revenue = Utility.CalculateRevenue(myOriginalCase, EvaluateAndSelect(myOriginalCase, initPopulation, 1).FirstOrDefault());
             int count = 0;
             for (var lop = 0; lop < noloop; lop++)
             {
-                result.noGen++;
-                var Children = MakeChildren(myOriginalCase, initPopulation, percentCrossOver);
+                result.noGen++;        
+                var Children = MakeChildren(myOriginalCase, initPopulation, percentCrossOver);               
                 // add children to population
                 initPopulation = initPopulation.Concat(Children).ToList();
                 // resize of population
@@ -375,13 +377,143 @@ namespace solver_TVHS_26_7
                     break;
                 }
             }
-             watch.Stop();
+            watch.Stop();
             var elapsedH1 = watch.ElapsedMilliseconds;
             result.Choosen = EvaluateAndSelect(myOriginalCase, initPopulation, 1).FirstOrDefault();
             result.Elapsed = elapsedH1;
             result.Revenue = Utility.CalculateRevenue(myOriginalCase, result.Choosen);
             return result;
         }
+
+        public MyStatictis Solve5(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, string filename)
+        {
+            if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen5.txt"))
+            {
+                // Create a file to write to.
+                using (StreamWriter sw = File.CreateText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen5.txt"))
+                {
+                }
+            }
+
+                 
+            MyCase myOriginalCase = input;
+            double revenue = 0;
+            MyStatictis result = new MyStatictis();
+            result.noGen = 0;
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var initPopulation = CreateInitPopulation(myOriginalCase, initSize);
+
+            revenue = Utility.CalculateRevenue(myOriginalCase, EvaluateAndSelect(myOriginalCase, initPopulation, 1).FirstOrDefault());
+            int count = 0;
+            List<string> totalunbornParents = new List<string>();
+            using (System.IO.StreamWriter file = File.AppendText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen5.txt"))
+            {
+                file.WriteLine(DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString());
+                     
+                for (var lop = 0; lop < noloop; lop++)
+                {
+                    result.noGen++;
+                    var Parents = SelectParents5(myOriginalCase, initPopulation, percentCrossOver, totalunbornParents);
+                    List<string> unbornParents = new List<string>();
+                    var Children = MakeChildren5(myOriginalCase, Parents, out unbornParents);
+                    // add children to population
+                    initPopulation = initPopulation.Concat(Children).ToList();
+
+                    foreach (var parents in unbornParents)
+                    {
+                        if (totalunbornParents.Contains(parents))
+                            totalunbornParents.Add(parents);
+                    }
+                    initPopulation = EvaluateAndSelect2(myOriginalCase, initPopulation, populationSize, percentCrossOver);
+                    double re = Utility.CalculateRevenue(myOriginalCase, initPopulation.FirstOrDefault());
+                    if (re > revenue)
+                    {
+                        revenue = re;
+                        count = 0;
+                    }
+                    count++;
+                    Debug.WriteLine(lop + "\t" + revenue);
+                    file.WriteLine(lop + "\t" + revenue);
+                    if (count > nochange)
+                    {
+                        break;
+                    }
+                }
+                file.WriteLine("");
+            }
+            watch.Stop();
+            var elapsedH1 = watch.ElapsedMilliseconds;
+            result.Choosen = EvaluateAndSelect(myOriginalCase, initPopulation, 1).FirstOrDefault();
+            result.Elapsed = elapsedH1;
+            result.Revenue = Utility.CalculateRevenue(myOriginalCase, result.Choosen);
+            return result;
+        }
+
+        public List<List<int[]>> SelectParents5(MyCase myOriginalCase, List<int[]> population, double percentCrossOver, List<string> totalunbornParents)
+        {
+            List<EvaluatePopulation> eva = new List<EvaluatePopulation>();
+            foreach (int[] pop in population as List<int[]>)
+            {
+                var e = new EvaluatePopulation();
+                e.resident = pop;
+                e.revenue = Utility.CalculateRevenue(myOriginalCase,pop);
+                eva.Add(e);
+            }
+            eva = eva.OrderByDescending(x => x.revenue).ToList();
+            double sum = 0;
+            double total = eva.Sum(x => x.revenue);
+            foreach (var e in eva)
+            {
+                e.min = sum;                
+                sum += e.revenue / total;
+                e.max = sum;
+            }
+
+            Random rnd = new Random();
+            List<List<int[]>> parents = new List<List<int[]>>();
+            while (parents.Count() < population.Count() * percentCrossOver/2)
+            {
+                double r = rnd.NextDouble();
+                List<int[]> couple = new List<int[]>();
+                var a = eva.Where(x => x.min < r && x.max >= r).FirstOrDefault();
+                if (a != null)
+                {
+                    couple.Add(a.resident);
+                }
+
+                r = rnd.NextDouble();
+                a = eva.Where(x => x.min < r && x.max >= r).FirstOrDefault();
+                if (a != null)
+                {
+                    couple.Add(a.resident);
+                }
+                string couplestr = string.Join(", ", couple.First()) + ";" + string.Join(", ", couple.Last());
+                if (!totalunbornParents.Contains(couplestr))
+                    parents.Add(couple);
+            }
+            return parents;
+        }
+
+        public List<int[]> MakeChildren5(MyCase myOriginalCase, List<List<int[]>> parents, out List<string> unbornParents)
+        {
+            List<int[]> result = new List<int[]>();
+            Random rnd = new Random();
+            unbornParents = new List<string>();
+            for (int i = 0; i < parents.Count(); i++)
+            {                             
+                List<int[]> r = SingleCross2(myOriginalCase, parents[i]);
+                if (r.FirstOrDefault() != null)
+                    result.Add(r.FirstOrDefault());
+                if (r.LastOrDefault() != null)
+                    result.Add(r.LastOrDefault());
+                if (r.FirstOrDefault() == null && r.LastOrDefault() == null)
+                {
+                    unbornParents.Add(string.Join(", ", parents[i].First()) + ";" + string.Join(", ", parents[i].Last()));
+                }
+            }
+            return result;
+        }
+
         
         public List<int[]> CreateInitPopulation(MyCase myOriginalCase, int Size)
         {
@@ -514,6 +646,48 @@ namespace solver_TVHS_26_7
             return result;
         }
 
+        public List<int[]> EvaluateAndSelect2(MyCase myOriginalCase, List<int[]> population, int Size, double percentCrossOver)
+        {
+            List<EvaluatePopulation> evaluations = new List<EvaluatePopulation>();
+            List<int[]> result = new List<int[]>();
+            foreach (var i in population)
+            {
+                var eva = new EvaluatePopulation();
+                eva.resident = i;
+                eva.revenue = Utility.CalculateRevenue(myOriginalCase, i);
+                evaluations.Add(eva);
+            }
+            var parents = evaluations.OrderByDescending(x => x.revenue).Take(Size-Convert.ToInt32(Size * percentCrossOver)).ToList();
+            List<EvaluatePopulation> randomparents = new List<EvaluatePopulation>();
+            var half = evaluations.Where(x => !parents.Contains(x)).ToList();
+            Random r = new Random();
+            if (half.Count <= Convert.ToInt32(Size * percentCrossOver))
+            {
+                randomparents = half;
+            }
+            else
+            {
+                while (randomparents.Count <= Convert.ToInt32(Size * percentCrossOver))
+                {
+                    if (half.Count < 2)
+                    {
+                        break;
+                    }
+                    int j = r.Next(half.Count - 1);
+                    if (!randomparents.Contains(half[j]))
+                    {
+                        randomparents.Add(half[j]);
+                    }
+                }
+            }
+            parents = parents.Concat(randomparents).ToList();
+            foreach (var j in parents)
+            {
+                result.Add(j.resident);
+            }
+            return result;
+        }
+
         public List<int[]> MakeChildren(MyCase myOriginalCase, List<int[]> initPopulation, double percentCrossOver)
         {
             List<int[]> result = new List<int[]>();
@@ -529,7 +703,7 @@ namespace solver_TVHS_26_7
                     saveIndex.Add(r);
                 }
             }
-          
+            
             for (int i = 0; i < parents.Count() -1; i++)
             {
                 for (int j = i + 1; j < parents.Count(); j++)
@@ -544,6 +718,43 @@ namespace solver_TVHS_26_7
                     result.Add(r.LastOrDefault());
                 }
             }
+            return result;
+        }
+
+        public List<int[]> SingleCross2(MyCase myOriginalCase, List<int[]> couple)
+        {
+            List<MyProgram> parent1 = Utility.ConvertToProgram(myOriginalCase, couple[0]);
+            List<MyProgram> parent2 = Utility.ConvertToProgram(myOriginalCase, couple[1]);
+            Random rd = new Random();
+            int splitPoint = Convert.ToInt32(Math.Min(parent1.Count(), parent2.Count()) * rd.NextDouble());
+            var child1 = new List<MyProgram>();
+            var child2 = new List<MyProgram>();
+            for (int i = 0; i < parent1.Count(); i++)
+            {
+                if (i < splitPoint)
+                {
+                    child1.Add(parent2.ElementAt(i));
+                }
+                else
+                {
+                    child1.Add(parent1.ElementAt(i));
+                }
+            }
+            for (int i = 0; i < parent2.Count(); i++)
+            {
+                if (i < splitPoint)
+                {
+                    child2.Add(parent1.ElementAt(i));
+                }
+                else
+                {
+                    child2.Add(parent2.ElementAt(i));
+                }
+            }
+
+            List<int[]> result = new List<int[]>();
+            result.Add(FixChild(myOriginalCase, child1));
+            result.Add(FixChild(myOriginalCase, child2));
             return result;
         }
 
@@ -584,8 +795,10 @@ namespace solver_TVHS_26_7
         }
 
         public int[] FixChild(MyCase myOriginalCase, List<MyProgram> child)
-        {          
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             MyCase myCase = Utility.Clone<MyCase>(myOriginalCase);
+            
             int[] Choosen = new int[myCase.Times.Count];
             for (int j = 0; j < myCase.Times.Count; j++)
             {
@@ -688,8 +901,10 @@ namespace solver_TVHS_26_7
                     break;
             }
             #endregion
-
+          
             var va = Validate.ValidateResult(myOriginalCase, Choosen);
+            watch.Stop();
+            var elapsedH1 = watch.ElapsedMilliseconds;
             if(va.Where(x=>x!=0).Any())
                 return null;
             else
@@ -700,6 +915,8 @@ namespace solver_TVHS_26_7
         {
             public int[] resident { get; set; }
             public double revenue { get; set; }
+            public double min { get; set; }
+            public double max { get; set; }
         }
 
         private class EvaluatePopulation2
