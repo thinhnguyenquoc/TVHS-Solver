@@ -8,7 +8,8 @@ using System.Text;
 namespace solver_TVHS_26_7
 {
     public class Genetic
-    {      
+    {
+        #region temp
         public MyStatictis Solve(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, string filename)
         {
             if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
@@ -62,122 +63,7 @@ namespace solver_TVHS_26_7
             result.Revenue = Utility.CalculateRevenue(myOriginalCase, result.Choosen);
             return result;
         }
-
-        public MyStatictis Solve2(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, double mutationPercent, string filename)
-        {
-            if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
-            {
-                // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
-                {
-                }
-            }
-            MyCase myOriginalCase = input;
-            double revenue = 0;
-            MyStatictis result = new MyStatictis();
-            result.noGen = 0;
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            List<EvaluatePopulation> initPopulation = CreateInitPopulation(myOriginalCase, initSize);
-            revenue = initPopulation.OrderByDescending(x => x.revenue).FirstOrDefault().revenue;
-            int count = 0;
-            using (System.IO.StreamWriter file = File.AppendText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
-            {
-                file.WriteLine(DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString());
-                for (var lop = 0; lop < noloop; lop++)
-                {
-                    result.noGen++;
-                    var Parents = SelectParents(myOriginalCase, initPopulation, percentCrossOver);
-                    var Children = MakeChildren(myOriginalCase, Parents);
-                    foreach (var child in Children)
-                    {
-                        initPopulation.Add(child);
-                    }
-                    initPopulation = Resize2(initPopulation, populationSize);
-                    initPopulation = Mutate(myOriginalCase, initPopulation, mutationPercent);
-                    double re = initPopulation.OrderByDescending(x => x.revenue).FirstOrDefault().revenue;
-                    if (re > revenue)
-                    {
-                        revenue = re;
-                        count = 0;
-                    }
-                    count++;
-                    Debug.WriteLine(lop + "\t" + revenue);
-                    file.WriteLine(lop + "\t" + revenue);
-                    if (count > nochange)
-                    {
-                        break;
-                    }
-                }
-                file.WriteLine("");
-            }
-            watch.Stop();
-            var elapsedH1 = watch.ElapsedMilliseconds;
-            result.Choosen = initPopulation.FirstOrDefault().Choosen;
-            result.Elapsed = elapsedH1;
-            result.Revenue = Utility.CalculateRevenue(myOriginalCase, result.Choosen);
-            return result;
-        }
-        public List<EvaluatePopulation> Resize2(List<EvaluatePopulation> population, int Size)
-        {
-            var theBest = population.OrderByDescending(x => x.revenue).Take(Size).ToList();
-            return theBest;
-        }
-
-        public List<EvaluatePopulation> Mutate(MyCase myOriginalCase, List<EvaluatePopulation> population, double percent)
-        {
-            Random ran = new Random();
-            List<int> indexSave = new List<int>();
-            while (indexSave.Count() <= population.Count * percent)
-            {
-                int index = ran.Next(0, population.Count - 1);
-                if (!indexSave.Contains(index))
-                {
-                    List<MyProgram> chromosome = Utility.ConvertToProgram(myOriginalCase, population[index].Choosen);
-                    int indexMutation = ran.Next(0, chromosome.Count - 1);
-                    int indexProgram = ran.Next(0, myOriginalCase.Programs.Count - 1);
-                    chromosome[indexMutation] = myOriginalCase.Programs[indexProgram];
-                    var fixedChild = FixChild(myOriginalCase, chromosome);
-                    if (fixedChild != null)
-                    {
-                        population[index] = fixedChild;
-                        indexSave.Add(index);
-                    }
-
-                }
-            }
-            return population;
-        }
-
-
-        public List<EvaluatePopulation> Resize(MyCase myOriginalCase, List<EvaluatePopulation> population, int Size, double percentCrossOver)
-        {
-            var theBest = population.OrderByDescending(x => x.revenue).Take(Size - Convert.ToInt32(Size * percentCrossOver)).ToList();
-            List<EvaluatePopulation> randomparents = new List<EvaluatePopulation>();
-            var ran = population.Where(x => !theBest.Contains(x)).ToList();
-            Random r = new Random();
-            if (ran.Count <= Convert.ToInt32(Size * percentCrossOver))
-            {
-                randomparents = ran;
-            }
-            else
-            {
-                while (randomparents.Count <= Convert.ToInt32(Size * percentCrossOver))
-                {
-                    if (ran.Count < 2)
-                    {
-                        break;
-                    }
-                    int j = r.Next(ran.Count - 1);
-                    if (!randomparents.Contains(ran[j]))
-                    {
-                        randomparents.Add(ran[j]);
-                    }
-                }
-            }
-            theBest = theBest.Concat(randomparents).ToList();
-            return theBest;
-        }
-
+        
         public List<EvaluatePopulation> CreateInitPopulation(MyCase myOriginalCase, int Size)
         {
             List<EvaluatePopulation> result = new List<EvaluatePopulation>();
@@ -346,7 +232,6 @@ namespace solver_TVHS_26_7
         public List<EvaluatePopulation> MakeChildren(MyCase myOriginalCase, List<List<EvaluatePopulation>> parents)
         {
             List<EvaluatePopulation> result = new List<EvaluatePopulation>();
-            Random rnd = new Random();
             for (int i = 0; i < parents.Count(); i++)
             {
                 List<EvaluatePopulation> r = SingleCross(myOriginalCase, parents[i]);
@@ -519,14 +404,197 @@ namespace solver_TVHS_26_7
             Random random = new Random();
             return random.NextDouble() * (maximum - minimum) + minimum;
         }
+        #endregion
 
-        public class EvaluatePopulation
+        #region gen 1
+        public MyStatictis Solve2(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, double mutationPercent, string filename)
         {
-            public double revenue { get; set; }
-            public double min { get; set; }
-            public double max { get; set; }
-            public int[] Choosen { get; set; }
-            public bool CanBorn { get; set; }
+            if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
+            {
+                // Create a file to write to.
+                using (StreamWriter sw = File.CreateText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
+                {
+                }
+            }
+            MyCase myOriginalCase = input;
+            double revenue = 0;
+            MyStatictis result = new MyStatictis();
+            result.noGen = 0;
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            List<EvaluatePopulation> initPopulation = CreateInitPopulation(myOriginalCase, initSize);
+            revenue = initPopulation.OrderByDescending(x => x.revenue).FirstOrDefault().revenue;
+            int count = 0;
+            using (System.IO.StreamWriter file = File.AppendText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
+            {
+                file.WriteLine(DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString());
+                for (var lop = 0; lop < noloop; lop++)
+                {
+                    result.noGen++;
+                    var Parents = SelectParents(myOriginalCase, initPopulation, percentCrossOver);
+                    var Children = MakeChildren(myOriginalCase, Parents);
+                    foreach (var child in Children)
+                    {
+                        initPopulation.Add(child);
+                    }
+                    initPopulation = Resize2(initPopulation, populationSize);
+                    initPopulation = Mutate(myOriginalCase, initPopulation, mutationPercent);
+                    double re = initPopulation.OrderByDescending(x => x.revenue).FirstOrDefault().revenue;
+                    if (re > revenue)
+                    {
+                        revenue = re;
+                        count = 0;
+                    }
+                    count++;
+                    Debug.WriteLine(lop + "\t" + revenue);
+                    file.WriteLine(lop + "\t" + revenue);
+                    if (count > nochange)
+                    {
+                        break;
+                    }
+                }
+                file.WriteLine("");
+            }
+            watch.Stop();
+            var elapsedH1 = watch.ElapsedMilliseconds;
+            result.Choosen = initPopulation.FirstOrDefault().Choosen;
+            result.Elapsed = elapsedH1;
+            result.Revenue = Utility.CalculateRevenue(myOriginalCase, result.Choosen);
+            return result;
         }
+        public List<EvaluatePopulation> Resize2(List<EvaluatePopulation> population, int Size)
+        {
+            var theBest = population.OrderByDescending(x => x.revenue).Take(Size).ToList();
+            return theBest;
+        }
+
+        public List<EvaluatePopulation> Mutate(MyCase myOriginalCase, List<EvaluatePopulation> population, double percent)
+        {
+            Random ran = new Random();
+            List<int> indexSave = new List<int>();
+            while (indexSave.Count() <= population.Count * percent)
+            {
+                int index = ran.Next(0, population.Count - 1);
+                if (!indexSave.Contains(index))
+                {
+                    List<MyProgram> chromosome = Utility.ConvertToProgram(myOriginalCase, population[index].Choosen);
+                    int indexMutation = ran.Next(0, chromosome.Count - 1);
+                    int indexProgram = ran.Next(0, myOriginalCase.Programs.Count - 1);
+                    chromosome[indexMutation] = myOriginalCase.Programs[indexProgram];
+                    var fixedChild = FixChild(myOriginalCase, chromosome);
+                    if (fixedChild != null)
+                    {
+                        population[index] = fixedChild;
+                        indexSave.Add(index);
+                    }
+
+                }
+            }
+            return population;
+        }
+
+
+        public List<EvaluatePopulation> Resize(MyCase myOriginalCase, List<EvaluatePopulation> population, int Size, double percentCrossOver)
+        {
+            var theBest = population.OrderByDescending(x => x.revenue).Take(Size - Convert.ToInt32(Size * percentCrossOver)).ToList();
+            List<EvaluatePopulation> randomparents = new List<EvaluatePopulation>();
+            var ran = population.Where(x => !theBest.Contains(x)).ToList();
+            Random r = new Random();
+            if (ran.Count <= Convert.ToInt32(Size * percentCrossOver))
+            {
+                randomparents = ran;
+            }
+            else
+            {
+                while (randomparents.Count <= Convert.ToInt32(Size * percentCrossOver))
+                {
+                    if (ran.Count < 2)
+                    {
+                        break;
+                    }
+                    int j = r.Next(ran.Count - 1);
+                    if (!randomparents.Contains(ran[j]))
+                    {
+                        randomparents.Add(ran[j]);
+                    }
+                }
+            }
+            theBest = theBest.Concat(randomparents).ToList();
+            return theBest;
+        }
+        #endregion
+
+        #region gen 2
+        public MyStatictis Solve3(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, double mutationPercent, string filename, List<int[]> heuristics)
+        {
+            if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
+            {
+                // Create a file to write to.
+                using (StreamWriter sw = File.CreateText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
+                {
+                }
+            }
+            MyCase myOriginalCase = input;
+            double revenue = 0;
+            MyStatictis result = new MyStatictis();
+            result.noGen = 0;
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            List<EvaluatePopulation> initPopulation = CreateInitPopulation(myOriginalCase, initSize);
+            foreach(var i in heuristics)
+            {
+                EvaluatePopulation e = new EvaluatePopulation();
+                e.Choosen = i;
+                e.revenue = Utility.CalculateRevenue(myOriginalCase, i);
+                initPopulation.Add(e);
+            }
+            revenue = initPopulation.OrderByDescending(x => x.revenue).FirstOrDefault().revenue;
+            int count = 0;
+            using (System.IO.StreamWriter file = File.AppendText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
+            {
+                file.WriteLine(DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString());
+                for (var lop = 0; lop < noloop; lop++)
+                {
+                    result.noGen++;
+                    var Parents = SelectParents(myOriginalCase, initPopulation, percentCrossOver);
+                    var Children = MakeChildren(myOriginalCase, Parents);
+                    foreach (var child in Children)
+                    {
+                        initPopulation.Add(child);
+                    }
+                    initPopulation = Resize2(initPopulation, populationSize);
+                    initPopulation = Mutate(myOriginalCase, initPopulation, mutationPercent);
+                    double re = initPopulation.OrderByDescending(x => x.revenue).FirstOrDefault().revenue;
+                    if (re > revenue)
+                    {
+                        revenue = re;
+                        count = 0;
+                    }
+                    count++;
+                    Debug.WriteLine(lop + "\t" + revenue);
+                    file.WriteLine(lop + "\t" + revenue);
+                    if (count > nochange)
+                    {
+                        break;
+                    }
+                }
+                file.WriteLine("");
+            }
+            watch.Stop();
+            var elapsedH1 = watch.ElapsedMilliseconds;
+            result.Choosen = initPopulation.FirstOrDefault().Choosen;
+            result.Elapsed = elapsedH1;
+            result.Revenue = Utility.CalculateRevenue(myOriginalCase, result.Choosen);
+            return result;
+        }
+
+        #endregion
     }
+    public class EvaluatePopulation
+    {
+        public double revenue { get; set; }
+        public double min { get; set; }
+        public double max { get; set; }
+        public int[] Choosen { get; set; }
+        public bool CanBorn { get; set; }
+    }
+
 }
