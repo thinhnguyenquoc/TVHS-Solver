@@ -20,10 +20,10 @@ namespace solver_TVHS_26_7
             double solverResult = 7000000000;
             double elapsedSolver = 0;
             List<string> fileList = new List<string>(){
-                @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
+                /*@"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
                 /*@"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
@@ -42,7 +42,7 @@ namespace solver_TVHS_26_7
                 // Create a file to write to.
                 using (StreamWriter sw = File.CreateText(@"..\..\..\..\TVHS_Data_test\Result\Gen.txt"))
                 {
-                    sw.WriteLine("Test name \t Solver \t Solver elasped \t G1 \t G1 elapsed \t time");
+                    sw.WriteLine("Test name \t Solver \t Solver elasped \t G1 \t G1 elapsed \t gennum \t time");
                 }
             }
             using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\Gen.txt"))
@@ -152,19 +152,63 @@ namespace solver_TVHS_26_7
                 
                 Genetic gen = new Genetic();
                 //10% 0.5
-                //var genResult = gen.Solve2(input, 100, 500, 0.1, 30, 500, 0.005, filename);
+                var genResult1 = gen.Solve2(input, 100, 500, 0.1, 30, 500, 0.005, filename);
                 //20% 0.5
-                //var genResult = gen.Solve2(input, 100, 500, 0.2, 30, 500, 0.005, filename);
+                var genResult2 = gen.Solve2(input, 100, 500, 0.2, 30, 500, 0.005, filename);
                 //30% 0.5
-                //var genResult = gen.Solve2(input, 100, 500, 0.3, 30, 500, 0.005, filename);
+                var genResult3 = gen.Solve2(input, 100, 500, 0.3, 30, 500, 0.005, filename);
                 //40% 0.5
-                var genResult = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.005, filename);
+                var genResult4 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.005, filename);
+                //50% 0.5
+                var genResult5 = gen.Solve2(input, 100, 500, 0.5, 30, 500, 0.005, filename);
 
-                var vgen = Validate.ValidateResult(input, genResult.Choosen);
-                foreach (var i in vgen)
-                {
-                    Debug.WriteLine(i);
-                }
+                //10% 1
+                var genResult6 = gen.Solve2(input, 100, 500, 0.1, 30, 500, 0.01, filename);
+                //20% 1
+                var genResult7 = gen.Solve2(input, 100, 500, 0.2, 30, 500, 0.01, filename);
+                //30% 1
+                var genResult8 = gen.Solve2(input, 100, 500, 0.3, 30, 500, 0.01, filename);
+                //40% 1
+                var genResult9 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.01, filename);
+                //50% 1
+                var genResult10 = gen.Solve2(input, 100, 500, 0.5, 30, 500, 0.01, filename);
+
+                //10% 2
+                var genResult11 = gen.Solve2(input, 100, 500, 0.1, 30, 500, 0.02, filename);
+                //20% 2
+                var genResult12 = gen.Solve2(input, 100, 500, 0.2, 30, 500, 0.02, filename);
+                //30% 2
+                var genResult13 = gen.Solve2(input, 100, 500, 0.3, 30, 500, 0.02, filename);
+                //40% 2
+                var genResult14 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.02, filename);
+                //50% 2
+                var genResult15 = gen.Solve2(input, 100, 500, 0.5, 30, 500, 0.02, filename);
+
+                //10% 5
+                var genResult16 = gen.Solve2(input, 100, 500, 0.1, 30, 500, 0.05, filename);
+                //20 % 5
+                var genResult17 = gen.Solve2(input, 100, 500, 0.2, 30, 500, 0.05, filename);
+                //30% 5
+                var genResult18 = gen.Solve2(input, 100, 500, 0.3, 30, 500, 0.05, filename);
+                //40% 5
+                var genResult19 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.05, filename);
+                //50% 5
+                var genResult20 = gen.Solve2(input, 100, 500, 0.5, 30, 500, 0.05, filename);
+
+                //10% 10
+                var genResult21 = gen.Solve2(input, 100, 500, 0.1, 30, 500, 0.1, filename);
+                //20 % 10
+                var genResult22 = gen.Solve2(input, 100, 500, 0.2, 30, 500, 0.1, filename);
+                //30% 10
+                var genResult23 = gen.Solve2(input, 100, 500, 0.3, 30, 500, 0.1, filename);
+                //40% 10
+                var genResult24 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.1, filename);
+                //50% 10
+                var genResult25 = gen.Solve2(input, 100, 500, 0.5, 30, 500, 0.1, filename);
+                Debug.WriteLine("");
+
+                Debug.WriteLine("");
+               
                 Debug.WriteLine("");
 
 
@@ -172,7 +216,31 @@ namespace solver_TVHS_26_7
                 {
                     string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
                     string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
-                    file.WriteLine(testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult.Revenue + " \t " + genResult.Elapsed + " \t " + time);
+                    file.WriteLine("G1" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult1.Revenue + " \t " + genResult1.Elapsed + " \t " + genResult1.noGen + " \t " + time);
+                    file.WriteLine("G2" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult2.Revenue + " \t " + genResult2.Elapsed + " \t " + genResult2.noGen + " \t " + time);
+                    file.WriteLine("G3" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult3.Revenue + " \t " + genResult3.Elapsed + " \t " + genResult3.noGen + " \t " + time);
+                    file.WriteLine("G4" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult4.Revenue + " \t " + genResult4.Elapsed + " \t " + genResult4.noGen + " \t " + time);
+                    file.WriteLine("G5" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult5.Revenue + " \t " + genResult5.Elapsed + " \t " + genResult5.noGen + " \t " + time);
+                    file.WriteLine("G6" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult6.Revenue + " \t " + genResult6.Elapsed + " \t " + genResult6.noGen + " \t " + time);
+                    file.WriteLine("G7" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult7.Revenue + " \t " + genResult7.Elapsed + " \t " + genResult7.noGen + " \t " + time);
+                    file.WriteLine("G8" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult8.Revenue + " \t " + genResult8.Elapsed + " \t " + genResult8.noGen + " \t " + time);
+                    file.WriteLine("G9" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult9.Revenue + " \t " + genResult9.Elapsed + " \t " + genResult9.noGen + " \t " + time);
+                    file.WriteLine("G10" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult10.Revenue + " \t " + genResult10.Elapsed + " \t " + genResult10.noGen + " \t " + time);
+                    file.WriteLine("G11" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult11.Revenue + " \t " + genResult11.Elapsed + " \t " + genResult11.noGen + " \t " + time);
+                    file.WriteLine("G12" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult12.Revenue + " \t " + genResult12.Elapsed + " \t " + genResult12.noGen + " \t " + time);
+                    file.WriteLine("G13" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult13.Revenue + " \t " + genResult13.Elapsed + " \t " + genResult13.noGen + " \t " + time);
+                    file.WriteLine("G14" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult14.Revenue + " \t " + genResult14.Elapsed + " \t " + genResult14.noGen + " \t " + time);
+                    file.WriteLine("G15" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult15.Revenue + " \t " + genResult15.Elapsed + " \t " + genResult15.noGen + " \t " + time);
+                    file.WriteLine("G16" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult16.Revenue + " \t " + genResult16.Elapsed + " \t " + genResult16.noGen + " \t " + time);
+                    file.WriteLine("G17" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult17.Revenue + " \t " + genResult17.Elapsed + " \t " + genResult17.noGen + " \t " + time);
+                    file.WriteLine("G18" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult18.Revenue + " \t " + genResult18.Elapsed + " \t " + genResult18.noGen + " \t " + time);
+                    file.WriteLine("G19" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult19.Revenue + " \t " + genResult19.Elapsed + " \t " + genResult19.noGen + " \t " + time);
+                    file.WriteLine("G20" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult20.Revenue + " \t " + genResult20.Elapsed + " \t " + genResult20.noGen + " \t " + time);
+                    file.WriteLine("G21" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult21.Revenue + " \t " + genResult21.Elapsed + " \t " + genResult21.noGen + " \t " + time);
+                    file.WriteLine("G22" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult22.Revenue + " \t " + genResult22.Elapsed + " \t " + genResult22.noGen + " \t " + time);
+                    file.WriteLine("G23" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult23.Revenue + " \t " + genResult23.Elapsed + " \t " + genResult23.noGen + " \t " + time);
+                    file.WriteLine("G24" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult24.Revenue + " \t " + genResult24.Elapsed + " \t " + genResult24.noGen + " \t " + time);
+                    file.WriteLine("G25" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult25.Revenue + " \t " + genResult25.Elapsed + " \t " + genResult25.noGen + " \t " + time);
                 }
                 
                 #endregion

@@ -10,7 +10,11 @@ namespace solver_TVHS_26_7
        
         public static int[] ValidateResult(MyCase myCase, int[] Choosen)
         {         
-            int[] result = new int[6];
+            int[] result = new int[7];
+            if (!ValidateContinuePrograms(myCase, Choosen))
+                result[6] = -7;
+            else
+                result[6] = 0;
             if (!ValidateTimeFrame(myCase, Choosen))
                 result[0] = -1;
             else
@@ -169,6 +173,28 @@ namespace solver_TVHS_26_7
                 int TotalTime = Choosen.Where(x => ProgramId.Contains(x)).Count();
                 if (TotalTime > gr.TotalTime)
                     return false;
+            }
+            return true;
+        }
+
+        public static bool ValidateContinuePrograms(MyCase myCase, int[] Choosen)
+        {
+            foreach (var pro in myCase.Programs)
+            {
+                int mark = 0;
+                for (int i = 0; i < Choosen.Count(); i++)
+                {
+                    if (Choosen[i] != -1 && Choosen[i] == pro.Id)
+                    {
+                        mark++;
+                        if (mark > pro.Duration)
+                            return false;
+                    }
+                    if (Choosen[i] != -1 && Choosen[i] != pro.Id)
+                    {
+                        mark = 0;
+                    }
+                }
             }
             return true;
         }
