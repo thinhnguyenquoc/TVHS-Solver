@@ -20,19 +20,19 @@ namespace solver_TVHS_26_7
             double solverResult = 7000000000;
             double elapsedSolver = 0;
             List<string> fileList = new List<string>(){
-                //@"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
-                /*@"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
-                /*@"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\8-1_9-1_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\24-8_30-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\27-7_2-8_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\31-8_6-9_2015\F0-F10.xlsx",*/
+                @"..\..\..\..\TVHS_Data_test\31-8_6-9_2015\F0-F10.xlsx",
             };
 
             #endregion
@@ -59,6 +59,19 @@ namespace solver_TVHS_26_7
             }
 
             using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\Heuristic.txt"))
+            {
+                file.WriteLine("");
+            }
+
+            if (!File.Exists(@"..\..\..\..\TVHS_Data_test\Result\GA1.txt"))
+            {
+                // Create a file to write to.
+                using (StreamWriter sw = File.CreateText(@"..\..\..\..\TVHS_Data_test\Result\GA1.txt"))
+                {
+                    sw.WriteLine("Test name \t Solver \t Solver elasped \t G1 \t G1 elapsed \t gennum \t time");
+                }
+            }
+            using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\GA1.txt"))
             {
                 file.WriteLine("");
             }
@@ -92,7 +105,7 @@ namespace solver_TVHS_26_7
                 #endregion
 
                 #region calculate heuristic  
-                   
+                /*   
                 var heuristic = new Heuristic();
                 var heuristicResult1 = heuristic.strategy1(input, filename);
                 heuristicResult1.Ratio = heuristicResult1.Revenue / solverResult;
@@ -145,10 +158,11 @@ namespace solver_TVHS_26_7
                     string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
                     file.WriteLine(testName +" \t "+ solverResult+ " \t " + elapsedSolver + " \t " + heuristicResult1.Revenue + " \t " + heuristicResult1.Elapsed + " \t " + heuristicResult2.Revenue + " \t " + heuristicResult2.Elapsed + " \t " + heuristicResult3.Revenue + " \t " + heuristicResult3.Elapsed + " \t " + heuristicResult4.Revenue + " \t " + heuristicResult4.Elapsed + " \t " + time);                               
                 }
-
+                */
                 #endregion
 
-                #region gen
+                #region gen parameter
+                /*
                 List<int[]> heuristics = new List<int[]>();
                 heuristics.Add(heuristicResult1.Choosen);
                 heuristics.Add(heuristicResult2.Choosen);
@@ -305,7 +319,41 @@ namespace solver_TVHS_26_7
                     file.WriteLine("G24" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult24.Revenue + " \t " + genResult24.Elapsed + " \t " + genResult24.noGen + " \t " + time);
                     file.WriteLine("G25" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult25.Revenue + " \t " + genResult25.Elapsed + " \t " + genResult25.noGen + " \t " + time);
                 }
-                
+                */
+                #endregion
+
+                #region GA 1
+                /*Genetic gen = new Genetic();
+                var genResult4 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.005, filename);
+
+                using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\GA1.txt"))
+                {
+                    string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
+                    string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
+                    file.WriteLine("GA1" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult4.Revenue + " \t " + genResult4.Elapsed + " \t " + genResult4.noGen + " \t " + time);                 
+                }*/
+                #endregion
+
+                #region GA 2
+                var heuristic = new Heuristic();
+                var heuristicResult1 = heuristic.strategy1(input, filename);
+                var heuristicResult2 = heuristic.strategy2(input, filename);
+                var heuristicResult3 = heuristic.strategy3(input, filename);
+                var heuristicResult4 = heuristic.strategy4(input, filename);
+                List<int[]> heuristics = new List<int[]>();
+                heuristics.Add(heuristicResult1.Choosen);
+                heuristics.Add(heuristicResult2.Choosen);
+                heuristics.Add(heuristicResult3.Choosen);
+                heuristics.Add(heuristicResult4.Choosen);
+                Genetic gen = new Genetic();
+                var genResult3 = gen.Solve3(input, 100, 500, 0.3, 30, 500, 0.005, filename,heuristics);
+
+                using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\GA2.txt"))
+                {
+                    string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
+                    string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
+                    file.WriteLine("GA2" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult3.Revenue + " \t " + genResult3.Elapsed + " \t " + genResult3.noGen + " \t " + time);
+                }
                 #endregion
             }
 
