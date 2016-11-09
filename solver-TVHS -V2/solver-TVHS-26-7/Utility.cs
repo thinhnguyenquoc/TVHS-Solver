@@ -82,6 +82,19 @@ namespace solver_TVHS_26_7
             myCase.Groups.Where(x => x.Id == item.GroupId).FirstOrDefault().TotalTime -= item.Duration;       
         }
 
+        public static void AssignProgramToScheTree(int[] Choosen, int startAv, MyProgram item, MyGroup group)
+        {
+            ////assign program to frame
+            for (int j = 0; j < item.Duration; j++)
+            {
+                Choosen[startAv] = item.Id;
+                startAv++;
+            }
+            //// decrease the maximum show time of this program
+            item.MaxShowTime--;
+            group.TotalTime -= item.Duration;
+        }
+
         public static void UpdateUnOccupiedFrameTime(MyCase myCase, int[] Choosen)
         {
             //// update frame unoccupate
