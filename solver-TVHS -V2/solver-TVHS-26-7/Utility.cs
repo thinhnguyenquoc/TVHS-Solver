@@ -162,6 +162,60 @@ namespace solver_TVHS_26_7
             return result;
         }
 
+        public static List<MyProgram> RandomProgramListTree(List<MyProgram> OriginalPrograms)
+        {
+            List<MyProgram> result = new List<MyProgram>();
+            Random r = new Random();
+            List<int> saveList = new List<int>();
+            for (int i = 0; i < OriginalPrograms.Count; i++)
+            {
+                var rn = r.Next(OriginalPrograms.Count);
+                if (!saveList.Contains(rn))
+                {
+                    saveList.Add(rn);
+                }
+            }
+            foreach(var i in saveList)
+            {
+                result.Add(OriginalPrograms[i]);
+            }
+            for (int i = 0; i < OriginalPrograms.Count; i++)
+            {
+                if (!saveList.Contains(i))
+                {
+                    result.Add(OriginalPrograms[i]);
+                }
+            }
+            return result;
+        }
+
+        public static List<MyTimeFrame> RandomFrameListTree(List<MyTimeFrame> OriginalFrames)
+        {
+            List<MyTimeFrame> result = new List<MyTimeFrame>();
+            Random r = new Random();
+            List<int> saveList = new List<int>();
+            for (int i = 0; i < OriginalFrames.Count; i++)
+            {
+                var rn = r.Next(OriginalFrames.Count);
+                if (!saveList.Contains(rn))
+                {
+                    saveList.Add(rn);
+                }
+            }
+            foreach (var i in saveList)
+            {
+                result.Add(OriginalFrames[i]);
+            }
+            for (int i = 0; i < OriginalFrames.Count; i++)
+            {
+                if (!saveList.Contains(i))
+                {
+                    result.Add(OriginalFrames[i]);
+                }
+            }
+            return result;
+        }
+
         public static List<MyTimeFrame> RandomFrameList(List<MyTimeFrame> OriginalFrames)
         {
             Random r = new Random();

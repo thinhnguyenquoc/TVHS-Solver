@@ -21,18 +21,18 @@ namespace solver_TVHS_26_7
             double elapsedSolver = 0;
             List<string> fileList = new List<string>(){
                 @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\8-1_9-1_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\24-8_30-8_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\27-7_2-8_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\31-8_6-9_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\8-1_9-1_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\24-8_30-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\27-7_2-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\31-8_6-9_2015\F0-F10.xlsx",
             };
 
             #endregion
@@ -105,7 +105,7 @@ namespace solver_TVHS_26_7
                 #endregion
 
                 #region calculate heuristic  
-                /*   
+                   
                 var heuristic = new Heuristic();
                 var heuristicResult1 = heuristic.strategy1(input, filename);
                 heuristicResult1.Ratio = heuristicResult1.Revenue / solverResult;
@@ -113,9 +113,7 @@ namespace solver_TVHS_26_7
                 heuristicResult2.Ratio = heuristicResult2.Revenue / solverResult;
                 var heuristicResult3 = heuristic.strategy3(input, filename);
                 heuristicResult3.Ratio = heuristicResult3.Revenue / solverResult;
-                var heuristicResult4 = heuristic.strategy4(input, filename);
-                heuristicResult4.Ratio = heuristicResult4.Revenue / solverResult;
-
+               
                 var v = Validate.ValidateResult(input, heuristicResult1.Choosen);
                 foreach (var i in v)
                 {
@@ -135,13 +133,7 @@ namespace solver_TVHS_26_7
                     Debug.WriteLine(i);
                 }
                 Debug.WriteLine("");
-                v = Validate.ValidateResult(input, heuristicResult4.Choosen);
-                foreach (var i in v)
-                {
-                    Debug.WriteLine(i);
-                }
-                Debug.WriteLine("");
-
+                
 
                 if (!File.Exists(@"..\..\..\..\TVHS_Data_test\Result\Heuristic.txt"))
                 {
@@ -156,9 +148,9 @@ namespace solver_TVHS_26_7
                 {
                     string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
                     string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
-                    file.WriteLine(testName +" \t "+ solverResult+ " \t " + elapsedSolver + " \t " + heuristicResult1.Revenue + " \t " + heuristicResult1.Elapsed + " \t " + heuristicResult2.Revenue + " \t " + heuristicResult2.Elapsed + " \t " + heuristicResult3.Revenue + " \t " + heuristicResult3.Elapsed + " \t " + heuristicResult4.Revenue + " \t " + heuristicResult4.Elapsed + " \t " + time);                               
+                    file.WriteLine(testName +" \t "+ solverResult+ " \t " + elapsedSolver + " \t " + heuristicResult1.Revenue + " \t " + heuristicResult1.Elapsed + " \t " + heuristicResult2.Revenue + " \t " + heuristicResult2.Elapsed + " \t " + heuristicResult3.Revenue + " \t " + heuristicResult3.Elapsed + " \t " + time);                               
                 }
-                */
+
                 #endregion
 
                 #region gen parameter
@@ -167,7 +159,6 @@ namespace solver_TVHS_26_7
                 heuristics.Add(heuristicResult1.Choosen);
                 heuristics.Add(heuristicResult2.Choosen);
                 heuristics.Add(heuristicResult3.Choosen);
-                heuristics.Add(heuristicResult4.Choosen);
 
                 Genetic gen = new Genetic();
                 //10% 0.5
@@ -335,25 +326,25 @@ namespace solver_TVHS_26_7
                 #endregion
 
                 #region GA 2
-                var heuristic = new Heuristic();
-                var heuristicResult1 = heuristic.strategy1(input, filename);
-                var heuristicResult2 = heuristic.strategy2(input, filename);
-                var heuristicResult3 = heuristic.strategy3(input, filename);
-                var heuristicResult4 = heuristic.strategy4(input, filename);
-                List<int[]> heuristics = new List<int[]>();
-                heuristics.Add(heuristicResult1.Choosen);
-                heuristics.Add(heuristicResult2.Choosen);
-                heuristics.Add(heuristicResult3.Choosen);
-                heuristics.Add(heuristicResult4.Choosen);
-                Genetic gen = new Genetic();
-                var genResult3 = gen.Solve3_1(input, 100, 500, 0.3, 30, 500, 0.005, filename,heuristics);
+                /*
+               var heuristic = new Heuristic();
+               var heuristicResult1 = heuristic.strategy1(input, filename);
+               var heuristicResult2 = heuristic.strategy2(input, filename);
+               var heuristicResult3 = heuristic.strategy3(input, filename);
+               List<int[]> heuristics = new List<int[]>();
+               heuristics.Add(heuristicResult1.Choosen);
+               heuristics.Add(heuristicResult2.Choosen);
+               heuristics.Add(heuristicResult3.Choosen);
+               Genetic gen = new Genetic();
+               var genResult3 = gen.Solve3_1(input, 100, 500, 0.3, 30, 500, 0.005, filename,heuristics);
 
-                using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\GA2.txt"))
-                {
-                    string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
-                    string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
-                    file.WriteLine("GA2" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult3.Revenue + " \t " + genResult3.Elapsed + " \t " + genResult3.noGen + " \t " + time);
-                }
+               using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\GA2.txt"))
+               {
+                   string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
+                   string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
+                   file.WriteLine("GA2" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult3.Revenue + " \t " + genResult3.Elapsed + " \t " + genResult3.noGen + " \t " + time);
+               }
+               */
                 #endregion
             }
 

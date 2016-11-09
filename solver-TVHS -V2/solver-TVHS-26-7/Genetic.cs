@@ -199,14 +199,14 @@ namespace solver_TVHS_26_7
                 #region assign program to frame
                 while (true)
                 {
-                    var list1 = Utility.RandomProgramList(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
+                    var list1 = Utility.RandomProgramListTree(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
                     foreach (var item in list1)
                     {
                         var gr = myCase.Groups.Where(x => x.Id == item.GroupId).FirstOrDefault();
                         #region group still has cota
                         if (gr.TotalTime >= item.Duration)
                         {
-                            var FrameList = Utility.RandomFrameList(item.FrameList);
+                            var FrameList = Utility.RandomFrameListTree(item.FrameList);
                             foreach (var frame in FrameList)
                             {
                                 int startAv = Utility.GetFirstAvailableSlotInFrame(myCase, Choosen, frame);
@@ -867,6 +867,61 @@ namespace solver_TVHS_26_7
             theBest = theBest.Concat(randomparents).ToList();
             return theBest;
         }
+        #endregion
+
+        #region gen 1_1
+        public MyStatictis Solve2_1(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, double mutationPercent, string filename)
+        {
+            if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
+            {
+                // Create a file to write to.
+                using (StreamWriter sw = File.CreateText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
+                {
+                }
+            }
+            MyCase myOriginalCase = input;
+            double revenue = 0;
+            MyStatictis result = new MyStatictis();
+            result.noGen = 0;
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            List<EvaluatePopulation> initPopulation = CreateInitPopulationTree(myOriginalCase, initSize);
+            revenue = initPopulation.Max(x => x.revenue);
+            int count = 0;
+            using (System.IO.StreamWriter file = File.AppendText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultProcessGen.txt"))
+            {
+                file.WriteLine(DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString());
+                for (var lop = 0; lop < noloop; lop++)
+                {
+                    result.noGen++;
+                    var Parents = SelectParentsTree(myOriginalCase, initPopulation, percentCrossOver);
+                    var Children = MakeChildrenTree(myOriginalCase, Parents);
+                    initPopulation = initPopulation.Concat(Children).ToList();                   
+                    initPopulation = Resize2(initPopulation, populationSize);
+                    initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent);
+                    double re = initPopulation.Max(x => x.revenue);
+                    if (re > revenue)
+                    {
+                        revenue = re;
+                        count = 0;
+                    }
+                    count++;
+                    Debug.WriteLine(lop + "\t" + revenue);
+                    file.WriteLine(lop + "\t" + revenue);
+                    if (count > nochange)
+                    {
+                        break;
+                    }
+                }
+                file.WriteLine("");
+            }
+            watch.Stop();
+            var elapsedH1 = watch.ElapsedMilliseconds;
+            result.Choosen = initPopulation.FirstOrDefault().Choosen;
+            result.Elapsed = elapsedH1;
+            result.Revenue = Utility.CalculateRevenue(myOriginalCase, result.Choosen);
+            return result;
+        }
+       
         #endregion
 
         #region gen 2

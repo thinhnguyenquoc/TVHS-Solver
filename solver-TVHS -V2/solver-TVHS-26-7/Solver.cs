@@ -157,7 +157,6 @@ namespace solver_TVHS_26_7
 
                 #region result
                 var directive = new SimplexDirective();
-                //directive.TimeLimit = 60000;
                 var solution = context.Solve(directive);
                 context.PropagateDecisions();
                 var obs = choose.GetValues().ToList().Where(x => Convert.ToDouble(x.First()) > 0).ToList();
@@ -181,7 +180,7 @@ namespace solver_TVHS_26_7
 
                 #region generate result
                 using (System.IO.StreamWriter file =
-                    new System.IO.StreamWriter(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultBS.txt"))
+                    new System.IO.StreamWriter(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultBS_"+myCase.Theta1+"_"+myCase.Theta2+".txt"))
                 {
                     foreach (var i in obs)
                     {
