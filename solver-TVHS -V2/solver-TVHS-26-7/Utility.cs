@@ -9,11 +9,11 @@ namespace solver_TVHS_26_7
 {
     public static class Utility
     {
-        public static int GetFirstAvailableSlotInFrame(MyCase myCase, int[] Choosen, MyTimeFrame frame)
+        public static int GetFirstAvailableSlotInFrame(MyCase myCase, int[] choosen, MyTimeFrame frame)
         {
             for (int i = frame.Start; i <= frame.End; i++)
             {
-                if (Choosen[i - 1] == -1)
+                if (choosen[i - 1] == -1)
                 {
                     return i - 1;
                 }
@@ -21,7 +21,7 @@ namespace solver_TVHS_26_7
             return -1;
         }
 
-        public static bool CheckAssignableProgram(MyCase myCase, int[] Choosen, int startAv, MyProgram item)
+        public static bool CheckAssignableProgram(MyCase myCase, int[] choosen, int startAv, MyProgram item)
         {
             // out bound of array time
             if (startAv + item.Duration - 1 >= myCase.Times.Count)
@@ -31,9 +31,9 @@ namespace solver_TVHS_26_7
             else
             {
                 // check space which has enough free space to assign program
-                for (int m = startAv; m < startAv + item.Duration; m++)
+                for (var m = startAv; m < startAv + item.Duration; m++)
                 {
-                    if (Choosen[m] != -1)
+                    if (choosen[m] != -1)
                     {
                         return false;
                     }
@@ -42,12 +42,12 @@ namespace solver_TVHS_26_7
             return true;
         }
 
-        public static bool CheckTooClose(MyCase myCase, int[] Choosen, int startAv, MyProgram item)
+        public static bool CheckTooClose(MyCase myCase, int[] choosen, int startAv, MyProgram item)
         {
             // check successor program
             for (int m = startAv; m < Math.Min(startAv + myCase.Delta, myCase.Times.Count); m++)
             {
-                if (Choosen[m] == item.Id)
+                if (choosen[m] == item.Id)
                 {
                     return false;
                 }
@@ -56,17 +56,13 @@ namespace solver_TVHS_26_7
 
             for (int i = startAv; i >=0 ; i--)
             {
-                if (Choosen[i] == item.Id)
+                if (choosen[i] == item.Id)
                 {
                     nearest = i;
                     break;
                 }
             }
-
-            if(nearest != -1 && startAv-nearest + item.Duration <= myCase.Delta )               
-                return false;
-                  
-            return true;
+            return nearest == -1 || startAv-(nearest - item.Duration+1)+1 > myCase.Delta;
         }
 
         public static void AssignProgramToSche(MyCase myCase, int[] Choosen, int startAv, MyProgram item)
@@ -82,12 +78,12 @@ namespace solver_TVHS_26_7
             myCase.Groups.Where(x => x.Id == item.GroupId).FirstOrDefault().TotalTime -= item.Duration;       
         }
 
-        public static void AssignProgramToScheTree(int[] Choosen, int startAv, MyProgram item, MyGroup group)
+        public static void AssignProgramToScheTree(int[] choosen, int startAv, MyProgram item, MyGroup group)
         {
             ////assign program to frame
             for (int j = 0; j < item.Duration; j++)
             {
-                Choosen[startAv] = item.Id;
+                choosen[startAv] = item.Id;
                 startAv++;
             }
             //// decrease the maximum show time of this program
@@ -162,14 +158,14 @@ namespace solver_TVHS_26_7
             return result;
         }
 
-        public static List<MyProgram> RandomProgramListTree(List<MyProgram> OriginalPrograms)
+        public static List<MyProgram> RandomProgramListTree(List<MyProgram> originalPrograms)
         {
-            List<MyProgram> result = new List<MyProgram>();
-            Random r = new Random();
-            List<int> saveList = new List<int>();
-            for (int i = 0; i < OriginalPrograms.Count; i++)
+            var result = new List<MyProgram>();
+            var r = new Random();
+            var saveList = new List<int>();
+            for (var i = 0; i < originalPrograms.Count; i++)
             {
-                var rn = r.Next(OriginalPrograms.Count);
+                var rn = r.Next(originalPrograms.Count);
                 if (!saveList.Contains(rn))
                 {
                     saveList.Add(rn);
@@ -177,26 +173,26 @@ namespace solver_TVHS_26_7
             }
             foreach(var i in saveList)
             {
-                result.Add(OriginalPrograms[i]);
+                result.Add(originalPrograms[i]);
             }
-            for (int i = 0; i < OriginalPrograms.Count; i++)
+            for (int i = 0; i < originalPrograms.Count; i++)
             {
                 if (!saveList.Contains(i))
                 {
-                    result.Add(OriginalPrograms[i]);
+                    result.Add(originalPrograms[i]);
                 }
             }
             return result;
         }
 
-        public static List<MyTimeFrame> RandomFrameListTree(List<MyTimeFrame> OriginalFrames)
+        public static List<MyTimeFrame> RandomFrameListTree(List<MyTimeFrame> originalFrames)
         {
-            List<MyTimeFrame> result = new List<MyTimeFrame>();
-            Random r = new Random();
-            List<int> saveList = new List<int>();
-            for (int i = 0; i < OriginalFrames.Count; i++)
+            var result = new List<MyTimeFrame>();
+            var r = new Random();
+            var saveList = new List<int>();
+            for (int i = 0; i < originalFrames.Count; i++)
             {
-                var rn = r.Next(OriginalFrames.Count);
+                var rn = r.Next(originalFrames.Count);
                 if (!saveList.Contains(rn))
                 {
                     saveList.Add(rn);
@@ -204,13 +200,13 @@ namespace solver_TVHS_26_7
             }
             foreach (var i in saveList)
             {
-                result.Add(OriginalFrames[i]);
+                result.Add(originalFrames[i]);
             }
-            for (int i = 0; i < OriginalFrames.Count; i++)
+            for (int i = 0; i < originalFrames.Count; i++)
             {
                 if (!saveList.Contains(i))
                 {
-                    result.Add(OriginalFrames[i]);
+                    result.Add(originalFrames[i]);
                 }
             }
             return result;
@@ -378,15 +374,13 @@ namespace solver_TVHS_26_7
 
         public static List<MyProgram> ConvertToProgram(MyCase myCase, int[] array)
         {
-            int mark = -1;
-            List<MyProgram> proList = new List<MyProgram>();
-            for (int i = 0; i < array.Count(); i++)
+            var mark = -1;
+            var proList = new List<MyProgram>();
+            for (var i = 0; i < array.Count(); i++)
             {
-                if (array[i] != -1 && array[i] != mark)
-                {
-                    proList.Add(myCase.Programs.Where(x => x.Id == array[i]).FirstOrDefault());
-                    mark = array[i];
-                }
+                if (array[i] == -1 || array[i] == mark) continue;
+                proList.Add(myCase.Programs.First(x => x.Id == array[i]));
+                mark = array[i];
             }
             return proList;
         } 

@@ -20,19 +20,22 @@ namespace solver_TVHS_26_7
             double solverResult = 7000000000;
             double elapsedSolver = 0;
             List<string> fileList = new List<string>(){
-                @"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
                 @"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\8-1_9-1_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\24-8_30-8_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\27-7_2-8_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\31-8_6-9_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\27-7_2-8_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\24-8_30-8_2015\F0-F10.xlsx",
+
+                //@"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\21-9_27-9_2015\F0-F10.xlsx",
+
+                //@"..\..\..\..\TVHS_Data_test\31-8_6-9_2015\F0-F10.xlsx",
+                //2016
+
             };
 
             #endregion
@@ -78,82 +81,93 @@ namespace solver_TVHS_26_7
             #endregion
             foreach (var filename in fileList)
             {
-                MyCase input = InitData(filename);
+                var input = InitData(filename);
                 #region call solver
                 //var solver = new Solver();
                 //var solveResult = solver.Solve(input, filename);
                 #endregion
 
                 #region read solver result 
-                
-               string solverUrl = filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultBS.txt";
-               string[] lines = System.IO.File.ReadAllLines(solverUrl);
-               foreach (string line in lines)
-               {
-                   if (line.Contains("RBS"))
-                   {
-                        var a = line.Split(new string[] { "\t" }, StringSplitOptions.None);                       
-                        solverResult = Convert.ToDouble(a[1]);                       
-                   }
-                   if (line.Contains("total time of"))
-                   {
-                       var a = line.Split(new string[] { "total time of" }, StringSplitOptions.None)[1];
-                       var b = a.Split(new string[] { "ms" }, StringSplitOptions.None)[0];
-                       elapsedSolver = Convert.ToDouble(b);
-                   }
-               }
+
+                //string solverUrl = filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_resultBS.txt";
+                //string[] lines = System.IO.File.ReadAllLines(solverUrl);
+                //foreach (string line in lines)
+                //{
+                //    if (line.Contains("RBS"))
+                //    {
+                //        var a = line.Split(new string[] { "\t" }, StringSplitOptions.None);
+                //        solverResult = Convert.ToDouble(a[1]);
+                //    }
+                //    if (line.Contains("total time of"))
+                //    {
+                //        var a = line.Split(new string[] { "total time of" }, StringSplitOptions.None)[1];
+                //        var b = a.Split(new string[] { "ms" }, StringSplitOptions.None)[0];
+                //        elapsedSolver = Convert.ToDouble(b);
+                //    }
+                //}
                 #endregion
 
                 #region calculate heuristic  
-                   
-                var heuristic = new Heuristic();
-                var heuristicResult1 = heuristic.strategy1(input, filename);
-                heuristicResult1.Ratio = heuristicResult1.Revenue / solverResult;
-                var heuristicResult2 = heuristic.strategy2(input, filename);
-                heuristicResult2.Ratio = heuristicResult2.Revenue / solverResult;
-                var heuristicResult3 = heuristic.strategy3(input, filename);
-                heuristicResult3.Ratio = heuristicResult3.Revenue / solverResult;
-               
-                var v = Validate.ValidateResult(input, heuristicResult1.Choosen);
-                foreach (var i in v)
-                {
-                    Debug.WriteLine(i);
-                }
-                Debug.WriteLine("");
 
-                v = Validate.ValidateResult(input, heuristicResult2.Choosen);
-                foreach (var i in v)
-                {
-                    Debug.WriteLine(i);
-                }
-                Debug.WriteLine("");
-                v = Validate.ValidateResult(input, heuristicResult3.Choosen);
-                foreach (var i in v)
-                {
-                    Debug.WriteLine(i);
-                }
-                Debug.WriteLine("");
-                
+                //var heuristic = new Heuristic();
+                //var heuristicResult1 = heuristic.strategy1(input, filename);
+                //heuristicResult1.Ratio = heuristicResult1.Revenue / solverResult;
+                //var heuristicResult2 = heuristic.strategy2(input, filename);
+                //heuristicResult2.Ratio = heuristicResult2.Revenue / solverResult;
+                //var heuristicResult3 = heuristic.strategy3(input, filename);
+                //heuristicResult3.Ratio = heuristicResult3.Revenue / solverResult;
 
-                if (!File.Exists(@"..\..\..\..\TVHS_Data_test\Result\Heuristic.txt"))
-                {
-                    // Create a file to write to.
-                    using (StreamWriter sw = File.CreateText(@"..\..\..\..\TVHS_Data_test\Result\Heuristic.txt"))
-                    {
-                        sw.WriteLine("Test name \t Solver \t Solver elasped \t H1 \t H1 elapsed \t H2 \t H2 elapsed \t H3 \t H3 elapsed \t H4 \t H4 elapsed \t time");
-                    }
-                }
+                //var v = Validate.ValidateResult(input, heuristicResult1.Choosen);
+                //foreach (var i in v)
+                //{
+                //    Debug.WriteLine(i);
+                //}
+                //Debug.WriteLine("");
 
-                using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\Heuristic.txt"))
-                {
-                    string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
-                    string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
-                    file.WriteLine(testName +" \t "+ solverResult+ " \t " + elapsedSolver + " \t " + heuristicResult1.Revenue + " \t " + heuristicResult1.Elapsed + " \t " + heuristicResult2.Revenue + " \t " + heuristicResult2.Elapsed + " \t " + heuristicResult3.Revenue + " \t " + heuristicResult3.Elapsed + " \t " + time);                               
-                }
+                //v = Validate.ValidateResult(input, heuristicResult2.Choosen);
+                //foreach (var i in v)
+                //{
+                //    Debug.WriteLine(i);
+                //}
+                //Debug.WriteLine("");
+                //v = Validate.ValidateResult(input, heuristicResult3.Choosen);
+                //foreach (var i in v)
+                //{
+                //    Debug.WriteLine(i);
+                //}
+                //Debug.WriteLine("");
+
+
+                //if (!File.Exists(@"..\..\..\..\TVHS_Data_test\Result\Heuristic.txt"))
+                //{
+                //    // Create a file to write to.
+                //    using (StreamWriter sw = File.CreateText(@"..\..\..\..\TVHS_Data_test\Result\Heuristic.txt"))
+                //    {
+                //        sw.WriteLine("Test name \t Solver \t Solver elasped \t H1 \t H1 elapsed \t H2 \t H2 elapsed \t H3 \t H3 elapsed \t H4 \t H4 elapsed \t time");
+                //    }
+                //}
+
+                //using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\Heuristic.txt"))
+                //{
+                //    string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
+                //    string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
+                //    file.WriteLine(testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + heuristicResult1.Revenue + " \t " + heuristicResult1.Elapsed + " \t " + heuristicResult2.Revenue + " \t " + heuristicResult2.Elapsed + " \t " + heuristicResult3.Revenue + " \t " + heuristicResult3.Elapsed + " \t " + time);
+                //}
 
                 #endregion
 
                 #region gen parameter
+                var gen = new Genetic();
+                //10% 0.5
+                //var genResult1 = gen.Solve1(input, 100, 500, 0.1, 100, 500, 0.005, filename);
+                //20% 0.5
+                //var genResult2 = gen.Solve1(input, 100, 500, 0.2, 100, 500, 0.005, filename);
+                //30% 0.5
+                var genResult3 = gen.Solve1(input, 100, 500, 0.3, 60, 500, 0.005, filename);
+                //40% 0.5
+                var genResult4 = gen.Solve1(input, 100, 500, 0.4, 60, 500, 0.005, filename);
+                //50% 0.5
+                //var genResult5 = gen.Solve1(input, 100, 500, 0.5, 100, 500, 0.005, filename);
                 /*
                 List<int[]> heuristics = new List<int[]>();
                 heuristics.Add(heuristicResult1.Choosen);
@@ -356,8 +370,8 @@ namespace solver_TVHS_26_7
         {
             IWorkbook wb = null;
             MyCase data = new MyCase();
-            data.Theta1 = 10;
-            data.Theta2 = 1;
+            data.Theta1 = 0.9;
+            data.Theta2 = 0.1;
             data.Delta = 60;
             data.Alpha = 0.6;
             data.Allocates = new List<MyAssignment>();
