@@ -21,8 +21,8 @@ namespace solver_TVHS_26_7
             double elapsedSolver = 0;
             List<string> fileList = new List<string>(){
                 @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\27-7_2-8_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
@@ -159,15 +159,32 @@ namespace solver_TVHS_26_7
                 #region gen parameter
                 var gen = new Genetic();
                 //10% 0.5
-                //var genResult1 = gen.Solve1(input, 100, 500, 0.1, 100, 500, 0.005, filename);
+                //var genResult1 = gen.Solve1(input, 100, 500, 0.1, 60, 500, 0.005, filename);
+                //var genResult2 = gen.Solve2(input, 100, 500, 0.1, 60, 500, 0.005, filename);
+                //var genResult3 = gen.Solve3(input, 100, 500, 0.1, 60, 500, 0.005, filename);
+                //var genResult4 = gen.Solve4(input, 100, 500, 0.1, 60, 500, 0.005, filename);
                 //20% 0.5
-                //var genResult2 = gen.Solve1(input, 100, 500, 0.2, 100, 500, 0.005, filename);
-                //30% 0.5
-                var genResult3 = gen.Solve1(input, 100, 500, 0.3, 60, 500, 0.005, filename);
-                //40% 0.5
-                var genResult4 = gen.Solve1(input, 100, 500, 0.4, 60, 500, 0.005, filename);
-                //50% 0.5
-                //var genResult5 = gen.Solve1(input, 100, 500, 0.5, 100, 500, 0.005, filename);
+                var genResult1 = gen.Solve1(input, 100, 500, 0.2, 60, 500, 0.005, filename);
+                var genResult2 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.005, filename);
+                var genResult3 = gen.Solve3(input, 100, 500, 0.2, 60, 500, 0.005, filename);
+                var genResult4 = gen.Solve4(input, 100, 500, 0.2, 60, 500, 0.005, filename);
+                ////30% 0.5
+                //var genResult3 = gen.Solve1(input, 100, 500, 0.3, 60, 500, 0.005, filename);
+
+                ////10% 1
+                //var genResult13 = gen.Solve1(input, 100, 500, 0.1, 60, 500, 0.01, filename);
+                ////20% 1
+                //var genResult23 = gen.Solve1(input, 100, 500, 0.2, 60, 500, 0.01, filename);
+                ////30% 1
+                //var genResult33 = gen.Solve1(input, 100, 500, 0.3, 60, 500, 0.01, filename);
+
+                ////10% 5
+                //var genResult12 = gen.Solve1(input, 100, 500, 0.1, 60, 500, 0.05, filename);
+                ////20% 5
+                //var genResult22 = gen.Solve1(input, 100, 500, 0.2, 60, 500, 0.05, filename);
+                ////30% 5
+                //var genResult32 = gen.Solve1(input, 100, 500, 0.3, 60, 500, 0.05, filename);
+
                 /*
                 List<int[]> heuristics = new List<int[]>();
                 heuristics.Add(heuristicResult1.Choosen);

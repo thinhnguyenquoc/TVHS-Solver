@@ -52,3 +52,16 @@ C:\Users\thinhnguyen.DICENTRAL\Documents\GitHub\TVHS-Solver\solver-TVHS -V2\solv
 C:\Users\thinhnguyen.DICENTRAL\Documents\GitHub\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\Newtonsoft.Json.xml
 C:\Users\thinhnguyen.DICENTRAL\Documents\GitHub\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\NPOI.xml
 C:\Users\thinhnguyen.DICENTRAL\Documents\GitHub\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\obj\Debug\solver-TVHS.csprojResolveAssemblyReference.cache
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\obj\Debug\solver-TVHS-26-7.exe
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\obj\Debug\solver-TVHS-26-7.pdb
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\solver-TVHS-26-7.exe
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\solver-TVHS-26-7.pdb
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\Newtonsoft.Json.dll
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\NPOI.dll
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\NPOI.OOXML.dll
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\NPOI.OpenXml4Net.dll
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\NPOI.OpenXmlFormats.dll
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\Newtonsoft.Json.xml
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\NPOI.xml
+C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\obj\Debug\solver-TVHS.csprojResolveAssemblyReference.cache
