@@ -20,14 +20,14 @@ namespace solver_TVHS_26_7
             double solverResult = 7000000000;
             double elapsedSolver = 0;
             List<string> fileList = new List<string>(){
-                @"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\7-7_12-7_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\13-7_19-7_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\20-7_26-7_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\27-7_2-8_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\24-8_30-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\24-8_30-8_2015\F0-F10.xlsx",
 
                 //@"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
@@ -109,274 +109,195 @@ namespace solver_TVHS_26_7
 
                 #region calculate heuristic  
 
-                //var heuristic = new Heuristic();
-                //var heuristicResult1 = heuristic.strategy1(input, filename);
-                //heuristicResult1.Ratio = heuristicResult1.Revenue / solverResult;
-                //var heuristicResult2 = heuristic.strategy2(input, filename);
-                //heuristicResult2.Ratio = heuristicResult2.Revenue / solverResult;
-                //var heuristicResult3 = heuristic.strategy3(input, filename);
-                //heuristicResult3.Ratio = heuristicResult3.Revenue / solverResult;
-
-                //var v = Validate.ValidateResult(input, heuristicResult1.Choosen);
-                //foreach (var i in v)
-                //{
-                //    Debug.WriteLine(i);
-                //}
-                //Debug.WriteLine("");
-
-                //v = Validate.ValidateResult(input, heuristicResult2.Choosen);
-                //foreach (var i in v)
-                //{
-                //    Debug.WriteLine(i);
-                //}
-                //Debug.WriteLine("");
-                //v = Validate.ValidateResult(input, heuristicResult3.Choosen);
-                //foreach (var i in v)
-                //{
-                //    Debug.WriteLine(i);
-                //}
-                //Debug.WriteLine("");
-
-
-                //if (!File.Exists(@"..\..\..\..\TVHS_Data_test\Result\Heuristic.txt"))
-                //{
-                //    // Create a file to write to.
-                //    using (StreamWriter sw = File.CreateText(@"..\..\..\..\TVHS_Data_test\Result\Heuristic.txt"))
-                //    {
-                //        sw.WriteLine("Test name \t Solver \t Solver elasped \t H1 \t H1 elapsed \t H2 \t H2 elapsed \t H3 \t H3 elapsed \t H4 \t H4 elapsed \t time");
-                //    }
-                //}
-
-                //using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\Heuristic.txt"))
-                //{
-                //    string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
-                //    string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
-                //    file.WriteLine(testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + heuristicResult1.Revenue + " \t " + heuristicResult1.Elapsed + " \t " + heuristicResult2.Revenue + " \t " + heuristicResult2.Elapsed + " \t " + heuristicResult3.Revenue + " \t " + heuristicResult3.Elapsed + " \t " + time);
-                //}
+                var heuristic = new Heuristic();
+                var heuristicResult1 = heuristic.strategy1(input, filename);
+                var heuristicResult2 = heuristic.strategy2(input, filename);
+                var heuristicResult3 = heuristic.strategy3(input, filename);
+                var heuristics = new List<int[]>
+                {
+                    heuristicResult1.Choosen,
+                    heuristicResult2.Choosen,
+                    heuristicResult3.Choosen
+                };
 
                 #endregion
 
-                #region gen parameter
-                var gen = new Genetic();
-                //10% 0.5
+                //#region gen parameter
+                //var gen = new Genetic();
+                ////10% 0.5
                 //var genResult1 = gen.Solve1(input, 100, 500, 0.1, 60, 500, 0.005, filename);
                 //var genResult2 = gen.Solve2(input, 100, 500, 0.1, 60, 500, 0.005, filename);
                 //var genResult3 = gen.Solve3(input, 100, 500, 0.1, 60, 500, 0.005, filename);
                 //var genResult4 = gen.Solve4(input, 100, 500, 0.1, 60, 500, 0.005, filename);
-                //20% 0.5
-                var genResult1 = gen.Solve1(input, 100, 500, 0.2, 60, 500, 0.005, filename);
-                var genResult2 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.005, filename);
-                var genResult3 = gen.Solve3(input, 100, 500, 0.2, 60, 500, 0.005, filename);
-                var genResult4 = gen.Solve4(input, 100, 500, 0.2, 60, 500, 0.005, filename);
-                ////30% 0.5
-                //var genResult3 = gen.Solve1(input, 100, 500, 0.3, 60, 500, 0.005, filename);
+                //var genResult5 = gen.Solve5(input, 100, 500, 0.1, 60, 500, 0.005, filename);
+                //var genResult6 = gen.Solve6(input, 100, 500, 0.1, 60, 500, 0.005, filename, heuristics);
+                ////20% 0.5coi 
+                //var genResult21 = gen.Solve1(input, 100, 500, 0.2, 60, 500, 0.005, filename);
+                //var genResult22 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.005, filename);
+                //var genResult23 = gen.Solve3(input, 100, 500, 0.2, 60, 500, 0.005, filename);
+                //var genResult24 = gen.Solve4(input, 100, 500, 0.2, 60, 500, 0.005, filename);
+                //var genResult25 = gen.Solve5(input, 100, 500, 0.2, 60, 500, 0.005, filename);
+                //var genResult26 = gen.Solve6(input, 100, 500, 0.2, 60, 500, 0.005, filename, heuristics);
+                //////30% 0.5
+                //var genResult31 = gen.Solve1(input, 100, 500, 0.3, 60, 500, 0.005, filename);
+                //var genResult32 = gen.Solve2(input, 100, 500, 0.3, 60, 500, 0.005, filename);
+                //var genResult33 = gen.Solve3(input, 100, 500, 0.3, 60, 500, 0.005, filename);
+                //var genResult34 = gen.Solve4(input, 100, 500, 0.3, 60, 500, 0.005, filename);
+                //var genResult35 = gen.Solve5(input, 100, 500, 0.3, 60, 500, 0.005, filename);
+                //var genResult36 = gen.Solve6(input, 100, 500, 0.3, 60, 500, 0.005, filename, heuristics);
 
                 ////10% 1
-                //var genResult13 = gen.Solve1(input, 100, 500, 0.1, 60, 500, 0.01, filename);
+                //var genResult41 = gen.Solve1(input, 100, 500, 0.1, 60, 500, 0.01, filename);
+                //var genResult42 = gen.Solve2(input, 100, 500, 0.1, 60, 500, 0.01, filename);
+                //var genResult43 = gen.Solve3(input, 100, 500, 0.1, 60, 500, 0.01, filename);
+                //var genResult44 = gen.Solve4(input, 100, 500, 0.1, 60, 500, 0.01, filename);
+                //var genResult45 = gen.Solve5(input, 100, 500, 0.1, 60, 500, 0.01, filename);
+                //var genResult46 = gen.Solve6(input, 100, 500, 0.1, 60, 500, 0.01, filename, heuristics);
                 ////20% 1
-                //var genResult23 = gen.Solve1(input, 100, 500, 0.2, 60, 500, 0.01, filename);
-                ////30% 1
-                //var genResult33 = gen.Solve1(input, 100, 500, 0.3, 60, 500, 0.01, filename);
+                //var genResult421 = gen.Solve1(input, 100, 500, 0.2, 60, 500, 0.01, filename);
+                //var genResult422 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.01, filename);
+                //var genResult423 = gen.Solve3(input, 100, 500, 0.2, 60, 500, 0.01, filename);
+                //var genResult424 = gen.Solve4(input, 100, 500, 0.2, 60, 500, 0.01, filename);
+                //var genResult425 = gen.Solve5(input, 100, 500, 0.2, 60, 500, 0.01, filename);
+                //var genResult426 = gen.Solve6(input, 100, 500, 0.2, 60, 500, 0.01, filename, heuristics);
+                //////30% 1
+                //var genResult431 = gen.Solve1(input, 100, 500, 0.3, 60, 500, 0.01, filename);
+                //var genResult432 = gen.Solve2(input, 100, 500, 0.3, 60, 500, 0.01, filename);
+                //var genResult433 = gen.Solve3(input, 100, 500, 0.3, 60, 500, 0.01, filename);
+                //var genResult434 = gen.Solve4(input, 100, 500, 0.3, 60, 500, 0.01, filename);
+                //var genResult435 = gen.Solve5(input, 100, 500, 0.3, 60, 500, 0.01, filename);
+                //var genResult436 = gen.Solve6(input, 100, 500, 0.3, 60, 500, 0.01, filename, heuristics);
 
                 ////10% 5
-                //var genResult12 = gen.Solve1(input, 100, 500, 0.1, 60, 500, 0.05, filename);
+                //var genResult51 = gen.Solve1(input, 100, 500, 0.1, 60, 500, 0.05, filename);
+                //var genResult52 = gen.Solve2(input, 100, 500, 0.1, 60, 500, 0.05, filename);
+                //var genResult53 = gen.Solve3(input, 100, 500, 0.1, 60, 500, 0.05, filename);
+                //var genResult54 = gen.Solve4(input, 100, 500, 0.1, 60, 500, 0.05, filename);
+                //var genResult55 = gen.Solve5(input, 100, 500, 0.1, 60, 500, 0.05, filename);
+                //var genResult56 = gen.Solve6(input, 100, 500, 0.1, 60, 500, 0.05, filename, heuristics);
                 ////20% 5
-                //var genResult22 = gen.Solve1(input, 100, 500, 0.2, 60, 500, 0.05, filename);
-                ////30% 5
-                //var genResult32 = gen.Solve1(input, 100, 500, 0.3, 60, 500, 0.05, filename);
+                //var genResult521 = gen.Solve1(input, 100, 500, 0.2, 60, 500, 0.05, filename);
+                //var genResult522 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.05, filename);
+                //var genResult523 = gen.Solve3(input, 100, 500, 0.2, 60, 500, 0.05, filename);
+                //var genResult524 = gen.Solve4(input, 100, 500, 0.2, 60, 500, 0.05, filename);
+                //var genResult525 = gen.Solve5(input, 100, 500, 0.2, 60, 500, 0.05, filename);
+                //var genResult526 = gen.Solve6(input, 100, 500, 0.2, 60, 500, 0.05, filename, heuristics);
+                //////30% 5
+                //var genResult531 = gen.Solve1(input, 100, 500, 0.3, 60, 500, 0.05, filename);
+                //var genResult532 = gen.Solve2(input, 100, 500, 0.3, 60, 500, 0.05, filename);
+                //var genResult533 = gen.Solve3(input, 100, 500, 0.3, 60, 500, 0.05, filename);
+                //var genResult534 = gen.Solve4(input, 100, 500, 0.3, 60, 500, 0.05, filename);
+                //var genResult535 = gen.Solve5(input, 100, 500, 0.3, 60, 500, 0.05, filename);
+                //var genResult536 = gen.Solve6(input, 100, 500, 0.3, 60, 500, 0.05, filename, heuristics);
+                //#endregion
 
-                /*
-                List<int[]> heuristics = new List<int[]>();
-                heuristics.Add(heuristicResult1.Choosen);
-                heuristics.Add(heuristicResult2.Choosen);
-                heuristics.Add(heuristicResult3.Choosen);
-
-                Genetic gen = new Genetic();
+                var gen = new Genetic();
                 //10% 0.5
-                var genResult1 = gen.Solve3(input, 100, 500, 0.1, 30, 500, 0.005, filename, heuristics);
-                //20% 0.5
-                var genResult2 = gen.Solve3(input, 100, 500, 0.2, 30, 500, 0.005, filename, heuristics);
-                //30% 0.5
-                var genResult3 = gen.Solve3(input, 100, 500, 0.3, 30, 500, 0.005, filename, heuristics);
-                //40% 0.5
-                var genResult4 = gen.Solve3(input, 100, 500, 0.4, 30, 500, 0.005, filename, heuristics);
-                //50% 0.5
-                var genResult5 = gen.Solve3(input, 100, 500, 0.5, 30, 500, 0.005, filename, heuristics);
-
-                //10% 1
-                var genResult6 = gen.Solve3(input, 100, 500, 0.1, 30, 500, 0.01, filename, heuristics);
-                //20% 1
-                var genResult7 = gen.Solve3(input, 100, 500, 0.2, 30, 500, 0.01, filename, heuristics);
-                //30% 1
-                var genResult8 = gen.Solve3(input, 100, 500, 0.3, 30, 500, 0.01, filename, heuristics);
-                //40% 1
-                var genResult9 = gen.Solve3(input, 100, 500, 0.4, 30, 500, 0.01, filename, heuristics);
-                //50% 1
-                var genResult10 = gen.Solve3(input, 100, 500, 0.5, 30, 500, 0.01, filename, heuristics);
-
-                //10% 2
-                var genResult11 = gen.Solve3(input, 100, 500, 0.1, 30, 500, 0.02, filename, heuristics);
-                //20% 2
-                var genResult12 = gen.Solve3(input, 100, 500, 0.2, 30, 500, 0.02, filename, heuristics);
-                //30% 2
-                var genResult13 = gen.Solve3(input, 100, 500, 0.3, 30, 500, 0.02, filename, heuristics);
-                //40% 2
-                var genResult14 = gen.Solve3(input, 100, 500, 0.4, 30, 500, 0.02, filename, heuristics);
-                //50% 2
-                var genResult15 = gen.Solve3(input, 100, 500, 0.5, 30, 500, 0.02, filename, heuristics);
-
-                //10% 5
-                var genResult16 = gen.Solve3(input, 100, 500, 0.1, 30, 500, 0.05, filename, heuristics);
-                //20 % 5
-                var genResult17 = gen.Solve3(input, 100, 500, 0.2, 30, 500, 0.05, filename, heuristics);
-                //30% 5
-                var genResult18 = gen.Solve3(input, 100, 500, 0.3, 30, 500, 0.05, filename, heuristics);
-                //40% 5
-                var genResult19 = gen.Solve3(input, 100, 500, 0.4, 30, 500, 0.05, filename, heuristics);
-                //50% 5
-                var genResult20 = gen.Solve3(input, 100, 500, 0.5, 30, 500, 0.05, filename, heuristics);
-
-                //10% 10
-                var genResult21 = gen.Solve3(input, 100, 500, 0.1, 30, 500, 0.1, filename, heuristics);
-                //20 % 10
-                var genResult22 = gen.Solve3(input, 100, 500, 0.2, 30, 500, 0.1, filename, heuristics);
-                //30% 10
-                var genResult23 = gen.Solve3(input, 100, 500, 0.3, 30, 500, 0.1, filename, heuristics);
-                //40% 10
-                var genResult24 = gen.Solve3(input, 100, 500, 0.4, 30, 500, 0.1, filename, heuristics);
-                //50% 10
-                var genResult25 = gen.Solve3(input, 100, 500, 0.5, 30, 500, 0.1, filename, heuristics);
-
-
-
-                ////10% 0.5
-                //var genResult1 = gen.Solve2(input, 100, 500, 0.1, 30, 500, 0.005, filename);
-                ////20% 0.5
-                //var genResult2 = gen.Solve2(input, 100, 500, 0.2, 30, 500, 0.005, filename);
-                ////30% 0.5
-                //var genResult3 = gen.Solve2(input, 100, 500, 0.3, 30, 500, 0.005, filename);
-                ////40% 0.5
-                //var genResult4 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.005, filename);
-                ////50% 0.5
-                //var genResult5 = gen.Solve2(input, 100, 500, 0.5, 30, 500, 0.005, filename);
+                //var genResult1 = gen.Solve1(input, 100, 900, 0.1, 60, 500, 0.005, filename);
+                //var genResult2 = gen.Solve2(input, 100, 900, 0.1, 60, 500, 0.005, filename);
+                //var genResult3 = gen.Solve3(input, 100, 900, 0.1, 60, 500, 0.005, filename);
+                //var genResult4 = gen.Solve4(input, 100, 900, 0.1, 60, 500, 0.005, filename);
+                //var genResult5 = gen.Solve5(input, 100, 900, 0.1, 60, 500, 0.005, filename);
+                //var genResult6 = gen.Solve6(input, 100, 900, 0.1, 60, 500, 0.005, filename, heuristics);
+                ////20% 0.5coi 
+                //var genResult21 = gen.Solve1(input, 100, 900, 0.2, 60, 500, 0.005, filename);
+                //var genResult22 = gen.Solve2(input, 100, 900, 0.2, 60, 500, 0.005, filename);
+                //var genResult23 = gen.Solve3(input, 100, 900, 0.2, 60, 500, 0.005, filename);
+                //var genResult24 = gen.Solve4(input, 100, 900, 0.2, 60, 500, 0.005, filename);
+                //var genResult25 = gen.Solve5(input, 100, 900, 0.2, 60, 500, 0.005, filename);
+                //var genResult26 = gen.Solve6(input, 100, 900, 0.2, 60, 500, 0.005, filename, heuristics);
+                //////30% 0.5
+                //var genResult31 = gen.Solve1(input, 100, 900, 0.3, 60, 500, 0.005, filename);
+                //var genResult32 = gen.Solve2(input, 100, 900, 0.3, 60, 500, 0.005, filename);
+                //var genResult33 = gen.Solve3(input, 100, 900, 0.3, 60, 500, 0.005, filename);
+                //var genResult34 = gen.Solve4(input, 100, 900, 0.3, 60, 500, 0.005, filename);
+                //var genResult35 = gen.Solve5(input, 100, 900, 0.3, 60, 500, 0.005, filename);
+                //var genResult36 = gen.Solve6(input, 100, 900, 0.3, 60, 500, 0.005, filename, heuristics);
 
                 ////10% 1
-                //var genResult6 = gen.Solve2(input, 100, 500, 0.1, 30, 500, 0.01, filename);
+                //var genResult41 = gen.Solve1(input, 100, 900, 0.1, 60, 500, 0.01, filename);
+                //var genResult42 = gen.Solve2(input, 100, 900, 0.1, 60, 500, 0.01, filename);
+                //var genResult43 = gen.Solve3(input, 100, 900, 0.1, 60, 500, 0.01, filename);
+                //var genResult44 = gen.Solve4(input, 100, 900, 0.1, 60, 500, 0.01, filename);
+                //var genResult45 = gen.Solve5(input, 100, 900, 0.1, 60, 500, 0.01, filename);
+                //var genResult46 = gen.Solve6(input, 100, 900, 0.1, 60, 500, 0.01, filename, heuristics);
                 ////20% 1
-                //var genResult7 = gen.Solve2(input, 100, 500, 0.2, 30, 500, 0.01, filename);
-                ////30% 1
-                //var genResult8 = gen.Solve2(input, 100, 500, 0.3, 30, 500, 0.01, filename);
-                ////40% 1
-                //var genResult9 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.01, filename);
-                ////50% 1
-                //var genResult10 = gen.Solve2(input, 100, 500, 0.5, 30, 500, 0.01, filename);
-
-                ////10% 2
-                //var genResult11 = gen.Solve2(input, 100, 500, 0.1, 30, 500, 0.02, filename);
-                ////20% 2
-                //var genResult12 = gen.Solve2(input, 100, 500, 0.2, 30, 500, 0.02, filename);
-                ////30% 2
-                //var genResult13 = gen.Solve2(input, 100, 500, 0.3, 30, 500, 0.02, filename);
-                ////40% 2
-                //var genResult14 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.02, filename);
-                ////50% 2
-                //var genResult15 = gen.Solve2(input, 100, 500, 0.5, 30, 500, 0.02, filename);
+                //var genResult421 = gen.Solve1(input, 100, 900, 0.2, 60, 500, 0.01, filename);
+                //var genResult422 = gen.Solve2(input, 100, 900, 0.2, 60, 500, 0.01, filename);
+                //var genResult423 = gen.Solve3(input, 100, 900, 0.2, 60, 500, 0.01, filename);
+                //var genResult424 = gen.Solve4(input, 100, 900, 0.2, 60, 500, 0.01, filename);
+                //var genResult425 = gen.Solve5(input, 100, 900, 0.2, 60, 500, 0.01, filename);
+                //var genResult426 = gen.Solve6(input, 100, 900, 0.2, 60, 500, 0.01, filename, heuristics);
+                //////30% 1
+                //var genResult431 = gen.Solve1(input, 100, 900, 0.3, 60, 500, 0.01, filename);
+                //var genResult432 = gen.Solve2(input, 100, 900, 0.3, 60, 500, 0.01, filename);
+                //var genResult433 = gen.Solve3(input, 100, 900, 0.3, 60, 500, 0.01, filename);
+                //var genResult434 = gen.Solve4(input, 100, 900, 0.3, 60, 500, 0.01, filename);
+                //var genResult435 = gen.Solve5(input, 100, 900, 0.3, 60, 500, 0.01, filename);
+                //var genResult436 = gen.Solve6(input, 100, 900, 0.3, 60, 500, 0.01, filename, heuristics);
 
                 ////10% 5
-                //var genResult16 = gen.Solve2(input, 100, 500, 0.1, 30, 500, 0.05, filename);
-                ////20 % 5
-                //var genResult17 = gen.Solve2(input, 100, 500, 0.2, 30, 500, 0.05, filename);
-                ////30% 5
-                //var genResult18 = gen.Solve2(input, 100, 500, 0.3, 30, 500, 0.05, filename);
-                ////40% 5
-                //var genResult19 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.05, filename);
-                ////50% 5
-                //var genResult20 = gen.Solve2(input, 100, 500, 0.5, 30, 500, 0.05, filename);
-
-                ////10% 10
-                //var genResult21 = gen.Solve2(input, 100, 500, 0.1, 30, 500, 0.1, filename);
-                ////20 % 10
-                //var genResult22 = gen.Solve2(input, 100, 500, 0.2, 30, 500, 0.1, filename);
-                ////30% 10
-                //var genResult23 = gen.Solve2(input, 100, 500, 0.3, 30, 500, 0.1, filename);
-                ////40% 10
-                //var genResult24 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.1, filename);
-                ////50% 10
-                //var genResult25 = gen.Solve2(input, 100, 500, 0.5, 30, 500, 0.1, filename);
-
-                Debug.WriteLine("");
-
-                Debug.WriteLine("");
-               
-                Debug.WriteLine("");
+                //var genResult51 = gen.Solve1(input, 100, 900, 0.1, 60, 500, 0.05, filename);
+                //var genResult52 = gen.Solve2(input, 100, 900, 0.1, 60, 500, 0.05, filename);
+                //var genResult53 = gen.Solve3(input, 100, 900, 0.1, 60, 500, 0.05, filename);
+                //var genResult54 = gen.Solve4(input, 100, 900, 0.1, 60, 500, 0.05, filename);
+                //var genResult55 = gen.Solve5(input, 100, 900, 0.1, 60, 500, 0.05, filename);
+                //var genResult56 = gen.Solve6(input, 100, 900, 0.1, 60, 500, 0.05, filename, heuristics);
+                ////20% 5
+                //var genResult521 = gen.Solve1(input, 100, 900, 0.2, 60, 500, 0.05, filename);
+                //var genResult522 = gen.Solve2(input, 100, 900, 0.2, 60, 500, 0.05, filename);
+                //var genResult523 = gen.Solve3(input, 100, 900, 0.2, 60, 500, 0.05, filename);
+                //var genResult524 = gen.Solve4(input, 100, 900, 0.2, 60, 500, 0.05, filename);
+                //var genResult525 = gen.Solve5(input, 100, 900, 0.2, 60, 500, 0.05, filename);
+                //var genResult526 = gen.Solve6(input, 100, 900, 0.2, 60, 500, 0.05, filename, heuristics);
+                //////30% 5
+                //var genResult531 = gen.Solve1(input, 100, 900, 0.3, 60, 500, 0.05, filename);
+                //var genResult532 = gen.Solve2(input, 100, 900, 0.3, 60, 500, 0.05, filename);
+                //var genResult533 = gen.Solve3(input, 100, 900, 0.3, 60, 500, 0.05, filename);
+                //var genResult534 = gen.Solve4(input, 100, 900, 0.3, 60, 500, 0.05, filename);
+                //var genResult535 = gen.Solve5(input, 100, 900, 0.3, 60, 500, 0.05, filename);
+                //var genResult536 = gen.Solve6(input, 100, 900, 0.3, 60, 500, 0.05, filename, heuristics);
 
 
-                using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\Gen.txt"))
-                {
-                    string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
-                    string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
-                    file.WriteLine("G1" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult1.Revenue + " \t " + genResult1.Elapsed + " \t " + genResult1.noGen + " \t " + time);
-                    file.WriteLine("G2" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult2.Revenue + " \t " + genResult2.Elapsed + " \t " + genResult2.noGen + " \t " + time);
-                    file.WriteLine("G3" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult3.Revenue + " \t " + genResult3.Elapsed + " \t " + genResult3.noGen + " \t " + time);
-                    file.WriteLine("G4" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult4.Revenue + " \t " + genResult4.Elapsed + " \t " + genResult4.noGen + " \t " + time);
-                    file.WriteLine("G5" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult5.Revenue + " \t " + genResult5.Elapsed + " \t " + genResult5.noGen + " \t " + time);
-                    file.WriteLine("G6" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult6.Revenue + " \t " + genResult6.Elapsed + " \t " + genResult6.noGen + " \t " + time);
-                    file.WriteLine("G7" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult7.Revenue + " \t " + genResult7.Elapsed + " \t " + genResult7.noGen + " \t " + time);
-                    file.WriteLine("G8" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult8.Revenue + " \t " + genResult8.Elapsed + " \t " + genResult8.noGen + " \t " + time);
-                    file.WriteLine("G9" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult9.Revenue + " \t " + genResult9.Elapsed + " \t " + genResult9.noGen + " \t " + time);
-                    file.WriteLine("G10" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult10.Revenue + " \t " + genResult10.Elapsed + " \t " + genResult10.noGen + " \t " + time);
-                    file.WriteLine("G11" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult11.Revenue + " \t " + genResult11.Elapsed + " \t " + genResult11.noGen + " \t " + time);
-                    file.WriteLine("G12" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult12.Revenue + " \t " + genResult12.Elapsed + " \t " + genResult12.noGen + " \t " + time);
-                    file.WriteLine("G13" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult13.Revenue + " \t " + genResult13.Elapsed + " \t " + genResult13.noGen + " \t " + time);
-                    file.WriteLine("G14" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult14.Revenue + " \t " + genResult14.Elapsed + " \t " + genResult14.noGen + " \t " + time);
-                    file.WriteLine("G15" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult15.Revenue + " \t " + genResult15.Elapsed + " \t " + genResult15.noGen + " \t " + time);
-                    file.WriteLine("G16" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult16.Revenue + " \t " + genResult16.Elapsed + " \t " + genResult16.noGen + " \t " + time);
-                    file.WriteLine("G17" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult17.Revenue + " \t " + genResult17.Elapsed + " \t " + genResult17.noGen + " \t " + time);
-                    file.WriteLine("G18" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult18.Revenue + " \t " + genResult18.Elapsed + " \t " + genResult18.noGen + " \t " + time);
-                    file.WriteLine("G19" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult19.Revenue + " \t " + genResult19.Elapsed + " \t " + genResult19.noGen + " \t " + time);
-                    file.WriteLine("G20" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult20.Revenue + " \t " + genResult20.Elapsed + " \t " + genResult20.noGen + " \t " + time);
-                    file.WriteLine("G21" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult21.Revenue + " \t " + genResult21.Elapsed + " \t " + genResult21.noGen + " \t " + time);
-                    file.WriteLine("G22" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult22.Revenue + " \t " + genResult22.Elapsed + " \t " + genResult22.noGen + " \t " + time);
-                    file.WriteLine("G23" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult23.Revenue + " \t " + genResult23.Elapsed + " \t " + genResult23.noGen + " \t " + time);
-                    file.WriteLine("G24" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult24.Revenue + " \t " + genResult24.Elapsed + " \t " + genResult24.noGen + " \t " + time);
-                    file.WriteLine("G25" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult25.Revenue + " \t " + genResult25.Elapsed + " \t " + genResult25.noGen + " \t " + time);
-                }
-                */
-                #endregion
+                ///
+                /// test for 1 strategy
+                /// 
+                var genResult11 = gen.Solve2(input, 8000, 8000, 0.1, 30, 1000, 0.005, filename);
+                //var genResult21 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.005, filename);
+                //var genResult31 = gen.Solve2(input, 100, 500, 0.3, 60, 500, 0.005, filename);
+                //var genResult41 = gen.Solve2(input, 100, 500, 0.4, 60, 500, 0.005, filename);
+                //var genResult211 = gen.Solve2(input, 100, 500, 0.5, 60, 500, 0.005, filename);
 
-                #region GA 1
-                /*Genetic gen = new Genetic();
-                var genResult4 = gen.Solve2(input, 100, 500, 0.4, 30, 500, 0.005, filename);
+                //var genResult51 = gen.Solve2(input, 100, 500, 0.1, 60, 500, 0.01, filename);
+                //var genResult61 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.01, filename);
+                //var genResult71 = gen.Solve2(input, 100, 500, 0.3, 60, 500, 0.01, filename);
+                //var genResult81 = gen.Solve2(input, 100, 500, 0.4, 60, 500, 0.01, filename);
+                //var genResult221 = gen.Solve2(input, 100, 500, 0.5, 60, 500, 0.01, filename);
 
-                using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\GA1.txt"))
-                {
-                    string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
-                    string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
-                    file.WriteLine("GA1" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult4.Revenue + " \t " + genResult4.Elapsed + " \t " + genResult4.noGen + " \t " + time);                 
-                }*/
-                #endregion
+                //var genResult91 = gen.Solve2(input, 100, 500, 0.1, 60, 500, 0.02, filename);
+                //var genResult101 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.02, filename);
+                //var genResult111 = gen.Solve2(input, 100, 500, 0.3, 60, 500, 0.02, filename);
+                //var genResult121 = gen.Solve2(input, 100, 500, 0.4, 60, 500, 0.02, filename);
+                //var genResult231 = gen.Solve2(input, 100, 500, 0.5, 60, 500, 0.02, filename);
 
-                #region GA 2
-                /*
-               var heuristic = new Heuristic();
-               var heuristicResult1 = heuristic.strategy1(input, filename);
-               var heuristicResult2 = heuristic.strategy2(input, filename);
-               var heuristicResult3 = heuristic.strategy3(input, filename);
-               List<int[]> heuristics = new List<int[]>();
-               heuristics.Add(heuristicResult1.Choosen);
-               heuristics.Add(heuristicResult2.Choosen);
-               heuristics.Add(heuristicResult3.Choosen);
-               Genetic gen = new Genetic();
-               var genResult3 = gen.Solve3_1(input, 100, 500, 0.3, 30, 500, 0.005, filename,heuristics);
+                //var genResult241 = gen.Solve2(input, 100, 500, 0.1, 60, 500, 0.03, filename);
+                //var genResult251 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.03, filename);
+                //var genResult261 = gen.Solve2(input, 100, 500, 0.3, 60, 500, 0.03, filename);
+                //var genResult271 = gen.Solve2(input, 100, 500, 0.4, 60, 500, 0.03, filename);
+                //var genResult281 = gen.Solve2(input, 100, 500, 0.5, 60, 500, 0.03, filename);
 
-               using (System.IO.StreamWriter file = File.AppendText(@"..\..\..\..\TVHS_Data_test\Result\GA2.txt"))
-               {
-                   string testName = filename.Split(new string[] { "TVHS_Data_test\\" }, StringSplitOptions.None).Last().Split(new string[] { "\\F0" }, StringSplitOptions.None).First();
-                   string time = DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString();
-                   file.WriteLine("GA2" + "\t" + testName + " \t " + solverResult + " \t " + elapsedSolver + " \t " + genResult3.Revenue + " \t " + genResult3.Elapsed + " \t " + genResult3.noGen + " \t " + time);
-               }
-               */
-                #endregion
+                //var genResult131 = gen.Solve2(input, 100, 500, 0.1, 60, 500, 0.04, filename);
+                //var genResult141 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.04, filename);
+                //var genResult151 = gen.Solve2(input, 100, 500, 0.3, 60, 500, 0.04, filename);
+                //var genResult161 = gen.Solve2(input, 100, 500, 0.4, 60, 500, 0.04, filename);
+                //var genResult291 = gen.Solve2(input, 100, 500, 0.5, 60, 500, 0.04, filename);
+
+                //var genResult171 = gen.Solve2(input, 100, 500, 0.1, 60, 500, 0.05, filename);
+                //var genResult181 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.05, filename);
+                //var genResult191 = gen.Solve2(input, 100, 500, 0.3, 60, 500, 0.05, filename);
+                //var genResult201 = gen.Solve2(input, 100, 500, 0.4, 60, 500, 0.05, filename);
+                //var genResult301 = gen.Solve2(input, 100, 500, 0.5, 60, 500, 0.05, filename);
+
             }
 
         }

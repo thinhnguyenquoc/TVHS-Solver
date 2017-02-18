@@ -21,10 +21,10 @@ namespace solver_TVHS_26_7
                     choosen[j] = -1;
                 }
                 bool change = false;
-                #region assign program to frame
-                var list1 = Utility.RandomProgramListTree(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
+                #region assign program to frame             
                 while (true)
-                {                   
+                {
+                    var list1 = Utility.RandomProgramListTree(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
                     foreach (var item in list1)
                     {
                         var gr = myCase.Groups.First(x => x.Id == item.GroupId);
@@ -62,14 +62,13 @@ namespace solver_TVHS_26_7
                 }
                 #endregion
                 #region try to assign programe between two frames
-
                 if (isInsert)
                 {
                     change = false;
-                    // calculate the unoccupate of two continue frame
-                    var list2 = Utility.RandomProgramListTree(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
+                    // calculate the unoccupate of two continue frame                    
                     while (true)
                     {
+                        var list2 = Utility.RandomProgramListTree(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
                         Utility.UpdateUnOccupiedFrameTime(myCase, choosen);
                         var unoccupate = new List<int>();
                         for (var i = 0; i < myCase.Frames.Count - 1; i++)
@@ -121,32 +120,33 @@ namespace solver_TVHS_26_7
                 }
 
                 #endregion
-                var e = new EvaluatePopulation {Choosen = choosen};
-                if (!CheckExist(result, e))
-                {
-                    var vals = Validate.ValidateResult(myOriginalCase, choosen);
-                    var error = false;
-                    foreach (var val in vals)
-                    {
-                        if (val < 0)
-                        {
-                            error = true;
-                            break;
-                        }
-                    }
-                    if (!error)
-                    {
-                        e.revenue = Utility.CalculateRevenue(myOriginalCase, choosen);
-                        result.Add(e);
-                    }
-                }
+                var e = new EvaluatePopulation { Choosen = choosen };
+                e.revenue = Utility.CalculateRevenue(myOriginalCase, choosen);
+                result.Add(e);
+                //if (!CheckExist(result, e))
+                //{
+                //    var vals = Validate.ValidateResult(myOriginalCase, choosen);
+                //    var error = false;
+                //    foreach (var val in vals)
+                //    {
+                //        if (val < 0)
+                //        {
+                //            error = true;
+                //            break;
+                //        }
+                //    }
+                //    if (!error)
+                //    {
+                      
+                //    }
+                //}
             }
             return result;
         }
 
-        public bool CheckExist (List<EvaluatePopulation> population, EvaluatePopulation e)
+        public bool CheckExist(List<EvaluatePopulation> population, EvaluatePopulation e)
         {
-            foreach(var p in population)
+            foreach (var p in population)
             {
                 if (p.Choosen.SequenceEqual(e.Choosen))
                 {
@@ -155,11 +155,11 @@ namespace solver_TVHS_26_7
             }
             return false;
         }
-        
+
         // round robin - monte carlo
         public List<List<EvaluatePopulation>> SelectParentsTreeRoundRobin(MyCase myOriginalCase, List<EvaluatePopulation> population, double percentCrossOver)
         {
-            List < EvaluatePopulation > cache= new List<EvaluatePopulation>();
+            List<EvaluatePopulation> cache = new List<EvaluatePopulation>();
             double sum = 0;
             double total = population.Sum(x => x.revenue);
             foreach (var e in population)
@@ -198,18 +198,18 @@ namespace solver_TVHS_26_7
         {
             var fathers =
                 population.OrderByDescending(x => x.revenue)
-                    .Take(Convert.ToInt32(population.Count()*percentCrossOver/2)+1)
+                    .Take(Convert.ToInt32(population.Count() * percentCrossOver / 2) + 1)
                     .ToList();
             var mothers = population.OrderByDescending(x => x.revenue)
                     .Skip(Convert.ToInt32(population.Count() * percentCrossOver / 2))
-                    .ToList();          
+                    .ToList();
             var rnd = new Random();
             var parents = new List<List<EvaluatePopulation>>();
             var i = 0;
             while (parents.Count() < population.Count() * percentCrossOver / 2)
             {
-                var couple = new List<EvaluatePopulation> {fathers[i++]};
-                var r1 = rnd.Next(0,mothers.Count-1);
+                var couple = new List<EvaluatePopulation> { fathers[i++] };
+                var r1 = rnd.Next(0, mothers.Count - 1);
                 couple.Add(mothers[r1]);
                 parents.Add(couple);
             }
@@ -249,7 +249,7 @@ namespace solver_TVHS_26_7
 
             var result = new List<EvaluatePopulation>();
             var newChild1 = FixChildTree(myOriginalCase, child1, IsInsert);
-            if(newChild1 != null)
+            if (newChild1 != null)
                 result.Add(newChild1);
             var newChild2 = FixChildTree(myOriginalCase, child2, IsInsert);
             if (newChild2 != null)
@@ -305,7 +305,7 @@ namespace solver_TVHS_26_7
                         }
                     }
                 }
-                    #endregion
+                #endregion
             }
             #endregion
             #region try to assign programe between two frames
@@ -378,15 +378,15 @@ namespace solver_TVHS_26_7
                 e.revenue = Utility.CalculateRevenue(myOriginalCase, choosen);
                 return e;
             }
-            
+
         }
-                   
+
         public double GetRandomNumber(double minimum, double maximum)
         {
             var random = new Random();
             return random.NextDouble() * (maximum - minimum) + minimum;
         }
-              
+
         //choose the best
         public List<EvaluatePopulation> ReproductionTheBest(List<EvaluatePopulation> population, int Size)
         {
@@ -394,18 +394,21 @@ namespace solver_TVHS_26_7
             return theBest;
         }
 
-        public List<EvaluatePopulation> Reproduction8020(List<EvaluatePopulation> population, int Size)
+        public List<EvaluatePopulation> Reproduction8020(List<EvaluatePopulation> population, int size)
         {
             var ran = new Random();
-            var theBest = population.OrderByDescending(x => x.revenue).Take(Size*20/100).ToList();
-            var remain = population.OrderByDescending(x => x.revenue).Skip(Size * 20 / 100).ToList();
-            while (theBest.Count < Size)
+            var theBest = population.OrderByDescending(x => x.revenue).Take(size * 20 / 100).ToList();
+            var remain = population.OrderByDescending(x => x.revenue).Skip(size * 20 / 100).ToList();
+            while (theBest.Count < size && theBest.Count < population.Count)
             {
-                theBest.Add(remain[ran.Next(0,remain.Count-1)]);
+                var index = ran.Next(0, remain.Count - 1);
+                theBest.Add(remain[index]);
+                remain.RemoveAt(index);
             }
             return theBest;
         }
 
+        //replace the old chromosome by mutaion chromosome
         public List<EvaluatePopulation> MutateTree(MyCase myOriginalCase, List<EvaluatePopulation> population, double percent, bool IsInsert)
         {
             Random ran = new Random();
@@ -430,118 +433,145 @@ namespace solver_TVHS_26_7
             }
             return population;
         }
-      
-     
+
+
         public MyStatictis Solve1(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, double mutationPercent, string filename)
         {
-            if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_noInsertGen_"+ percentCrossOver +"_"+ mutationPercent + ".txt"))
-            {
-                // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_noInsertGen_" + percentCrossOver + "_" + mutationPercent + ".txt"))
-                {
-                }
-            }
             var myOriginalCase = input;
             double revenue = 0;
             var result = new MyStatictis();
-            result.noGen = 0;
+            result.noGen = 1;
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var initPopulation = CreateInitPopulationTree(myOriginalCase, initSize, false);
+            revenue = initPopulation.Max(x => x.revenue);
             var elapsedH1 = 0.0;
             int count = 0;
-            using (System.IO.StreamWriter file = File.AppendText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_noInsertGen_" + percentCrossOver + "_" + mutationPercent + ".txt"))
+            var db = new TVHS();
+            var testcase = db.TestCases.Add(new TestCase
             {
-                file.WriteLine(DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString());
-                for (var lop = 0; lop < noloop; lop++)
+                TestCase1 = filename.Split(new string[] { "TVHS_Data_test" }, StringSplitOptions.None).Last(),
+                Kind = "RoundRobin - NoInsert - TheBestParent",
+                CrossOver = percentCrossOver,
+                Mutation = mutationPercent,
+                Population = populationSize,
+                LimitLoop = noloop,
+                NoChange = nochange,
+                Date = DateTime.Now,
+                MaxGen = revenue
+            });
+
+            for (var lop = 0; lop < noloop; lop++)
+            {
+                result.noGen++;
+                // using round robin - monte carlo
+                var parents = SelectParentsTreeRoundRobin(myOriginalCase, initPopulation, percentCrossOver);
+                var children = MakeChildrenTree(myOriginalCase, parents, false);
+                initPopulation = initPopulation.Concat(children).ToList();
+                initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, false);
+                initPopulation = ReproductionTheBest(initPopulation, populationSize);
+                var re = initPopulation.Max(x => x.revenue);
+                if (re > revenue)
                 {
-                    revenue = initPopulation.Max(x => x.revenue);
-                    result.noGen++;
-                    // using round robin - monte carlo
-                    var parents = SelectParentsTreeRoundRobin(myOriginalCase, initPopulation, percentCrossOver);
-                    var children = MakeChildrenTree(myOriginalCase, parents, false);
-                    initPopulation = initPopulation.Concat(children).ToList();
-                    initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, false);
-                    initPopulation = ReproductionTheBest(initPopulation, populationSize);
-                    var re = initPopulation.Max(x => x.revenue);
-                    if (re > revenue)
-                    {
-                        revenue = re;
-                        count = 0;
-                    }
-                    count++;
-                    Debug.WriteLine(lop + "\t revenue:" + revenue + "\t children:" + children.Count);
-                    file.WriteLine(lop + "\t revenue:" + revenue + "\t children:" + children.Count);
-                    if (count > nochange)
-                    {
-                        Debug.WriteLine("\t" + "no change to die");
-                        file.WriteLine("\t" + "no change to die");
-                        break;
-                    }
+                    revenue = re;
+                    count = 0;
                 }
-                
-                watch.Stop();
-                elapsedH1 = watch.ElapsedMilliseconds;
-                file.WriteLine("Elapse time: "+ elapsedH1);
+                count++;
+                var test = db.Tests.Add(new Test
+                {
+                    TestCaseId = testcase.Id,
+                    NoGen = result.noGen,
+                    Revenue = (float)revenue,
+                    RevenueIteration = (float)re,
+                    Children = children.Count
+                });
+
+
+                if (count > nochange)
+                {
+                    break;
+                }
             }
-           
+
+            watch.Stop();
+            elapsedH1 = watch.ElapsedMilliseconds;
+
+            testcase.NoGen = result.noGen;
+            testcase.MaxGen = revenue;
+            testcase.ElapseTime = (int)elapsedH1;
+
+            db.SaveChanges();
             var firstOrDefault = initPopulation.FirstOrDefault();
             if (firstOrDefault != null) result.Choosen = firstOrDefault.Choosen;
-            result.Elapsed = (long) elapsedH1;
+            result.Elapsed = (long)elapsedH1;
             result.Revenue = Utility.CalculateRevenue(myOriginalCase, result.Choosen);
             return result;
         }
 
+        // insert
         public MyStatictis Solve2(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, double mutationPercent, string filename)
         {
-            if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_InsertGen_" + percentCrossOver + "_" + mutationPercent + ".txt"))
-            {
-                // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_InsertGen_" + percentCrossOver + "_" + mutationPercent + ".txt"))
-                {
-                }
-            }
             var myOriginalCase = input;
             double revenue = 0;
             var result = new MyStatictis();
             result.noGen = 0;
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var initPopulation = CreateInitPopulationTree(myOriginalCase, initSize, false);
+            revenue = initPopulation.Max(x => x.revenue);
             var elapsedH1 = 0.0;
             int count = 0;
-            using (System.IO.StreamWriter file = File.AppendText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_InsertGen_" + percentCrossOver + "_" + mutationPercent + ".txt"))
+            var db = new TVHS();
+            var testcase = db.TestCases.Add(new TestCase
             {
-                file.WriteLine(DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString());
-                for (var lop = 0; lop < noloop; lop++)
-                {
-                    revenue = initPopulation.Max(x => x.revenue);
-                    result.noGen++;
-                    // using round robin - monte carlo
-                    var parents = SelectParentsTreeRoundRobin(myOriginalCase, initPopulation, percentCrossOver);
-                    var children = MakeChildrenTree(myOriginalCase, parents, true);
-                    initPopulation = initPopulation.Concat(children).ToList();
-                    initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, true);
-                    initPopulation = ReproductionTheBest(initPopulation, populationSize);
-                    var re = initPopulation.Max(x => x.revenue);
-                    if (re > revenue)
-                    {
-                        revenue = re;
-                        count = 0;
-                    }
-                    count++;
-                    Debug.WriteLine(lop + "\t revenue:" + revenue + "\t children:" + children.Count);
-                    file.WriteLine(lop + "\t revenue:" + revenue + "\t children:" + children.Count);
-                    if (count > nochange)
-                    {
-                        Debug.WriteLine("\t" + "no change to die");
-                        file.WriteLine("\t" + "no change to die");
-                        break;
-                    }
-                }
+                TestCase1 = filename.Split(new string[] { "TVHS_Data_test" }, StringSplitOptions.None).Last(),
+                Kind = "RoundRobin - Insert - TheBestParent",
+                CrossOver = percentCrossOver,
+                Mutation = mutationPercent,
+                Population = populationSize,
+                LimitLoop = noloop,
+                NoChange = nochange,
+                Date = DateTime.Now,
+                MaxGen = revenue
+            });
 
-                watch.Stop();
-                elapsedH1 = watch.ElapsedMilliseconds;
-                file.WriteLine("Elapse time: " + elapsedH1);
+            for (var lop = 0; lop < noloop; lop++)
+            {
+
+                result.noGen++;
+                // using round robin - monte carlo
+                var parents = SelectParentsTreeRoundRobin(myOriginalCase, initPopulation, percentCrossOver);
+                var children = MakeChildrenTree(myOriginalCase, parents, true);
+                initPopulation = initPopulation.Concat(children).ToList();
+                initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, true);
+                initPopulation = ReproductionTheBest(initPopulation, populationSize);
+                var re = initPopulation.Max(x => x.revenue);
+                if (re > revenue)
+                {
+                    revenue = re;
+                    count = 0;
+                }
+                count++;
+                var test = db.Tests.Add(new Test
+                {
+                    TestCaseId = testcase.Id,
+                    NoGen = result.noGen,
+                    Revenue = (float)revenue,
+                    RevenueIteration = (float)re,
+                    Children = children.Count
+                });
+                if (count > nochange)
+                {
+                    break;
+                }
             }
+
+            watch.Stop();
+            elapsedH1 = watch.ElapsedMilliseconds;
+
+            testcase.NoGen = result.noGen;
+            testcase.MaxGen = revenue;
+            testcase.ElapseTime = (int)elapsedH1;
+
+            db.SaveChanges();
 
             var firstOrDefault = initPopulation.FirstOrDefault();
             if (firstOrDefault != null) result.Choosen = firstOrDefault.Choosen;
@@ -552,56 +582,66 @@ namespace solver_TVHS_26_7
 
         public MyStatictis Solve3(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, double mutationPercent, string filename)
         {
-            if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_InsertGen_Parent_half_random" + percentCrossOver + "_" + mutationPercent + ".txt"))
-            {
-                // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_InsertGen_Parent_half_random" + percentCrossOver + "_" + mutationPercent + ".txt"))
-                {
-                }
-            }
             var myOriginalCase = input;
             double revenue = 0;
             var result = new MyStatictis();
             result.noGen = 0;
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var initPopulation = CreateInitPopulationTree(myOriginalCase, initSize, false);
+            revenue = initPopulation.Max(x => x.revenue);
             var elapsedH1 = 0.0;
             int count = 0;
-            using (System.IO.StreamWriter file = File.AppendText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_InsertGen_Parent_half_random" + percentCrossOver + "_" + mutationPercent + ".txt"))
+            var db = new TVHS();
+            var testcase = db.TestCases.Add(new TestCase
             {
-                file.WriteLine(DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString());
-                for (var lop = 0; lop < noloop; lop++)
-                {
-                    revenue = initPopulation.Max(x => x.revenue);
-                    result.noGen++;
-                    // using half random
-                    var parents = SelectParentsTreeHalfRandom(myOriginalCase, initPopulation, percentCrossOver);
-                    var children = MakeChildrenTree(myOriginalCase, parents, true);
-                    initPopulation = initPopulation.Concat(children).ToList();
-                    initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, true);
-                    initPopulation = ReproductionTheBest(initPopulation, populationSize);
-                    var re = initPopulation.Max(x => x.revenue);
-                    if (re > revenue)
-                    {
-                        revenue = re;
-                        count = 0;
-                    }
-                    count++;
-                    Debug.WriteLine(lop + "\t revenue:" + revenue + "\t children:" + children.Count);
-                    file.WriteLine(lop + "\t revenue:" + revenue + "\t children:" + children.Count);
-                    if (count > nochange)
-                    {
-                        Debug.WriteLine("\t" + "no change to die");
-                        file.WriteLine("\t" + "no change to die");
-                        break;
-                    }
-                }
+                TestCase1 = filename.Split(new string[] { "TVHS_Data_test" }, StringSplitOptions.None).Last(),
+                Kind = "HalfRandom - Insert - TheBestParent",
+                CrossOver = percentCrossOver,
+                Mutation = mutationPercent,
+                Population = populationSize,
+                LimitLoop = noloop,
+                NoChange = nochange,
+                Date = DateTime.Now,
+                MaxGen = revenue
+            });
+            for (var lop = 0; lop < noloop; lop++)
+            {
 
-                watch.Stop();
-                elapsedH1 = watch.ElapsedMilliseconds;
-                file.WriteLine("Elapse time: " + elapsedH1);
+                result.noGen++;
+                // using half random
+                var parents = SelectParentsTreeHalfRandom(myOriginalCase, initPopulation, percentCrossOver);
+                var children = MakeChildrenTree(myOriginalCase, parents, true);
+                initPopulation = initPopulation.Concat(children).ToList();
+                initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, true);
+                initPopulation = ReproductionTheBest(initPopulation, populationSize);
+                var re = initPopulation.Max(x => x.revenue);
+                if (re > revenue)
+                {
+                    revenue = re;
+                    count = 0;
+                }
+                count++;
+                var test = db.Tests.Add(new Test
+                {
+                    TestCaseId = testcase.Id,
+                    NoGen = result.noGen,
+                    Revenue = (float)revenue,
+                    RevenueIteration = (float)re,
+                    Children = children.Count
+                });
+                if (count > nochange)
+                {
+                    break;
+                }
             }
 
+            watch.Stop();
+            elapsedH1 = watch.ElapsedMilliseconds;
+            testcase.NoGen = result.noGen;
+            testcase.MaxGen = revenue;
+            testcase.ElapseTime = (int)elapsedH1;
+
+            db.SaveChanges();
             var firstOrDefault = initPopulation.FirstOrDefault();
             if (firstOrDefault != null) result.Choosen = firstOrDefault.Choosen;
             result.Elapsed = (long)elapsedH1;
@@ -611,10 +651,151 @@ namespace solver_TVHS_26_7
 
         public MyStatictis Solve4(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, double mutationPercent, string filename)
         {
-            if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_InsertGen_Parent_half_random_8020" + percentCrossOver + "_" + mutationPercent + ".txt"))
+            var myOriginalCase = input;
+            double revenue = 0;
+            var result = new MyStatictis();
+            result.noGen = 0;
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var initPopulation = CreateInitPopulationTree(myOriginalCase, initSize, false);
+            revenue = initPopulation.Max(x => x.revenue);
+            var elapsedH1 = 0.0;
+            int count = 0;
+            var db = new TVHS();
+            var testcase = db.TestCases.Add(new TestCase
+            {
+                TestCase1 = filename.Split(new string[] { "TVHS_Data_test" }, StringSplitOptions.None).Last(),
+                Kind = "HalfRandom - Insert - 8020",
+                CrossOver = percentCrossOver,
+                Mutation = mutationPercent,
+                Population = populationSize,
+                LimitLoop = noloop,
+                NoChange = nochange,
+                Date = DateTime.Now,
+                MaxGen = revenue
+            });
+
+            for (var lop = 0; lop < noloop; lop++)
+            {
+                result.noGen++;
+                // using half random
+                var parents = SelectParentsTreeHalfRandom(myOriginalCase, initPopulation, percentCrossOver);
+                var children = MakeChildrenTree(myOriginalCase, parents, true);
+                initPopulation = initPopulation.Concat(children).ToList();
+                initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, true);
+                initPopulation = Reproduction8020(initPopulation, populationSize);
+                var re = initPopulation.Max(x => x.revenue);
+                if (re > revenue)
+                {
+                    revenue = re;
+                    count = 0;
+                }
+                count++;
+                var test = db.Tests.Add(new Test
+                {
+                    TestCaseId = testcase.Id,
+                    NoGen = result.noGen,
+                    Revenue = (float)revenue,
+                    RevenueIteration = (float)re,
+                    Children = children.Count
+                });
+                if (count > nochange)
+                {
+                    break;
+                }
+            }
+
+            watch.Stop();
+            elapsedH1 = watch.ElapsedMilliseconds;
+
+            testcase.NoGen = result.noGen;
+            testcase.MaxGen = revenue;
+            testcase.ElapseTime = (int)elapsedH1;
+
+            db.SaveChanges();
+
+            var firstOrDefault = initPopulation.FirstOrDefault();
+            if (firstOrDefault != null) result.Choosen = firstOrDefault.Choosen;
+            result.Elapsed = (long)elapsedH1;
+            result.Revenue = Utility.CalculateRevenue(myOriginalCase, result.Choosen);
+            return result;
+        }
+
+        public MyStatictis Solve5(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, double mutationPercent, string filename)
+        {
+            var myOriginalCase = input;
+            double revenue = 0;
+            var result = new MyStatictis();
+            result.noGen = 0;
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var initPopulation = CreateInitPopulationTree(myOriginalCase, initSize, false);
+            revenue = initPopulation.Max(x => x.revenue);
+            var elapsedH1 = 0.0;
+            int count = 0;
+            var db = new TVHS();
+            var testcase = db.TestCases.Add(new TestCase
+            {
+                TestCase1 = filename.Split(new string[] { "TVHS_Data_test" }, StringSplitOptions.None).Last(),
+                Kind = "RoundRobin - Insert - 8020",
+                CrossOver = percentCrossOver,
+                Mutation = mutationPercent,
+                Population = populationSize,
+                LimitLoop = noloop,
+                NoChange = nochange,
+                Date = DateTime.Now,
+                MaxGen = revenue
+            });
+            for (var lop = 0; lop < noloop; lop++)
+            {
+                result.noGen++;
+                // using half random
+                var parents = SelectParentsTreeRoundRobin(myOriginalCase, initPopulation, percentCrossOver);
+                var children = MakeChildrenTree(myOriginalCase, parents, true);
+                initPopulation = initPopulation.Concat(children).ToList();
+                initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, true);
+                initPopulation = Reproduction8020(initPopulation, populationSize);
+                var re = initPopulation.Max(x => x.revenue);
+                if (re > revenue)
+                {
+                    revenue = re;
+                    count = 0;
+                }
+                count++;
+                var test = db.Tests.Add(new Test
+                {
+                    TestCaseId = testcase.Id,
+                    NoGen = result.noGen,
+                    Revenue = (float)revenue,
+                    RevenueIteration = (float)re,
+                    Children = children.Count
+                });
+                if (count > nochange)
+                {
+                    break;
+                }
+            }
+
+            watch.Stop();
+            elapsedH1 = watch.ElapsedMilliseconds;
+            testcase.NoGen = result.noGen;
+            testcase.MaxGen = revenue;
+            testcase.ElapseTime = (int)elapsedH1;
+
+            db.SaveChanges();
+
+            var firstOrDefault = initPopulation.FirstOrDefault();
+            if (firstOrDefault != null) result.Choosen = firstOrDefault.Choosen;
+            result.Elapsed = (long)elapsedH1;
+            result.Revenue = Utility.CalculateRevenue(myOriginalCase, result.Choosen);
+            return result;
+        }
+
+        // add hueristic
+        public MyStatictis Solve6(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, double mutationPercent, string filename, List<int[]> heuristics)
+        {
+            if (!File.Exists(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_noInsertGen_Heuristic_" + percentCrossOver + "_" + mutationPercent + ".txt"))
             {
                 // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_InsertGen_Parent_half_random_8020" + percentCrossOver + "_" + mutationPercent + ".txt"))
+                using (StreamWriter sw = File.CreateText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_noInsertGen_Heuristic_" + percentCrossOver + "_" + mutationPercent + ".txt"))
                 {
                 }
             }
@@ -624,42 +805,69 @@ namespace solver_TVHS_26_7
             result.noGen = 0;
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var initPopulation = CreateInitPopulationTree(myOriginalCase, initSize, false);
+            foreach (var i in heuristics)
+            {
+                EvaluatePopulation e = new EvaluatePopulation();
+                e.Choosen = i;
+                e.revenue = Utility.CalculateRevenue(myOriginalCase, i);
+                initPopulation.Add(e);
+            }
+            revenue = initPopulation.Max(x => x.revenue);
             var elapsedH1 = 0.0;
             int count = 0;
-            using (System.IO.StreamWriter file = File.AppendText(filename.Split(new string[] { ".xlsx" }, StringSplitOptions.None).FirstOrDefault() + "_InsertGen_Parent_half_random_8020" + percentCrossOver + "_" + mutationPercent + ".txt"))
+            var db = new TVHS();
+            var testcase = db.TestCases.Add(new TestCase
             {
-                file.WriteLine(DateTime.Now.ToLongDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString());
-                for (var lop = 0; lop < noloop; lop++)
-                {
-                    revenue = initPopulation.Max(x => x.revenue);
-                    result.noGen++;
-                    // using half random
-                    var parents = SelectParentsTreeHalfRandom(myOriginalCase, initPopulation, percentCrossOver);
-                    var children = MakeChildrenTree(myOriginalCase, parents, true);
-                    initPopulation = initPopulation.Concat(children).ToList();
-                    initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, true);
-                    initPopulation = Reproduction8020(initPopulation, populationSize);
-                    var re = initPopulation.Max(x => x.revenue);
-                    if (re > revenue)
-                    {
-                        revenue = re;
-                        count = 0;
-                    }
-                    count++;
-                    Debug.WriteLine(lop + "\t revenue:" + revenue + "\t children:" + children.Count);
-                    file.WriteLine(lop + "\t revenue:" + revenue + "\t children:" + children.Count);
-                    if (count > nochange)
-                    {
-                        Debug.WriteLine("\t" + "no change to die");
-                        file.WriteLine("\t" + "no change to die");
-                        break;
-                    }
-                }
+                TestCase1 = filename.Split(new string[] { "TVHS_Data_test" }, StringSplitOptions.None).Last(),
+                Kind = "RoundRobin - noInsert - 8020 - TheBestParent - Heuristic",
+                CrossOver = percentCrossOver,
+                Mutation = mutationPercent,
+                Population = populationSize,
+                LimitLoop = noloop,
+                NoChange = nochange,
+                Date = DateTime.Now,
+                MaxGen = revenue
+            });
 
-                watch.Stop();
-                elapsedH1 = watch.ElapsedMilliseconds;
-                file.WriteLine("Elapse time: " + elapsedH1);
+            for (var lop = 0; lop < noloop; lop++)
+            {
+
+                result.noGen++;
+                // using round robin - monte carlo
+                var parents = SelectParentsTreeRoundRobin(myOriginalCase, initPopulation, percentCrossOver);
+                var children = MakeChildrenTree(myOriginalCase, parents, false);
+                initPopulation = initPopulation.Concat(children).ToList();
+                initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, false);
+                initPopulation = ReproductionTheBest(initPopulation, populationSize);
+                var re = initPopulation.Max(x => x.revenue);
+                if (re > revenue)
+                {
+                    revenue = re;
+                    count = 0;
+                }
+                count++;
+                var test = db.Tests.Add(new Test
+                {
+                    TestCaseId = testcase.Id,
+                    NoGen = result.noGen,
+                    Revenue = (float)revenue,
+                    RevenueIteration = (float)re,
+                    Children = children.Count
+                });
+                if (count > nochange)
+                {
+                    break;
+                }
             }
+
+            watch.Stop();
+            elapsedH1 = watch.ElapsedMilliseconds;
+
+            testcase.NoGen = result.noGen;
+            testcase.MaxGen = revenue;
+            testcase.ElapseTime = (int)elapsedH1;
+
+            db.SaveChanges();
 
             var firstOrDefault = initPopulation.FirstOrDefault();
             if (firstOrDefault != null) result.Choosen = firstOrDefault.Choosen;
