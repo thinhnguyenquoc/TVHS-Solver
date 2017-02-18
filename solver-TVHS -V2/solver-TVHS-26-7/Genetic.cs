@@ -133,6 +133,16 @@ namespace solver_TVHS_26_7
             return result;
         }
 
+        public string ConvertArrayToString(int[] choose)
+        {
+            string result = "";
+            foreach (var character in choose)
+            {
+                result += character.ToString();
+            }
+            return result;
+        }
+
         public string CalculateMd5Hash(string input, MD5 md5)
         {
 
@@ -271,7 +281,7 @@ namespace solver_TVHS_26_7
 
                 #endregion
 
-                var md5String = CalculateMd5Hash(choosen.ToString(), _md5);
+                var md5String = CalculateMd5Hash(ConvertArrayToString(choosen), _md5);
                 if (!_dnaDictionary.ContainsKey(md5String))
                 {
                     var e = new EvaluatePopulation
@@ -363,7 +373,7 @@ namespace solver_TVHS_26_7
             var result = new List<EvaluatePopulation>();
             for (int i = 0; i < parents.Count(); i++)
             {
-                var md5String = CalculateMd5Hash(parents[i][0].Choosen.ToString()+"_"+parents[i][1].Choosen.ToString(), _md5);
+                var md5String = CalculateMd5Hash(ConvertArrayToString(parents[i][0].Choosen)+"_"+ ConvertArrayToString(parents[i][1].Choosen), _md5);
                 if (!_coupleDictionary.ContainsKey(md5String))
                 {
                     var children = SingleCrossTree(myOriginalCase, parents[i], IsInsert);
@@ -412,7 +422,7 @@ namespace solver_TVHS_26_7
             return result;
         }
 
-        public EvaluatePopulation FixChildTree(MyCase myOriginalCase, List<MyProgram> originalChild, bool IsInsert)
+        public EvaluatePopulation FixChildTreeV2(MyCase myOriginalCase, List<MyProgram> originalChild, bool IsInsert)
         {
             var myCase = myOriginalCase.DeepCopyByExpressionTree();
             var child = originalChild.DeepCopyByExpressionTree();
@@ -432,7 +442,7 @@ namespace solver_TVHS_26_7
                 }
             }
             list1 = missingPro.Concat(list1).ToList();
-            var md5str = CalculateMd5Hash(list1.Select(x => x.Id).ToArray().ToString(),_md5);
+            var md5str = CalculateMd5Hash(ConvertArrayToString(list1.Select(x => x.Id).ToArray()),_md5);
             if (_fixChildDictionary.ContainsKey(md5str))
             {
                 return _fixChildDictionary[md5str];
@@ -540,6 +550,132 @@ namespace solver_TVHS_26_7
                 e.Choosen = choosen;
                 e.revenue = Utility.CalculateRevenue(myOriginalCase, choosen);
                 _fixChildDictionary.Add(md5str, e);
+                return e;
+            }
+
+        }
+
+        public EvaluatePopulation FixChildTree(MyCase myOriginalCase, List<MyProgram> originalChild, bool IsInsert)
+        {
+            var myCase = myOriginalCase.DeepCopyByExpressionTree();
+            var child = originalChild.DeepCopyByExpressionTree();
+            var choosen = new int[myCase.Times.Count];
+            for (var j = 0; j < myCase.Times.Count; j++)
+            {
+                choosen[j] = -1;
+            }
+            #region assign program to frame
+            var list1 = child;
+            var missingPro = new List<MyProgram>();
+            foreach (var pro in myCase.Programs)
+            {
+                if (list1.FirstOrDefault(x => x.Id == pro.Id) == null)
+                {
+                    missingPro.Add(pro);
+                }
+            }
+            list1 = missingPro.Concat(list1).ToList();        
+            foreach (var item in list1)
+            {
+                if (myCase.Programs.First(x => x.Id == item.Id).MaxShowTime > 0)
+                {
+                    var gr = myCase.Groups.First(x => x.Id == item.GroupId);
+                    #region group still has cota
+                    if (gr.TotalTime >= item.Duration)
+                    {
+                        var frameList = item.FrameList;
+                        foreach (var frame in frameList)
+                        {
+                            int startAv = Utility.GetFirstAvailableSlotInFrame(myCase, choosen, frame);
+                            #region find a empty space to assign
+                            if (startAv != -1)
+                            {
+                                if (Utility.CheckAssignableProgram(myCase, choosen, startAv, item))
+                                {
+                                    if (Utility.CheckTooClose(myCase, choosen, startAv, item))
+                                    {
+                                        Utility.AssignProgramToScheTree(choosen, startAv, item, gr);
+                                        break;
+                                    }
+                                }
+                            }
+                            #endregion
+                        }
+                    }
+                }
+                #endregion
+            }
+            #endregion
+            #region try to assign programe between two frames
+            if (IsInsert)
+            {
+                var change = false;
+                // calculate the unoccupate of two continue frame
+                while (true)
+                {
+                    Utility.UpdateUnOccupiedFrameTime(myCase, choosen);
+                    var unoccupate = new List<int>();
+                    for (int i = 0; i < myCase.Frames.Count - 1; i++)
+                    {
+                        unoccupate.Add(myCase.Frames[i].Unoccupate + myCase.Frames[i + 1].Unoccupate);
+                    }
+                    var list2 =
+                        myCase.Programs.Where(x => x.MaxShowTime > 0).OrderByDescending(x => x.Efficiency).ToList();
+                    foreach (var pro in list2)
+                    {
+                        var gr = myCase.Groups.FirstOrDefault(x => x.Id == pro.GroupId);
+                        if (gr.TotalTime >= pro.Duration)
+                        {
+                            for (int i = 0; i < unoccupate.Count; i++)
+                            {
+                                if (pro.Duration <= unoccupate[i])
+                                {
+                                    //check allowed frames
+                                    var frameIdList = pro.FrameList.Select(x => x.Id).ToList();
+                                    //add program to time frame
+                                    if (frameIdList.Contains(i))
+                                    {
+                                        ////check available slot                      
+                                        int startAv = myCase.Frames[i].End - myCase.Frames[i].Unoccupate;
+                                        if (startAv != myCase.Frames[i].End)
+                                        {
+                                            if (Utility.CheckTooClose(myCase, choosen, startAv, pro))
+                                            {
+                                                int shift = pro.Duration - myCase.Frames[i].Unoccupate;
+                                                // ShiftRight
+                                                Utility.ShiftRight(myCase, choosen, shift, i + 1, unoccupate);
+                                                Utility.AssignProgramToScheTree(choosen, startAv, pro, gr);
+                                                change = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                        if (change)
+                            break;
+                    }
+                    if (change)
+                        change = false;
+                    else
+                        break;
+                }
+            }
+
+            #endregion
+
+            var va = Validate.ValidateResult(myOriginalCase, choosen);
+            if (va.Where(x => x != 0).Any())
+            {
+                return null;
+            }
+            else
+            {
+                var e = new EvaluatePopulation();
+                e.Choosen = choosen;
+                e.revenue = Utility.CalculateRevenue(myOriginalCase, choosen);
                 return e;
             }
 
@@ -1055,7 +1191,7 @@ namespace solver_TVHS_26_7
             var db = new TVHS();
             var testcase = db.TestCases.Add(new TestCase
             {
-                TestCase1 = filename.Split(new string[] { "TVHS_Data_test" }, StringSplitOptions.None).Last(),
+                TestCase1 = filename.Split(new string[] { "TVHS_Data_test" }, StringSplitOptions.None).Last() +"-V2",
                 Kind = "RoundRobin - Insert - TheBestParent",
                 CrossOver = percentCrossOver,
                 Mutation = mutationPercent,
