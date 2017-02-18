@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace solver_TVHS_26_7
 {
     public class Genetic
     {
+        private Dictionary<string, EvaluatePopulation> _dnaDictionary = new Dictionary<string, EvaluatePopulation>();
+        private Dictionary<string, List<EvaluatePopulation>> _coupleDictionary = new Dictionary<string, List<EvaluatePopulation>>();
+        private Dictionary<string, EvaluatePopulation> _fixChildDictionary = new Dictionary<string, EvaluatePopulation>();
+        private readonly MD5 _md5 = System.Security.Cryptography.MD5.Create();
+
         public List<EvaluatePopulation> CreateInitPopulationTree(MyCase myOriginalCase, int size, bool isInsert)
         {
             var result = new List<EvaluatePopulation>();
@@ -123,23 +129,159 @@ namespace solver_TVHS_26_7
                 var e = new EvaluatePopulation { Choosen = choosen };
                 e.revenue = Utility.CalculateRevenue(myOriginalCase, choosen);
                 result.Add(e);
-                //if (!CheckExist(result, e))
-                //{
-                //    var vals = Validate.ValidateResult(myOriginalCase, choosen);
-                //    var error = false;
-                //    foreach (var val in vals)
-                //    {
-                //        if (val < 0)
-                //        {
-                //            error = true;
-                //            break;
-                //        }
-                //    }
-                //    if (!error)
-                //    {
-                      
-                //    }
-                //}
+            }
+            return result;
+        }
+
+        public string CalculateMd5Hash(string input, MD5 md5)
+        {
+
+            // step 1, calculate MD5 hash from input
+
+            
+            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+
+            byte[] hash = md5.ComputeHash(inputBytes);
+
+            // step 2, convert byte array to hex string
+
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < hash.Length; i++)
+
+            {
+
+                sb.Append(hash[i].ToString("x2"));
+
+            }
+
+            return sb.ToString();
+
+        }
+
+        public List<EvaluatePopulation> CreateInitPopulationTreeV2(MyCase myOriginalCase, int size, bool isInsert)
+        {
+            var result = new List<EvaluatePopulation>();
+            while (result.Count < size)
+            {
+                var myCase = myOriginalCase.DeepCopyByExpressionTree();
+                var choosen = new int[myCase.Times.Count];
+                for (var j = 0; j < myCase.Times.Count; j++)
+                {
+                    choosen[j] = -1;
+                }
+                bool change = false;
+                #region assign program to frame             
+                while (true)
+                {
+                    var list1 = Utility.RandomProgramListTree(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
+                    foreach (var item in list1)
+                    {
+                        var gr = myCase.Groups.First(x => x.Id == item.GroupId);
+                        #region group still has cota
+                        if (gr.TotalTime >= item.Duration)
+                        {
+                            var frameList = Utility.RandomFrameListTree(item.FrameList);
+                            foreach (var frame in frameList)
+                            {
+                                var startAv = Utility.GetFirstAvailableSlotInFrame(myCase, choosen, frame);
+                                #region find a empty space to assign
+                                if (startAv != -1)
+                                {
+                                    if (Utility.CheckAssignableProgram(myCase, choosen, startAv, item))
+                                    {
+                                        if (Utility.CheckTooClose(myCase, choosen, startAv, item))
+                                        {
+                                            Utility.AssignProgramToScheTree(choosen, startAv, item, gr);
+                                            change = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                #endregion
+                            }
+                        }
+                        #endregion
+                    }
+                    #region if nothing changes, stop loop
+                    if (change)
+                        change = false;
+                    else
+                        break;
+                    #endregion
+                }
+                #endregion
+                #region try to assign programe between two frames
+                if (isInsert)
+                {
+                    change = false;
+                    // calculate the unoccupate of two continue frame                    
+                    while (true)
+                    {
+                        var list2 = Utility.RandomProgramListTree(myCase.Programs.Where(x => x.MaxShowTime > 0).ToList());
+                        Utility.UpdateUnOccupiedFrameTime(myCase, choosen);
+                        var unoccupate = new List<int>();
+                        for (var i = 0; i < myCase.Frames.Count - 1; i++)
+                        {
+                            unoccupate.Add(myCase.Frames[i].Unoccupate + myCase.Frames[i + 1].Unoccupate);
+                        }
+
+                        foreach (var pro in list2)
+                        {
+                            var gr = myCase.Groups.First(x => x.Id == pro.GroupId);
+                            if (gr.TotalTime >= pro.Duration)
+                            {
+                                for (int i = 0; i < unoccupate.Count; i++)
+                                {
+                                    if (pro.Duration <= unoccupate[i])
+                                    {
+                                        //check allowed frames
+                                        var frameIdList = pro.FrameList.Select(x => x.Id).ToList();
+                                        //add program to time frame
+                                        if (frameIdList.Contains(i))
+                                        {
+                                            ////check available slot                      
+                                            int startAv = myCase.Frames[i].End - myCase.Frames[i].Unoccupate;
+                                            if (startAv != myCase.Frames[i].End)
+                                            {
+                                                if (Utility.CheckTooClose(myCase, choosen, startAv, pro))
+                                                {
+                                                    int shift = pro.Duration - myCase.Frames[i].Unoccupate;
+                                                    // ShiftRight
+                                                    Utility.ShiftRight(myCase, choosen, shift, i + 1, unoccupate);
+                                                    Utility.AssignProgramToScheTree(choosen, startAv, pro, gr);
+                                                    change = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                            if (change)
+                                break;
+                        }
+                        if (change)
+                            change = false;
+                        else
+                            break;
+                    }
+                }
+
+                #endregion
+
+                var md5String = CalculateMd5Hash(choosen.ToString(), _md5);
+                if (!_dnaDictionary.ContainsKey(md5String))
+                {
+                    var e = new EvaluatePopulation
+                    {
+                        Choosen = choosen,
+                        revenue = Utility.CalculateRevenue(myOriginalCase, choosen)
+                    };
+                    result.Add(e);
+                    _dnaDictionary.Add(md5String,e);
+                }
             }
             return result;
         }
@@ -221,12 +363,25 @@ namespace solver_TVHS_26_7
             var result = new List<EvaluatePopulation>();
             for (int i = 0; i < parents.Count(); i++)
             {
-                var children = SingleCrossTree(myOriginalCase, parents[i], IsInsert);
-                if (children.FirstOrDefault() != null)
-                    result.Add(children.FirstOrDefault());
-                if (children.LastOrDefault() != null)
-                    result.Add(children.LastOrDefault());
-            }
+                var md5String = CalculateMd5Hash(parents[i][0].Choosen.ToString()+"_"+parents[i][1].Choosen.ToString(), _md5);
+                if (!_coupleDictionary.ContainsKey(md5String))
+                {
+                    var children = SingleCrossTree(myOriginalCase, parents[i], IsInsert);
+                    if (children.FirstOrDefault() != null)
+                        result.Add(children.FirstOrDefault());
+                    if (children.LastOrDefault() != null)
+                        result.Add(children.LastOrDefault());
+                    _coupleDictionary.Add(md5String, children);
+                }
+                else
+                {
+                    var children = _coupleDictionary[md5String];
+                    if (children.FirstOrDefault() != null)
+                        result.Add(children.FirstOrDefault());
+                    if (children.LastOrDefault() != null)
+                        result.Add(children.LastOrDefault());
+                }                            
+            }           
             return result;
         }
 
@@ -277,6 +432,11 @@ namespace solver_TVHS_26_7
                 }
             }
             list1 = missingPro.Concat(list1).ToList();
+            var md5str = CalculateMd5Hash(list1.Select(x => x.Id).ToArray().ToString(),_md5);
+            if (_fixChildDictionary.ContainsKey(md5str))
+            {
+                return _fixChildDictionary[md5str];
+            }
             foreach (var item in list1)
             {
                 if (myCase.Programs.First(x => x.Id == item.Id).MaxShowTime > 0)
@@ -370,12 +530,16 @@ namespace solver_TVHS_26_7
 
             var va = Validate.ValidateResult(myOriginalCase, choosen);
             if (va.Where(x => x != 0).Any())
+            {
+                _fixChildDictionary.Add(md5str, null);
                 return null;
+            }
             else
             {
                 var e = new EvaluatePopulation();
                 e.Choosen = choosen;
                 e.revenue = Utility.CalculateRevenue(myOriginalCase, choosen);
+                _fixChildDictionary.Add(md5str, e);
                 return e;
             }
 
@@ -838,6 +1002,79 @@ namespace solver_TVHS_26_7
                 var children = MakeChildrenTree(myOriginalCase, parents, false);
                 initPopulation = initPopulation.Concat(children).ToList();
                 initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, false);
+                initPopulation = ReproductionTheBest(initPopulation, populationSize);
+                var re = initPopulation.Max(x => x.revenue);
+                if (re > revenue)
+                {
+                    revenue = re;
+                    count = 0;
+                }
+                count++;
+                var test = db.Tests.Add(new Test
+                {
+                    TestCaseId = testcase.Id,
+                    NoGen = result.noGen,
+                    Revenue = (float)revenue,
+                    RevenueIteration = (float)re,
+                    Children = children.Count
+                });
+                if (count > nochange)
+                {
+                    break;
+                }
+            }
+
+            watch.Stop();
+            elapsedH1 = watch.ElapsedMilliseconds;
+
+            testcase.NoGen = result.noGen;
+            testcase.MaxGen = revenue;
+            testcase.ElapseTime = (int)elapsedH1;
+
+            db.SaveChanges();
+
+            var firstOrDefault = initPopulation.FirstOrDefault();
+            if (firstOrDefault != null) result.Choosen = firstOrDefault.Choosen;
+            result.Elapsed = (long)elapsedH1;
+            result.Revenue = Utility.CalculateRevenue(myOriginalCase, result.Choosen);
+            return result;
+        }
+
+
+        public MyStatictis SolveV2_1(MyCase input, int initSize, int populationSize, double percentCrossOver, int nochange, int noloop, double mutationPercent, string filename)
+        {
+            var myOriginalCase = input;
+            double revenue = 0;
+            var result = new MyStatictis();
+            result.noGen = 0;
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var initPopulation = CreateInitPopulationTreeV2(myOriginalCase, initSize, true);
+            revenue = initPopulation.Max(x => x.revenue);
+            var elapsedH1 = 0.0;
+            int count = 0;
+            var db = new TVHS();
+            var testcase = db.TestCases.Add(new TestCase
+            {
+                TestCase1 = filename.Split(new string[] { "TVHS_Data_test" }, StringSplitOptions.None).Last(),
+                Kind = "RoundRobin - Insert - TheBestParent",
+                CrossOver = percentCrossOver,
+                Mutation = mutationPercent,
+                Population = populationSize,
+                LimitLoop = noloop,
+                NoChange = nochange,
+                Date = DateTime.Now,
+                MaxGen = revenue
+            });
+
+            for (var lop = 0; lop < noloop; lop++)
+            {
+
+                result.noGen++;
+                // using round robin - monte carlo
+                var parents = SelectParentsTreeRoundRobin(myOriginalCase, initPopulation, percentCrossOver);
+                var children = MakeChildrenTree(myOriginalCase, parents, true);
+                initPopulation = initPopulation.Concat(children).ToList();
+                initPopulation = MutateTree(myOriginalCase, initPopulation, mutationPercent, true);
                 initPopulation = ReproductionTheBest(initPopulation, populationSize);
                 var re = initPopulation.Max(x => x.revenue);
                 if (re > revenue)

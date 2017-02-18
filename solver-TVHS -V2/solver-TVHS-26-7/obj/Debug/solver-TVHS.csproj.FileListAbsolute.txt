@@ -70,3 +70,21 @@ C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-
 C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\EntityFramework.SqlServer.dll
 C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\EntityFramework.xml
 C:\Users\NGUYEN Quoc Thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\solver-TVHS-26-7.exe.config
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\obj\Debug\solver-TVHS-26-7.exe
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\obj\Debug\solver-TVHS-26-7.pdb
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\solver-TVHS-26-7.exe
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\solver-TVHS-26-7.pdb
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\EntityFramework.dll
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\Newtonsoft.Json.dll
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\NPOI.dll
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\NPOI.OOXML.dll
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\NPOI.OpenXml4Net.dll
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\NPOI.OpenXmlFormats.dll
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\EntityFramework.xml
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\Newtonsoft.Json.xml
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\bin\Debug\NPOI.xml
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS -V2\solver-TVHS-26-7\obj\Debug\solver-TVHS.csprojResolveAssemblyReference.cache
