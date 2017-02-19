@@ -26,8 +26,8 @@ namespace solver_TVHS_26_7
                 //@"..\..\..\..\TVHS_Data_test\27-7_2-8_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\3-8_9-8_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\10-8_16-8_2015\F0-F10.xlsx",
-                //@"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
-                @"..\..\..\..\TVHS_Data_test\24-8_30-8_2015\F0-F10.xlsx",
+                @"..\..\..\..\TVHS_Data_test\17-8_23-8_2015\F0-F10.xlsx",
+                //@"..\..\..\..\TVHS_Data_test\24-8_30-8_2015\F0-F10.xlsx",
 
                 //@"..\..\..\..\TVHS_Data_test\7-9_13-9_2015\F0-F10.xlsx",
                 //@"..\..\..\..\TVHS_Data_test\14-9_20-9_2015\F0-F10.xlsx",
@@ -264,7 +264,10 @@ namespace solver_TVHS_26_7
                 /// 
                 //var genResult111 = gen.Solve2(input, 2000, 2000, 0.2, 30, 1000, 0.005, filename);
                 //var genResult11 = gen.SolveV2_1(input, 2000, 2000, 0.2, 30, 1000, 0.005, filename);
-                var genResult11 = new GenV2().SolveV2_1(input, 4000, 4000, 0.2, 30, 1000, 0.005, filename);
+                for (int i = 0; i < 6; i++)
+                {
+                    var genResult11 = new GenV2().SolveV2_1(input, 2000, 2000, 0.1, 30, 1000, 0.005, filename);
+                }
                 //var genResult21 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.005, filename);
                 //var genResult31 = gen.Solve2(input, 100, 500, 0.3, 60, 500, 0.005, filename);
                 //var genResult41 = gen.Solve2(input, 100, 500, 0.4, 60, 500, 0.005, filename);
