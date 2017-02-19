@@ -262,8 +262,9 @@ namespace solver_TVHS_26_7
                 ///
                 /// test for 1 strategy
                 /// 
-                var genResult111 = gen.Solve2(input, 500, 500, 0.1, 30, 1000, 0.005, filename);
-                var genResult11 = gen.SolveV2_1(input, 500, 500, 0.1, 30, 1000, 0.005, filename);
+                //var genResult111 = gen.Solve2(input, 2000, 2000, 0.2, 30, 1000, 0.005, filename);
+                //var genResult11 = gen.SolveV2_1(input, 2000, 2000, 0.2, 30, 1000, 0.005, filename);
+                var genResult11 = new GenV2().SolveV2_1(input, 4000, 4000, 0.2, 30, 1000, 0.005, filename);
                 //var genResult21 = gen.Solve2(input, 100, 500, 0.2, 60, 500, 0.005, filename);
                 //var genResult31 = gen.Solve2(input, 100, 500, 0.3, 60, 500, 0.005, filename);
                 //var genResult41 = gen.Solve2(input, 100, 500, 0.4, 60, 500, 0.005, filename);
