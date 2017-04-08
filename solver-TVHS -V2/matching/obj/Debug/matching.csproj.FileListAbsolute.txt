@@ -1,0 +1,6 @@
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\solver-TVHS -V2\matching\bin\Debug\matching.exe.config
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\solver-TVHS -V2\matching\bin\Debug\matching.exe
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\solver-TVHS -V2\matching\bin\Debug\matching.pdb
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\solver-TVHS -V2\matching\obj\Debug\matching.csprojResolveAssemblyReference.cache
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\solver-TVHS -V2\matching\obj\Debug\matching.exe
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\solver-TVHS -V2\matching\obj\Debug\matching.pdb

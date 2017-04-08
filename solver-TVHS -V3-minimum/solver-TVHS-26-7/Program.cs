@@ -311,8 +311,7 @@ namespace solver_TVHS_26_7
             #endregion
             return data;
         }
-        #endregion
-
+      
         private static List<MyTime> GetTime(int time)
         {
             var timeList = new List<MyTime>();
@@ -380,6 +379,7 @@ namespace solver_TVHS_26_7
             listGroup.Add(new MyGroup() { Id = 3, Name = "D" });
             return listGroup;
         }
+        #endregion
 
     }
 }

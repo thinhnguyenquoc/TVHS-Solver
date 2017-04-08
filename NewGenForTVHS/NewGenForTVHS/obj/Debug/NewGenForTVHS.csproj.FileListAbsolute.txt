@@ -1,0 +1,18 @@
+c:\users\thinh\documents\visual studio 2015\Projects\NewGenForTVHS\NewGenForTVHS\bin\Debug\NewGenForTVHS.exe.config
+C:\Users\thinh\documents\visual studio 2015\Projects\NewGenForTVHS\NewGenForTVHS\bin\Debug\NewGenForTVHS.exe
+C:\Users\thinh\documents\visual studio 2015\Projects\NewGenForTVHS\NewGenForTVHS\bin\Debug\NewGenForTVHS.pdb
+C:\Users\thinh\documents\visual studio 2015\Projects\NewGenForTVHS\NewGenForTVHS\obj\Debug\NewGenForTVHS.csprojResolveAssemblyReference.cache
+C:\Users\thinh\documents\visual studio 2015\Projects\NewGenForTVHS\NewGenForTVHS\obj\Debug\NewGenForTVHS.exe
+C:\Users\thinh\documents\visual studio 2015\Projects\NewGenForTVHS\NewGenForTVHS\obj\Debug\NewGenForTVHS.pdb
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\bin\Debug\NewGenForTVHS.exe.config
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\obj\Debug\NewGenForTVHS.exe
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\obj\Debug\NewGenForTVHS.pdb
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\bin\Debug\NewGenForTVHS.exe
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\bin\Debug\NewGenForTVHS.pdb
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\bin\Debug\NPOI.dll
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\bin\Debug\NPOI.OOXML.dll
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\bin\Debug\NPOI.OpenXml4Net.dll
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\bin\Debug\NPOI.OpenXmlFormats.dll
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\bin\Debug\NPOI.xml
+C:\Users\thinh\Documents\GitHub\TVHS-Solver\NewGenForTVHS\NewGenForTVHS\obj\Debug\NewGenForTVHS.csprojResolveAssemblyReference.cache
