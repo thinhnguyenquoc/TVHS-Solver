@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="DeepCopyByExpressionTrees.cs" />
     <Compile Include="Genetic.cs" />
+    <Compile Include="GenV2.cs" />
     <Compile Include="Heuristic.cs" />
     <Compile Include="MyModel.cs" />
     <Compile Include="Program.cs" />

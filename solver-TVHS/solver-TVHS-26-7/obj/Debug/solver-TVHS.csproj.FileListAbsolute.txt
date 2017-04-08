@@ -25,3 +25,5 @@ C:\Users\thinh\Documents\GitHub\TVHS-Solver\solver-TVHS\solver-TVHS-26-7\bin\Deb
 C:\Users\thinh\Documents\GitHub\TVHS-Solver\solver-TVHS\solver-TVHS-26-7\bin\Debug\NPOI.xml
 C:\Users\thinh\Documents\GitHub\TVHS-Solver\solver-TVHS\solver-TVHS-26-7\obj\Debug\solver-TVHS.csprojResolveAssemblyReference.cache
 C:\Users\thinhnguyen.DICENTRAL\Documents\GitHub\TVHS-Solver\solver-TVHS\solver-TVHS-26-7\obj\Debug\solver-TVHS.csprojResolveAssemblyReference.cache
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS\solver-TVHS-26-7\obj\Debug\solver-TVHS-26-7.exe
+C:\Users\thinh\Documents\TVHS-Solver\solver-TVHS\solver-TVHS-26-7\obj\Debug\solver-TVHS-26-7.pdb
